@@ -30,7 +30,7 @@ func RegisterAdmin(c fiber.Ctx) error {
 
 	if len(request.Username) < 13 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "กรุณากรอกเลขสหกรณ์ให้ถูกต้อง",
+			"message": "กรุณากรอกเลขบัตรประชาชนให้ถูกต้อง",
 		})
 	}
 
@@ -45,7 +45,7 @@ func RegisterAdmin(c fiber.Ctx) error {
 	isUsernameExists := database.DB.Where("username = ?", request.Username).First(&existingUser).Error == nil
 	if isUsernameExists {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "ชื่อผู้ใช้ถูกใช้แล้ว",
+			"message": "เลขบัตรประชาชนนี้ถูกใช้แล้ว",
 		})
 	}
 
@@ -106,6 +106,7 @@ func RegisterAdmin(c fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "สมัครสมาชิกสำเร็จ",
+		"data": newAdmin,
 	})
 }
 
@@ -123,14 +124,14 @@ func LoginAdmin(c fiber.Ctx) error {
 	var admin models.Admin
 	if err := database.DB.Where("username = ?", request.Username).First(&admin).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"message": "ไม่พบผู้ใช้",
+			"message": "เลขบัตรประชาชนหรือรหัสผ่านไม่ถูกต้อง",
 		})
 	}
 
 	// Check password
 	if !services.VerifyPassword(request.Password, admin.Password) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง",
+			"message": "เลขบัตรประชาชนหรือรหัสผ่านไม่ถูกต้อง",
 		})
 	}
 
@@ -154,6 +155,7 @@ func LoginAdmin(c fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "เข้าสู่ระบบสำเร็จ",
+		"data": admin,
 	})
 }
 
