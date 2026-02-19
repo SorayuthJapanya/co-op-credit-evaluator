@@ -27,7 +27,7 @@ const NotFoundPage = () => {
         </CardHeader>
         
         <CardContent className="text-center">
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-gray-700 leading-relaxed">
             ขออภัยด้วยนะครับ หน้าที่คุณกำลังมองหาไม่มีอยู่จริง
             <br />
             อาจจะถูกลบไป หรือ URL อาจจะไม่ถูกต้อง

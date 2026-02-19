@@ -70,7 +70,6 @@ export const useLogoutUser = () => {
   return useMutation({
     mutationFn: logoutUser,
     onSuccess: (response) => {
-      console.log(response);
       Swal.fire({
         icon: "success",
         title: response.message || "ออกจากระบบสำเร็จ",

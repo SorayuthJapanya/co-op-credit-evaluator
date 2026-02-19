@@ -418,21 +418,6 @@ All endpoints return consistent error format:
 ## 📄 License
 
 This project is licensed under the [License Name] - see the [LICENSE](LICENSE) file for details.
-
-## 👥 Team & Credits
-
-- **Development Team**: [Team Name/Individual Names]
-- **Project Lead**: [Lead Name]
-- **UI/UX Design**: [Designer Name]
-- **Special Thanks**: [Contributors/Special Thanks]
-
-## 📞 Support & Contact
-
-- **Email**: support@example.com
-- **Documentation**: [Link to docs]
-- **Issues**: [Link to issue tracker]
-- **Discussions**: [Link to discussions]
-
 ---
 
 **Note**: This is a financial application handling sensitive user data. Ensure all security best practices are followed and comply with relevant data protection regulations.

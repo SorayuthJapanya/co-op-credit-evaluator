@@ -43,7 +43,7 @@ const AppSidebar = memo(({ userProfile }: { userProfile: IUser }) => {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sm font-semibold text-sidebar-foreground/80">
+          <SidebarGroupLabel className="text-sm font-semibold text-sidebar-foreground/80 my-2">
             เมนูหลัก
           </SidebarGroupLabel>
           <SidebarGroupContent>
