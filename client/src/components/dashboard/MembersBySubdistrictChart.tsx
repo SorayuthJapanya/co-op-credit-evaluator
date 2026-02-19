@@ -129,7 +129,7 @@ export const MembersBySubdistrictChart: React.FC<
               height={36}
               formatter={(value: string) => (
                 <span className="text-xs text-gray-700">
-                  {value} คน
+                  {value}
                 </span>
               )}
             />

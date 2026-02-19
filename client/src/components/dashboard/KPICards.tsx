@@ -43,6 +43,7 @@ const variantStyles: Record<
     valueText: string; // สีตัวเลขหลัก
     badgeBg: string; // พื้น badge
     badgeText: string; // ตัวอักษร badge
+    border: string; // ขอบการ์ด
   }
 > = {
   blue: {
@@ -52,6 +53,7 @@ const variantStyles: Record<
     valueText: "text-blue-700",
     badgeBg: "bg-blue-50",
     badgeText: "text-blue-600",
+    border: "border-blue-100",
   },
   green: {
     bar: "from-emerald-500 to-teal-400",
@@ -60,6 +62,7 @@ const variantStyles: Record<
     valueText: "text-emerald-700",
     badgeBg: "bg-emerald-50",
     badgeText: "text-emerald-600",
+    border: "border-emerald-100",
   },
   purple: {
     bar: "from-violet-500 to-purple-400",
@@ -68,6 +71,7 @@ const variantStyles: Record<
     valueText: "text-violet-700",
     badgeBg: "bg-violet-50",
     badgeText: "text-violet-600",
+    border: "border-violet-100",
   },
   red: {
     bar: "from-rose-500 to-red-400",
@@ -76,6 +80,7 @@ const variantStyles: Record<
     valueText: "text-rose-700",
     badgeBg: "bg-rose-50",
     badgeText: "text-rose-600",
+    border: "border-rose-100",
   },
 };
 
@@ -153,7 +158,7 @@ export const KPICards: React.FC<kpiCardsProps> = ({ data, selectedYear }) => {
                 <p className="font-medium text-gray-700 leading-tight">
                   {card.title}
                 </p>
-                <div className={`flex-shrink-0 rounded-xl p-2.5 ${s.iconWrap}`}>
+                <div className={`shrink-0 rounded-xl p-2.5 ${s.iconWrap} border ${s.border}`}>
                   <Icon className={`h-5 w-5 ${s.icon}`} />
                 </div>
               </div>
