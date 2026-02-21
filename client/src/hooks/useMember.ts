@@ -1,7 +1,12 @@
 import { CrateMember, DeleteMember, GetMemberById, getMembers, UpdateMember } from "@/services/memberServices";
 import type { IFilterMemberRequest, IUpdateMemberRequest } from "@/types/member_types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import Swal from "sweetalert2";
+
+interface ApiErrorResponse {
+  message: string;
+}
 
 export const useMembers = ({
   fullName,
@@ -48,10 +53,11 @@ export const useCreateMember = () => {
         timer: 1500,
       });
     },
-    onError: (error) => {
+    onError: (error: AxiosError<ApiErrorResponse>) => {
+      const errorData = error?.response?.data;
       Swal.fire({
         icon: "error",
-        title: error.message || "เกิดข้อผิดพลาด",
+        title: errorData?.message || "เกิดข้อผิดพลาด",
         showConfirmButton: false,
         timer: 1500,
       });
@@ -72,10 +78,11 @@ export const useUpdateMember = () => {
         timer: 1500,
       });
     },
-    onError: (error) => {
+    onError: (error: AxiosError<ApiErrorResponse>) => {
+      const errorData = error?.response?.data;
       Swal.fire({
         icon: "error",
-        title: error.message || "เกิดข้อผิดพลาด",
+        title: errorData?.message || "เกิดข้อผิดพลาด",
         showConfirmButton: false,
         timer: 1500,
       });
@@ -96,10 +103,11 @@ export const useDeleteMember = () => {
         timer: 1500,
       });
     },
-    onError: (error) => {
+    onError: (error: AxiosError<ApiErrorResponse>) => {
+      const errorData = error?.response?.data;
       Swal.fire({
         icon: "error",
-        title: error.message || "เกิดข้อผิดพลาด",
+        title: errorData?.message || "เกิดข้อผิดพลาด",
         showConfirmButton: false,
         timer: 1500,
       });

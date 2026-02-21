@@ -50,7 +50,7 @@ const MemberForm = ({ onSuccess, onCancel }: MemberFormProps) => {
     defaultValues: {
       cooperativeId: "5600000225501",
       idCard: "",
-      accountYear: (new Date().getFullYear() + 543).toString(),
+      accountYear: (new Date().getFullYear()).toString(),
       memberId: "",
       fullName: "",
       nationality: "ไทย",

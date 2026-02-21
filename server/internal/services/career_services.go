@@ -109,11 +109,9 @@ func UpdateCareerCategory(id uuid.UUID, categoryName string) (*models.CareerCate
 }
 
 func DeleteCareerCategory(id uuid.UUID) error {
-	// Check if category has subcategories
-	var subCategoryCount int64
-	database.DB.Model(&models.SubCategory{}).Where("category_id = ?", id).Count(&subCategoryCount)
-	if subCategoryCount > 0 {
-		return errors.New("ไม่สามารถลบหมวดหมู่อาชีพที่มีหมวดหมู่ย่อยอยู่ได้")
+	// Delete subcategories
+	if err := database.DB.Delete(&models.SubCategory{}, "category_id = ?", id).Error; err != nil {
+		return err
 	}
 
 	// Delete category
@@ -159,12 +157,28 @@ func GetSubCategories() ([]models.SubCategory, error) {
 	return subCategories, nil
 }
 
-func GetSubCategoriesByCategoryID(categoryID uuid.UUID) ([]models.SubCategory, error) {
+func GetSubCategoriesByCategoryID(categoryID uuid.UUID, page, limit int, search string) ([]models.SubCategory, int64, error) {
 	var subCategories []models.SubCategory
-	if err := database.DB.Where("category_id = ?", categoryID).Find(&subCategories).Error; err != nil {
-		return nil, err
+	var total int64
+
+	offset := (page - 1) * limit
+
+	query := database.DB.Model(&models.SubCategory{}).Where("category_id = ?", categoryID)
+
+	if search != "" {
+		cleanSearch := strings.ReplaceAll(search, " ", "")
+		query = query.Where("REPLACE(sub_category_name, ' ', '') LIKE ?", "%"+cleanSearch+"%")
 	}
-	return subCategories, nil
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	if err := query.Offset(offset).Limit(limit).Find(&subCategories).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return subCategories, total, nil
 }
 
 func GetSubCategoryByID(id uuid.UUID) (*models.SubCategory, error) {

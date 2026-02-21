@@ -13,6 +13,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import CreditEvaluatorPage from "./pages/protected/CreditEvaluatorPage";
 import ManageMembersPage from "./pages/protected/ManageMembersPage";
 import ManageCareerCategoryPage from "./pages/protected/ManageCareerCategoryPage";
+import ManageSubCareer from "./pages/protected/ManageSubCareer";
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
           path="/manage-career-category"
           element={<ManageCareerCategoryPage />}
         />
+        <Route path="/manage-sub-career" element={<ManageSubCareer />} />
       </Route>
 
       {/* Not Found Page */}

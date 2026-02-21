@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"strconv"
+
 	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/services"
 	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
@@ -211,16 +213,41 @@ func GetSubCategoriesByCategory(c fiber.Ctx) error {
 		})
 	}
 
-	subCategories, err := services.GetSubCategoriesByCategoryID(categoryID)
+	pageStr := c.Query("page", "1")
+	limitStr := c.Query("limit", "10")
+	search := c.Query("search", "")
+
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit < 1 {
+		limit = 10
+	}
+
+	subCategories, total, err := services.GetSubCategoriesByCategoryID(categoryID, page, limit, search)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "ไม่สามารถดึงข้อมูลหมวดหมู่ย่อยอาชีพได้",
 		})
 	}
 
+	totalPages := int(total) / limit
+	if int(total)%limit != 0 {
+		totalPages++
+	}
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "ดึงข้อมูลหมวดหมู่ย่อยอาชีพสำเร็จ",
 		"data":    subCategories,
+		"pagination": fiber.Map{
+			"total":      total,
+			"page":       page,
+			"limit":      limit,
+			"totalPages": totalPages,
+		},
 	})
 }
 

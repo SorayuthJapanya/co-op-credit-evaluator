@@ -137,7 +137,7 @@ const Pagination = ({ page, totalPages, onPageChange }: PaginationProps) => {
           onBlur={handleInputSubmit}
           className="w-16 h-9"
         />
-        <Button type="submit" size="sm" variant="secondary" className="h-9">
+        <Button type="submit" size="sm" variant="secondary" className="h-9 cursor-pointer">
           ไป
         </Button>
       </form>
