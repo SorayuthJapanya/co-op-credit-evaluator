@@ -77,14 +77,6 @@ func GetCareerCategories(categoryNameFilter string, searchQuery string) ([]model
 	return categories, nil
 }
 
-func GetCareerCategoryByID(id uuid.UUID) (*models.CareerCategory, error) {
-	var category models.CareerCategory
-	if err := database.DB.Preload("SubCategory").First(&category, "id = ?", id).Error; err != nil {
-		return nil, err
-	}
-	return &category, nil
-}
-
 func UpdateCareerCategory(id uuid.UUID, categoryName string) (*models.CareerCategory, error) {
 	var category models.CareerCategory
 	if err := database.DB.First(&category, "id = ?", id).Error; err != nil {
@@ -149,14 +141,6 @@ func CreateSubCategory(categoryID uuid.UUID, subCategoryName string, subNetProfi
 	return &subCategory, nil
 }
 
-func GetSubCategories() ([]models.SubCategory, error) {
-	var subCategories []models.SubCategory
-	if err := database.DB.Find(&subCategories).Error; err != nil {
-		return nil, err
-	}
-	return subCategories, nil
-}
-
 func GetSubCategoriesByCategoryID(categoryID uuid.UUID, page, limit int, search string) ([]models.SubCategory, int64, error) {
 	var subCategories []models.SubCategory
 	var total int64
@@ -179,14 +163,6 @@ func GetSubCategoriesByCategoryID(categoryID uuid.UUID, page, limit int, search 
 	}
 
 	return subCategories, total, nil
-}
-
-func GetSubCategoryByID(id uuid.UUID) (*models.SubCategory, error) {
-	var subCategory models.SubCategory
-	if err := database.DB.First(&subCategory, "id = ?", id).Error; err != nil {
-		return nil, err
-	}
-	return &subCategory, nil
 }
 
 func UpdateSubCategory(id uuid.UUID, categoryID uuid.UUID, subCategoryName string, subNetProfit float64) (*models.SubCategory, error) {

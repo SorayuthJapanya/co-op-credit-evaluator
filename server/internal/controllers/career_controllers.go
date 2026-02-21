@@ -65,28 +65,6 @@ func GetCareerCategories(c fiber.Ctx) error {
 	})
 }
 
-func GetCareerCategory(c fiber.Ctx) error {
-	idParam := c.Params("id")
-	id, err := uuid.Parse(idParam)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "รูปแบบ ID ไม่ถูกต้อง",
-		})
-	}
-
-	category, err := services.GetCareerCategoryByID(id)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"message": "ไม่พบหมวดหมู่อาชีพ",
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "ดึงข้อมูลหมวดหมู่อาชีพสำเร็จ",
-		"data":    category,
-	})
-}
-
 func UpdateCareerCategory(c fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := uuid.Parse(idParam)
@@ -190,20 +168,6 @@ func CreateSubCategory(c fiber.Ctx) error {
 	})
 }
 
-func GetSubCategories(c fiber.Ctx) error {
-	subCategories, err := services.GetSubCategories()
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "ไม่สามารถดึงข้อมูลหมวดหมู่ย่อยอาชีพได้",
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "ดึงข้อมูลหมวดหมู่ย่อยอาชีพสำเร็จ",
-		"data":    subCategories,
-	})
-}
-
 func GetSubCategoriesByCategory(c fiber.Ctx) error {
 	categoryIDParam := c.Params("categoryId")
 	categoryID, err := uuid.Parse(categoryIDParam)
@@ -248,28 +212,6 @@ func GetSubCategoriesByCategory(c fiber.Ctx) error {
 			"limit":      limit,
 			"totalPages": totalPages,
 		},
-	})
-}
-
-func GetSubCategory(c fiber.Ctx) error {
-	idParam := c.Params("id")
-	id, err := uuid.Parse(idParam)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "รูปแบบ ID ไม่ถูกต้อง",
-		})
-	}
-
-	subCategory, err := services.GetSubCategoryByID(id)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"message": "ไม่พบหมวดหมู่ย่อยอาชีพ",
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "ดึงข้อมูลหมวดหมู่ย่อยอาชีพสำเร็จ",
-		"data":    subCategory,
 	})
 }
 
