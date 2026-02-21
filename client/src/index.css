@@ -5,7 +5,6 @@
 
 * {
   font-family: "Anuphan", sans-serif;
-  scroll-behavior: smooth;
 }
 
 @custom-variant dark (&:is(.dark *));

@@ -34,7 +34,6 @@ interface ActionMemberProps {
   province: string;
   limit: number;
   onFullNameChange: (fullName: string) => void;
-  onSearch: () => void;
   onSelectedChange: (name: string, value: string) => void;
   onLimitChange: (limit: number) => void;
   isLoadingMembers: boolean;
@@ -49,7 +48,6 @@ const ActionMember = ({
   province,
   limit,
   onFullNameChange,
-  onSearch,
   onSelectedChange,
   onLimitChange,
   isLoadingMembers,
@@ -67,14 +65,8 @@ const ActionMember = ({
           name="fullName"
           value={fullName}
           onChange={(e) => onFullNameChange(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              onSearch();
-            }
-          }}
-          disabled={isLoadingMembers || isLoadingDropdown}
         />
-        <InputGroupAddon className="cursor-pointer" onClick={onSearch}>
+        <InputGroupAddon className="cursor-pointer">
           <Search />
         </InputGroupAddon>
       </InputGroup>

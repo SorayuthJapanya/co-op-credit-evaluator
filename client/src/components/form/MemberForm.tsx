@@ -50,7 +50,7 @@ const MemberForm = ({ onSuccess, onCancel }: MemberFormProps) => {
     defaultValues: {
       cooperativeId: "5600000225501",
       idCard: "",
-      accountYear: (new Date().getFullYear()).toString(),
+      accountYear: (new Date().getFullYear() + 543).toString(),
       memberId: "",
       fullName: "",
       nationality: "ไทย",
@@ -78,7 +78,6 @@ const MemberForm = ({ onSuccess, onCancel }: MemberFormProps) => {
         moo: Number(data.moo),
       } as ICreateMemberRequest;
 
-      console.log("Payload: ", payload);
       await createMember(payload);
       form.reset();
       if (onSuccess) onSuccess();

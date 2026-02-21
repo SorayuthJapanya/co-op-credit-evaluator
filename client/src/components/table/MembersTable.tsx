@@ -21,7 +21,6 @@ import MemberDetailModal from "../modal/MemberDetailModal";
 import UpdateMemberForm from "../form/UpdateMemberForm";
 import Swal from "sweetalert2";
 import { useDeleteMember } from "@/hooks/useMember";
-import { useNavigate } from "react-router-dom";
 
 interface MembersTableProps {
   members: IMember[];
@@ -31,8 +30,6 @@ const MembersTable = ({ members }: MembersTableProps) => {
   const [selectedMember, setSelectedMember] = useState<IMember | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-
-  const navigate = useNavigate();
 
   const { mutateAsync: deleteMember } = useDeleteMember();
 
@@ -67,7 +64,6 @@ const MembersTable = ({ members }: MembersTableProps) => {
           },
         });
         await deleteMember(member.id);
-        navigate("/manager-members");
         Swal.close();
       }
     });

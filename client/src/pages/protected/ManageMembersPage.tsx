@@ -4,12 +4,12 @@ import Pagination from "@/components/Pagination";
 import MembersTable from "@/components/table/MembersTable";
 import { useFullDropdownData } from "@/hooks/useDropdown";
 import { useMembers } from "@/hooks/useMember";
-import { useState } from "react";
+import type { IMember } from "@/types/member_types";
+import { useMemo, useState } from "react";
 
 const ManageMembersPage = () => {
   // Search State
   const [fullName, setFullName] = useState("");
-  const [searchFullName, setSearchFullName] = useState("");
 
   // Dropdown State
   const [subdistrict, setSubdistrict] = useState("all");
@@ -26,13 +26,23 @@ const ManageMembersPage = () => {
     isLoading: isLoadingMembers,
     error: errorMembers,
   } = useMembers({
-    fullName: searchFullName,
+    fullName,
     subdistrict,
     district,
     province,
     limit,
     page,
   });
+
+  const filteredMembers = useMemo(() => {
+    if (!membersData) return [];
+    return membersData.data.filter((member: IMember) => {
+      const matchFullName = member.fullName
+        .toLowerCase()
+        .includes(fullName.toLowerCase());
+      return matchFullName;
+    });
+  }, [membersData, fullName]);
 
   // Get Dropdown
   const {
@@ -85,7 +95,6 @@ const ManageMembersPage = () => {
           district={district}
           province={province}
           onFullNameChange={setFullName}
-          onSearch={() => setSearchFullName(fullName)}
           onSelectedChange={handleSelectedChange}
           limit={limit}
           onLimitChange={setLimit}
@@ -96,8 +105,8 @@ const ManageMembersPage = () => {
       </div>
 
       {/* Table */}
-      {membersData && membersData?.data.length !== 0 ? (
-        <MembersTable members={membersData?.data || []} />
+      {filteredMembers && filteredMembers?.length !== 0 ? (
+        <MembersTable members={filteredMembers || []} />
       ) : isLoadingMembers ? (
         <div className="w-full flex items-center justify-center">
           <p className="text-gray-500">กำลังโหลด...</p>
@@ -109,7 +118,7 @@ const ManageMembersPage = () => {
       )}
 
       {/* Pagination Logic */}
-      {membersData && membersData?.data.length !== 0 ? (
+      {filteredMembers && filteredMembers?.length !== 0 ? (
         <div className="w-full flex items-center justify-center mt-4">
           <Pagination
             page={page}
