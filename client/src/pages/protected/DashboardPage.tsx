@@ -8,7 +8,7 @@ import { MemberYearlyGrowthChart } from "@/components/dashboard/MemberYearlyGrow
 import { useDashboardOverview, useSubdistrictData } from "@/hooks/useDashboard";
 
 const DashboardPage = () => {
-  const [selectedYear, setSelectedYear] = useState("2568");
+  const [selectedYear, setSelectedYear] = useState("all");
   const [selectedSubdistrict, setSelectedSubdistrict] = useState("all");
 
   const {

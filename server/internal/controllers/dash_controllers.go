@@ -12,14 +12,19 @@ func GetDashboardOverview(c fiber.Ctx) error {
 	rawAccountYear := c.Query("accountYear") // ex. 2568
 	rawSubdistrict := c.Query("subdistrict")
 
-	num, err := strconv.Atoi(rawAccountYear)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid account year",
-		})
+	accountYear := ""
+	if rawAccountYear == "all" {
+		accountYear = ""
+	} else {
+		num, err := strconv.Atoi(rawAccountYear)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "Invalid account year",
+			})
+		}
+		numAccountYear := num - 543
+		accountYear = strconv.Itoa(numAccountYear)
 	}
-	numAccountYear := num - 543
-	accountYear := strconv.Itoa(numAccountYear)
 
 	var subdistrict string
 	if rawSubdistrict == "all" {
@@ -87,7 +92,6 @@ func GetFullDropdown(c fiber.Ctx) error {
 	return c.JSON(data)
 }
 
-
 func GetSubDistricts(c fiber.Ctx) error {
 	data, err := services.GetSubDistricts()
 	if err != nil {
@@ -117,4 +121,3 @@ func GetProvinces(c fiber.Ctx) error {
 	}
 	return c.JSON(data)
 }
-

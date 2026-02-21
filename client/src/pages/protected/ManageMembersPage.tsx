@@ -1,5 +1,6 @@
 import ActionMember from "@/components/ActionMember";
 import Header from "@/components/Header";
+import Pagination from "@/components/Pagination";
 import MembersTable from "@/components/table/MembersTable";
 import { useFullDropdownData } from "@/hooks/useDropdown";
 import { useMembers } from "@/hooks/useMember";
@@ -70,10 +71,10 @@ const ManageMembersPage = () => {
       </div>
 
       {/* All User & filters */}
-      <div className="w-full flex items-center justify-between gap-2">
+      <div className="w-full flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-4">
         <h3 className="font-medium">
           สมาชิกทั้งหมด{" "}
-          <span className="text-gray-700 text-xl">
+          <span className="mx-2 text-primary text-xl font-semibold">
             {membersData?.pagination?.total || 0}
           </span>{" "}
           คน
@@ -97,11 +98,26 @@ const ManageMembersPage = () => {
       {/* Table */}
       {membersData && membersData?.data.length !== 0 ? (
         <MembersTable members={membersData?.data || []} />
+      ) : isLoadingMembers ? (
+        <div className="w-full flex items-center justify-center">
+          <p className="text-gray-500">กำลังโหลด...</p>
+        </div>
       ) : (
         <div className="w-full flex items-center justify-center">
           <p className="text-gray-500">ไม่พบข้อมูล</p>
         </div>
       )}
+
+      {/* Pagination Logic */}
+      {membersData && membersData?.data.length !== 0 ? (
+        <div className="w-full flex items-center justify-center mt-4">
+          <Pagination
+            page={page}
+            totalPages={membersData?.pagination?.totalPages || 0}
+            onPageChange={setPage}
+          />
+        </div>
+      ) : null}
     </div>
   );
 };

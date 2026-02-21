@@ -212,7 +212,7 @@ const ActionMember = ({
             <Plus className="mr-2 h-4 w-4" /> เพิ่มสมาชิก
           </Button>
         </DialogTrigger>
-        <DialogContent className="overflow-y-auto max-h-[90vh] sm:max-w-2xl w-full">
+        <DialogContent className="overflow-y-auto max-h-[90vh] sm:max-w-2xl w-full z-70 [&>button]:size-8 [&>button]:p-2 [&>button]:rounded-full [&>button]:hover:bg-primary/10 [&>button]:hover:text-primary [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button]:duration-200 [&>button]:transition-colors">
           <DialogHeader className="mb-4">
             <DialogTitle className="text-xl">เพิ่มสมาชิกสหกรณ์ใหม่</DialogTitle>
             <DialogDescription>

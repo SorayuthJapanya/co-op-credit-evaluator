@@ -31,7 +31,8 @@ export const DashboardFilters: React.FC<DashboardFiltersProps> = ({
           <SelectTrigger className="w-full">
             <SelectValue placeholder="เลือกปีบัญชี" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent align="center">
+            <SelectItem value="all">ทุกปีบัญชี</SelectItem>
             {YEARS.map((year) => (
               <SelectItem key={year} value={year}>
                 {year}

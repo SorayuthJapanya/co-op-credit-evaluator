@@ -4,9 +4,9 @@ import z from "zod";
 import { Button } from "../ui/button";
 import { Field, FieldError, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
-import type { ICreateMemberRequest } from "@/types/member_types";
+import type { IMember, IUpdateMemberRequest } from "@/types/member_types";
 import { Spinner } from "../ui/spinner";
-import { useCreateMember } from "@/hooks/useMember";
+import { useUpdateMember } from "@/hooks/useMember";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
@@ -36,34 +36,53 @@ const memberFormSchema = z.object({
 
 type MemberFormValues = z.infer<typeof memberFormSchema>;
 
-type MemberFormProps = {
+type UpdateMemberFormProps = {
+  member: IMember;
   onSuccess?: () => void;
   onCancel?: () => void;
 };
 
-const MemberForm = ({ onSuccess, onCancel }: MemberFormProps) => {
-  const { mutateAsync: createMember, isPending } = useCreateMember();
+const UpdateMemberForm = ({
+  member,
+  onSuccess,
+  onCancel,
+}: UpdateMemberFormProps) => {
+  const { mutateAsync: updateMember, isPending } = useUpdateMember();
+
+  const getDateString = (date?: string) => {
+    if (!date) return "";
+    try {
+      return new Date(date).toISOString().split("T")[0];
+    } catch {
+      return "";
+    }
+  };
 
   const form = useForm<MemberFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(memberFormSchema) as any,
     defaultValues: {
-      cooperativeId: "5600000225501",
-      idCard: "",
-      accountYear: (new Date().getFullYear() + 543).toString(),
-      memberId: "",
-      fullName: "",
-      nationality: "ไทย",
-      sharesNum: "",
-      sharesValue: "",
-      joiningDate: new Date().toISOString().split("T")[0],
-      memberType: "1",
-      leavingDate: "",
-      address: "",
-      moo: "",
-      subdistrict: "",
-      district: "",
-      province: "",
+      cooperativeId: member.cooperativeId || "5600000225501",
+      idCard: member.idCard || "",
+      accountYear:
+        (Number(member.accountYear) + 543).toString() ||
+        (new Date().getFullYear() + 543).toString(),
+      memberId: member.memberId || "",
+      fullName: member.fullName || "",
+      nationality: member.nationality || "ไทย",
+      sharesNum: String(member.sharesNum || ""),
+      sharesValue: String(member.sharesValue || ""),
+      joiningDate:
+        getDateString(member.joiningDate) ||
+        new Date().toISOString().split("T")[0],
+      memberType: String(member.memberType || "1"),
+      leavingDate:
+        member.sharesNum === 0 ? getDateString(member.leavingDate) : "",
+      address: member.address || "",
+      moo: String(member.moo || ""),
+      subdistrict: member.subdistrict || "",
+      district: member.district || "",
+      province: member.province || "",
     },
     mode: "onChange",
   });
@@ -72,15 +91,14 @@ const MemberForm = ({ onSuccess, onCancel }: MemberFormProps) => {
     try {
       const payload = {
         ...data,
+        id: member.id,
         sharesNum: Number(data.sharesNum),
         sharesValue: Number(data.sharesValue),
         memberType: Number(data.memberType),
         moo: Number(data.moo),
-      } as ICreateMemberRequest;
+      } as IUpdateMemberRequest;
 
-      console.log("Payload: ", payload);
-      await createMember(payload);
-      form.reset();
+      await updateMember({data: payload, id: member.id});
       if (onSuccess) onSuccess();
     } catch (error) {
       console.error(error);
@@ -310,7 +328,7 @@ const MemberForm = ({ onSuccess, onCancel }: MemberFormProps) => {
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 z-[100]" align="start">
+                <PopoverContent className="w-auto p-0 z-100" align="start">
                   <Calendar
                     mode="single"
                     selected={field.value ? new Date(field.value) : undefined}
@@ -359,7 +377,7 @@ const MemberForm = ({ onSuccess, onCancel }: MemberFormProps) => {
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 z-[100]" align="start">
+                <PopoverContent className="w-auto p-0 z-100" align="start">
                   <Calendar
                     mode="single"
                     selected={field.value ? new Date(field.value) : undefined}
@@ -563,4 +581,4 @@ const MemberForm = ({ onSuccess, onCancel }: MemberFormProps) => {
   );
 };
 
-export default MemberForm;
+export default UpdateMemberForm;

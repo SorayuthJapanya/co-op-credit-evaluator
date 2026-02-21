@@ -81,11 +81,16 @@ func CreateMember(c fiber.Ctx) error {
 		})
 	}
 
-	// Validate Thai ID card format
-	if !isValidThaiIDCard(request.IdCard) {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "รูปแบบเลขบัตรประชาชนไม่ถูกต้อง",
-		})
+	// Validate accountYear
+	if request.AccountYear != "" {
+		num, err := strconv.Atoi(request.AccountYear)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "รูปแบบปีบัญชีไม่ถูกต้อง (ต้องเป็น YYYY)",
+			})
+		}
+		numAccountYear := num - 543
+		request.AccountYear = strconv.Itoa(numAccountYear)
 	}
 
 	// Parse dates
@@ -156,8 +161,8 @@ func GetMembers(c fiber.Ctx) error {
 	}
 
 	limitNum, err := strconv.Atoi(limit)
-	if err != nil || limitNum < 1 || limitNum > 100 {
-		limitNum = 10
+	if err != nil || limitNum < 1 {
+		limitNum = 20
 	}
 
 	// If no filters provided, return all members with pagination
@@ -273,11 +278,29 @@ func UpdateMember(c fiber.Ctx) error {
 		})
 	}
 
-	// Validate Thai ID card format
-	if len(request.IdCard) == 13 && !isValidThaiIDCard(request.IdCard) {
+	// Validate cooperativeId
+	if len(request.CooperativeID) != 13 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "รูปแบบเลขบัตรประชาชนไม่ถูกต้อง",
+			"message": "เลขทะเบียนสหกรณ์ต้องมี 13 หลัก",
 		})
+	}
+
+	if len(request.IdCard) != 13 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "เลขบัตรประชาชนไม่ถูกต้อง",
+		})
+	}
+
+	// Validate accountYear
+	if request.AccountYear != "" {
+		num, err := strconv.Atoi(request.AccountYear)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "รูปแบบปีบัญชีไม่ถูกต้อง (ต้องเป็น YYYY)",
+			})
+		}
+		numAccountYear := num - 543
+		request.AccountYear = strconv.Itoa(numAccountYear)
 	}
 
 	// Parse dates
@@ -388,31 +411,4 @@ func isValidSeedFilePath(filePath string) bool {
 	}
 
 	return false
-}
-
-// isValidThaiIDCard validates Thai national ID card format using checksum algorithm
-func isValidThaiIDCard(id string) bool {
-	// Check if exactly 13 digits
-	if len(id) != 13 {
-		return false
-	}
-
-	// Check if all characters are digits
-	for _, char := range id {
-		if char < '0' || char > '9' {
-			return false
-		}
-	}
-
-	// Calculate checksum
-	sum := 0
-	for i := 0; i < 12; i++ {
-		digit := int(id[i] - '0')
-		sum += digit * (13 - i)
-	}
-
-	checksum := (11 - (sum % 11)) % 11
-	lastDigit := int(id[12] - '0')
-
-	return checksum == lastDigit
 }

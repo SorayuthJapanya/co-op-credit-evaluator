@@ -1,5 +1,5 @@
 import { CrateMember, DeleteMember, GetMemberById, getMembers, UpdateMember } from "@/services/memberServices";
-import type { IFilterMemberRequest } from "@/types/member_types";
+import type { IFilterMemberRequest, IUpdateMemberRequest } from "@/types/member_types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 
@@ -62,7 +62,7 @@ export const useCreateMember = () => {
 export const useUpdateMember = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: UpdateMember,
+    mutationFn: ({data, id}: {data: IUpdateMemberRequest, id: string}) => UpdateMember(data, id),
     onSuccess: async (response) => {
       await queryClient.invalidateQueries({ queryKey: ["members"] });
       Swal.fire({

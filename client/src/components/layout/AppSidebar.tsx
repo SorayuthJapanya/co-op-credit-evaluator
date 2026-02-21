@@ -20,7 +20,7 @@ const AppSidebar = memo(({ userProfile }: { userProfile: IUser }) => {
   const location = useLocationMemo();
 
   return (
-    <Sidebar>
+    <Sidebar className="z-40">
       <SidebarHeader>
         <SidebarMenu>
           <div className="flex items-center gap-3">

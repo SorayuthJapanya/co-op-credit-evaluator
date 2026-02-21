@@ -31,7 +31,7 @@ export interface ICreateMemberRequest {
     memberType: number;
     leavingDate?: string;
     address: string;
-    moo: string;
+    moo: number;
     subdistrict: string;
     district: string;
     province: string;
@@ -51,7 +51,7 @@ export interface IUpdateMemberRequest {
     memberType: number;
     leavingDate?: string;
     address: string;
-    moo: string;
+    moo: number;
     subdistrict: string;
     district: string;
     province: string;

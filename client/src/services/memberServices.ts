@@ -31,8 +31,8 @@ export const CrateMember = async (data: ICreateMemberRequest) => {
   return response.data;
 };
 
-export const UpdateMember = async (data: IUpdateMemberRequest) => {
-  const response = await axiosInstance.put("/protected/members", data);
+export const UpdateMember = async (data: IUpdateMemberRequest, id: string) => {
+  const response = await axiosInstance.put(`/protected/members/${id}`, data);
   return response.data;
 };
 

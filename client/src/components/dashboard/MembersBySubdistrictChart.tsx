@@ -32,7 +32,7 @@ interface TooltipProps {
     name?: string;
     value?: number;
     payload?: {
-      percentage?: number;
+      percent?: number;
       count?: number;
     };
   }>;
@@ -48,7 +48,7 @@ const CustomTooltip: React.FC<TooltipProps> = ({
         <p className="text-sm font-medium text-gray-900">{payload[0].name}</p>
         <p className="text-sm text-gray-700">สมาชิก: {payload[0].value} คน</p>
         <p className="text-sm text-gray-700">
-          คิดเป็น: {payload[0].payload?.percentage}%
+          คิดเป็น: {payload[0].payload?.percent}%
         </p>
       </div>
     );
