@@ -1,12 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  getDashboardOverviewData,
-  getSubdistrictData,
-} from "@/services/dashboardService";
+import { getDashboardOverviewData } from "@/services/dashboardService";
+import { getSubdistrictData } from "@/services/dropdownService";
 
 export const useDashboardOverview = (
   accountYear: string,
-  subdistrictCode: string
+  subdistrictCode: string,
 ) => {
   return useQuery({
     queryKey: ["dashboard-overview", accountYear, subdistrictCode],

@@ -10,16 +10,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// Dropdown Services
-
-func GetSubDistricts() ([]string, error) {
-	var subdistricts []string
-	if err := database.DB.Model(&models.Member{}).Distinct("subdistrict").Pluck("subdistrict", &subdistricts).Error; err != nil {
-		return nil, err
-	}
-	return subdistricts, nil
-}
-
 // KPI Dashboard Services
 
 func GetKPIDashboard(accountYear, subdistrict string) (*models.KPIDashboardResponse, error) {

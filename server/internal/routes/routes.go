@@ -34,4 +34,7 @@ func SetupRoutes(app fiber.Router) {
 
 	// dashboard routes (protected)
 	setUpDashboardRoutes(protectedRoute)
+
+	// dropdown routes (protected)
+	setUpDropdownRoutes(protectedRoute)
 }

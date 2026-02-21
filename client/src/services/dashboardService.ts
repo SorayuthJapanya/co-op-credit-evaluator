@@ -15,8 +15,3 @@ export const getDashboardOverviewData = async ({
   });
   return response.data;
 };
-
-export const getSubdistrictData = async () => {
-  const response = await axiosInstance.get("/protected/dashboard/subdistricts");
-  return response.data;
-};

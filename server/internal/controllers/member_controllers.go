@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/services"
+	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/util"
 	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 )
@@ -133,14 +134,20 @@ func CreateMember(c fiber.Ctx) error {
 
 func GetMembers(c fiber.Ctx) error {
 	// Get filter parameters from query string
-	fullName := c.Query("fullName")
-	subdistrict := c.Query("subdistrict")
-	district := c.Query("district")
-	province := c.Query("province")
+	rawFullName := c.Query("fullName")
+	rawSubdistrict := c.Query("subdistrict")
+	rawDistrict := c.Query("district")
+	rawProvince := c.Query("province")
 
 	// Get pagination parameters
 	page := c.Query("page", "1")
 	limit := c.Query("limit", "10")
+
+	// Validate filter parameter
+	fullName := util.ValidateAllToEmpty(rawFullName)
+	subdistrict := util.ValidateAllToEmpty(rawSubdistrict)
+	district := util.ValidateAllToEmpty(rawDistrict)
+	province := util.ValidateAllToEmpty(rawProvince)
 
 	// Parse pagination parameters
 	pageNum, err := strconv.Atoi(page)

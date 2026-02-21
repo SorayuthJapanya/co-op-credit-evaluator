@@ -11,5 +11,4 @@ func setUpDashboardRoutes(protectedRoute fiber.Router) {
 
 	// Dashboard data
 	dashboardGroup.Get("/overview", controllers.GetDashboardOverview) // Get dashboard data
-	dashboardGroup.Get("/subdistricts", controllers.GetSubDistricts)  // Get subdistricts for dropdown
 }

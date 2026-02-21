@@ -61,14 +61,6 @@ func CreateMember(cooperativeID string, idCard string, accountYear string, membe
 	return &member, nil
 }
 
-func GetMembers() ([]models.Member, error) {
-	var members []models.Member
-	if err := database.DB.Find(&members).Error; err != nil {
-		return nil, err
-	}
-	return members, nil
-}
-
 func GetMembersWithPagination(page int, limit int) ([]models.Member, int64, error) {
 	var members []models.Member
 	var total int64
@@ -80,7 +72,7 @@ func GetMembersWithPagination(page int, limit int) ([]models.Member, int64, erro
 
 	// Get paginated data
 	offset := (page - 1) * limit
-	if err := database.DB.Offset(offset).Limit(limit).Find(&members).Error; err != nil {
+	if err := database.DB.Model(&models.Member{}).Order("LENGTH(member_id) ASC, member_id ASC").Offset(offset).Limit(limit).Find(&members).Error; err != nil {
 		return nil, 0, err
 	}
 
@@ -113,35 +105,11 @@ func GetMembersWithFiltersAndPagination(fullName string, subdistrict string, dis
 
 	// Get paginated data with filters
 	offset := (page - 1) * limit
-	if err := query.Offset(offset).Limit(limit).Find(&members).Error; err != nil {
+	if err := query.Order("LENGTH(member_id) ASC, member_id ASC").Offset(offset).Limit(limit).Find(&members).Error; err != nil {
 		return nil, 0, err
 	}
 
 	return members, total, nil
-}
-
-func GetMembersWithFilters(fullName string, subdistrict string, district string, province string) ([]models.Member, error) {
-	var members []models.Member
-	query := database.DB
-
-	// Apply filters if provided
-	if fullName != "" {
-		query = query.Where("full_name ILIKE ?", "%"+fullName+"%")
-	}
-	if subdistrict != "" {
-		query = query.Where("subdistrict ILIKE ?", "%"+subdistrict+"%")
-	}
-	if district != "" {
-		query = query.Where("district ILIKE ?", "%"+district+"%")
-	}
-	if province != "" {
-		query = query.Where("province ILIKE ?", "%"+province+"%")
-	}
-
-	if err := query.Find(&members).Error; err != nil {
-		return nil, err
-	}
-	return members, nil
 }
 
 func GetMemberByID(id uuid.UUID) (*models.Member, error) {

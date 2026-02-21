@@ -76,6 +76,18 @@ func GetDashboardOverview(c fiber.Ctx) error {
 }
 
 // For dropdown
+
+func GetFullDropdown(c fiber.Ctx) error {
+	data, err := services.GetFullDropdown()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to get full dropdown",
+		})
+	}
+	return c.JSON(data)
+}
+
+
 func GetSubDistricts(c fiber.Ctx) error {
 	data, err := services.GetSubDistricts()
 	if err != nil {
@@ -85,3 +97,24 @@ func GetSubDistricts(c fiber.Ctx) error {
 	}
 	return c.JSON(data)
 }
+
+func GetDistricts(c fiber.Ctx) error {
+	data, err := services.GetDistricts()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to get districts",
+		})
+	}
+	return c.JSON(data)
+}
+
+func GetProvinces(c fiber.Ctx) error {
+	data, err := services.GetProvinces()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to get provinces",
+		})
+	}
+	return c.JSON(data)
+}
+
