@@ -50,7 +50,7 @@ const EvaluatesTable = ({
     Swal.fire({
       icon: "question",
       title: "ยืนยันการลบข้อมูล",
-      text: `คุณต้องการลบข้อมูลการประเมินของ ${evaluate.result.applicants[0]?.name || "ไม่ทราบชื่อ"} หรือไม่?`,
+      text: `คุณต้องการลบข้อมูลการประเมินนี้หรือไม่?`,
       showCancelButton: true,
       confirmButtonText: "ลบข้อมูล",
       cancelButtonText: "ยกเลิก",
