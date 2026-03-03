@@ -34,9 +34,9 @@ export const useCreateCareerCategory = () => {
       await queryClient.invalidateQueries({ queryKey: ["career-categories"] });
       Swal.fire({
         icon: "success",
-        title: response.message || "เพิ่มหมวดหมู่อาชีพสำเร็จ",
+        title: response?.message || "เพิ่มหมวดหมู่อาชีพสำเร็จ",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
@@ -45,7 +45,7 @@ export const useCreateCareerCategory = () => {
         icon: "error",
         title: errorData?.message || "เกิดข้อผิดพลาด",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
   });
@@ -65,9 +65,9 @@ export const useUpdateCareerCategory = () => {
       await queryClient.invalidateQueries({ queryKey: ["career-categories"] });
       Swal.fire({
         icon: "success",
-        title: response.message || "แก้ไขหมวดหมู่อาชีพสำเร็จ",
+        title: response?.message || "แก้ไขหมวดหมู่อาชีพสำเร็จ",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
@@ -76,7 +76,7 @@ export const useUpdateCareerCategory = () => {
         icon: "error",
         title: errorData?.message || "เกิดข้อผิดพลาด",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
   });
@@ -90,9 +90,9 @@ export const useDeleteCareerCategory = () => {
       await queryClient.invalidateQueries({ queryKey: ["career-categories"] });
       Swal.fire({
         icon: "success",
-        title: response.message || "ลบหมวดหมู่อาชีพสำเร็จ",
+        title: response?.message || "ลบหมวดหมู่อาชีพสำเร็จ",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
@@ -101,7 +101,7 @@ export const useDeleteCareerCategory = () => {
         icon: "error",
         title: errorData?.message || "เกิดข้อผิดพลาด",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
   });
@@ -131,9 +131,9 @@ export const useCreateSubCareer = () => {
       await queryClient.invalidateQueries({ queryKey: ["sub-categories"] });
       Swal.fire({
         icon: "success",
-        title: response.message || "เพิ่มอาชีพย่อยสำเร็จ",
+        title: response?.message || "เพิ่มอาชีพย่อยสำเร็จ",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
@@ -142,7 +142,7 @@ export const useCreateSubCareer = () => {
         icon: "error",
         title: errorData?.message || "เกิดข้อผิดพลาด",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
   });
@@ -157,9 +157,9 @@ export const useUpdateSubCareer = () => {
       await queryClient.invalidateQueries({ queryKey: ["sub-categories"] });
       Swal.fire({
         icon: "success",
-        title: response.message || "แก้ไขอาชีพย่อยสำเร็จ",
+        title: response?.message || "แก้ไขอาชีพย่อยสำเร็จ",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
@@ -168,7 +168,7 @@ export const useUpdateSubCareer = () => {
         icon: "error",
         title: errorData?.message || "เกิดข้อผิดพลาด",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
   });
@@ -182,9 +182,9 @@ export const useDeleteSubCareer = () => {
       await queryClient.invalidateQueries({ queryKey: ["sub-categories"] });
       Swal.fire({
         icon: "success",
-        title: response.message || "ลบอาชีพย่อยสำเร็จ",
+        title: response?.message || "ลบอาชีพย่อยสำเร็จ",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
@@ -193,7 +193,7 @@ export const useDeleteSubCareer = () => {
         icon: "error",
         title: errorData?.message || "เกิดข้อผิดพลาด",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
   });

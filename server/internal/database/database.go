@@ -34,4 +34,8 @@ func Connect() {
 	db.AutoMigrate(&models.CareerCategory{})
 	db.AutoMigrate(&models.SubCategory{})
 	db.AutoMigrate(&models.Member{})
+	db.AutoMigrate(&models.Evaluate{})
+	db.AutoMigrate(&models.Applicant{})
+	db.AutoMigrate(&models.EvaluateResult{})
+	db.AutoMigrate(&models.ResultApplicant{})
 }

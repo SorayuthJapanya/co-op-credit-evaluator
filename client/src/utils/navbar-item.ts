@@ -1,4 +1,4 @@
-import { Briefcase, FileText, LayoutDashboard, Users } from "lucide-react";
+import { Briefcase, FilePlus, FileText, LayoutDashboard, Users } from "lucide-react";
 
 export const getFirstCharAfterPrefix = (fullname: string): string => {
   if (!fullname) return "";
@@ -17,6 +17,11 @@ export const navbarItem = [
     title: "เอกสารการประเมิน",
     path: "/credit-evaluator",
     icon: FileText,
+  },
+  {
+    title: "สร้างเอกสารการประเมิน",
+    path: "/credit-evaluator/add",
+    icon: FilePlus,
   },
   {
     title: "จัดการสมาชิก",

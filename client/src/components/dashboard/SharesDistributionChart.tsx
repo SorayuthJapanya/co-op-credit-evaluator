@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import type { IDashboardOverview } from "@/types/dash_types";
+import type { IDashboardOverview, TooltipProps, XAxisTickProps, SharesDistributionData } from "@/types/dash_types";
 import {
   BarChart,
   Bar,
@@ -13,7 +13,7 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface TooltipData {
+interface CustomTooltipData extends SharesDistributionData {
   bucket: string;
   memberCount: number;
   percentage: number;
@@ -29,12 +29,12 @@ const BAR_COLORS = ["#818cf8", "#3b82f6", "#0ea5e9", "#06b6d4"];
 
 // ─── Custom Tooltip ───────────────────────────────────────────────────────────
 
-const CustomTooltip: React.FC<{ active?: boolean; payload?: any[] }> = ({
+const CustomTooltip: React.FC<TooltipProps> = ({
   active,
   payload,
 }) => {
   if (!active || !payload?.[0]) return null;
-  const d = payload[0].payload as TooltipData;
+  const d = payload[0].payload as CustomTooltipData;
   const color = payload[0].fill as string;
 
   return (
@@ -67,16 +67,16 @@ const CustomTooltip: React.FC<{ active?: boolean; payload?: any[] }> = ({
 
 // ─── Custom X-Axis Tick ───────────────────────────────────────────────────────
 
-const CustomXAxisTick: React.FC<any> = ({ x, y, payload, index }) => {
-  const color = BAR_COLORS[index % BAR_COLORS.length];
+const CustomXAxisTick: React.FC<XAxisTickProps> = ({ x, y, payload, index }) => {
+  const color = BAR_COLORS[index || 0 % BAR_COLORS.length];
   // ตัดบรรทัดถ้าข้อความยาว (split ที่ " - " หรือ "กว่า")
-  const lines: string[] = payload.value.includes(" - ")
+  const lines: string[] = payload?.value?.includes(" - ")
     ? payload.value.split(" - ")
-    : payload.value.includes("น้อยกว่า")
+    : payload?.value?.includes("น้อยกว่า")
       ? ["น้อยกว่า", payload.value.replace("น้อยกว่า ", "")]
-      : payload.value.includes("มากกว่า")
+      : payload?.value?.includes("มากกว่า")
         ? ["มากกว่า", payload.value.replace("มากกว่า ", "")]
-        : [payload.value];
+        : [payload?.value || ""];
 
   return (
     <g transform={`translate(${x},${y})`}>
@@ -161,7 +161,7 @@ export const SharesDistributionChart: React.FC<
           <EmptyState />
         ) : (
           <div className="w-full h-[300px]">
-            <ResponsiveContainer>
+            <ResponsiveContainer width="100%" height={300}>
               <BarChart
                 data={chartData}
                 margin={{ top: 8, right: 8, left: 8, bottom: 48 }}

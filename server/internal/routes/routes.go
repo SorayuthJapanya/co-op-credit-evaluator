@@ -37,4 +37,7 @@ func SetupRoutes(app fiber.Router) {
 
 	// dropdown routes (protected)
 	setUpDropdownRoutes(protectedRoute)
+
+	// evaluate routes (protected)
+	setUpEvaluateRoutes(protectedRoute)
 }

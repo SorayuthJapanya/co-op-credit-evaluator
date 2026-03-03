@@ -28,7 +28,7 @@ export const useRegisterUser = () => {
     onSuccess: (response) => {
       Swal.fire({
         icon: "success",
-        title: response.message || "ลงทะเบียนสำเร็จ",
+        title: response?.message || "ลงทะเบียนสำเร็จ",
       });
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
@@ -49,7 +49,7 @@ export const useLoginUser = () => {
     onSuccess: (response) => {
       Swal.fire({
         icon: "success",
-        title: response.message || "เข้าสู่ระบบสำเร็จ",
+        title: response?.message || "เข้าสู่ระบบสำเร็จ",
       });
       // Invalidate authUser query to refetch with new auth state
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
@@ -72,7 +72,7 @@ export const useLogoutUser = () => {
     onSuccess: (response) => {
       Swal.fire({
         icon: "success",
-        title: response.message || "ออกจากระบบสำเร็จ",
+        title: response?.message || "ออกจากระบบสำเร็จ",
       });
       // Invalidate authUser query to refetch with new auth state
       queryClient.invalidateQueries({ queryKey: ["authUser"] });

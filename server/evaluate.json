@@ -1,0 +1,100 @@
+{
+    "evaluateType": "เบิกเงินเพื่อสิทธฺส่วนบุคคล",
+    "marginType": "DTI & DSCR (ตามเกณฑ์ Margin)",
+    "applicants": [
+        {
+            "careerCategory": "หมวด J ข้อมูลข่าวสาร และการสื่อสาร",
+            "career": "การจัดทำโปรแกรมคอมพิวเตอร์ การให้คำปรึกษาเกี่ยวกับคอมพิวเตอร์",
+            "otherCareer": "",
+            "name": "สรยุทธ จาปัญญะ",
+            "idCard": "1509966348941",
+            "businessActivity": {
+                "salary": 1000000,
+                "otherSalary": 100000,
+                "totalIncome": 1100000
+            },
+            "expenseItem": {
+                "costPercentage": 70,
+                "costAndService": 770000,
+                "empSalary": 0,
+                "rentExpenses": 0,
+                "utilityExpenses": 0,
+                "otherExpenses": 0,
+                "totalExpense": 770000
+            },
+            "profileLost": {
+                "grossProfit": 330000,
+                "interestExpense": 10000,
+                "profitBeforeTax": 320000,
+                "taxExpense": 10000,
+                "netProfit": 310000
+            },
+            "shareHolder": {
+                "shareOfNetProfit": 25,
+                "bankNetProfit": 77500
+            },
+            "optionalOtherExpense": 0,
+            "salary": {
+                "base": 250000,
+                "tax": 20,
+                "socialSecurityFund": 20,
+                "providentFund": 20,
+                "shareFund": 20,
+                "associationFund": 20,
+                "otherFund": 20,
+                "total": 249880
+            },
+            "otherSalary": {
+                "entertainmentSalary": 2000,
+                "livingSalary": 2000,
+                "certificationSalary": 2000,
+                "professionalAllowance": 20,
+                "transportationSalary": 20,
+                "academicSalary": 20,
+                "otherRegularSalary": 20,
+                "total": 6080
+            },
+            "optionsSalary": {
+                "commission": 20,
+                "overtime": 20,
+                "bonus": 20,
+                "dividendsInterest": 20,
+                "netSupplementaryIncome": 20,
+                "other": 20,
+                "otherDocumentedIncome": 732,
+                "total": 256692
+            }
+        }
+    ],
+    "result": {
+        "evaluateType": "เบิกเงินเพื่อสิทธฺส่วนบุคคล",
+        "applicants": [
+            {
+                "name": "สรยุทธ จาปัญญะ",
+                "idCard": "1509966348941",
+                "salary": 250000,
+                "expenses": 120,
+                "otherSalary": 6080,
+                "optionsSalary": 256692,
+                "resultShareValue": 77500,
+                "totalSalary": 512772,
+                "resultIncome": 512652,
+                "customerExpenses": 30000,
+                "resultCustomerExpenses": 102530.40000000001,
+                "livingExpenses": 0,
+                "otherExpenses": 0,
+                "totalExpenses": 102530.40000000001
+            }
+        ],
+        "debtDetail": {
+            "debtAmount": 10000,
+            "lastDebt": 0,
+            "debtReported": 0,
+            "debtNotReported": 0,
+            "lastDeduction": 0,
+            "totalDebt": 10000
+        },
+        "dti": 1.95,
+        "dscr": 41.01
+    }
+}

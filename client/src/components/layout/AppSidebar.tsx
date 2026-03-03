@@ -21,13 +21,13 @@ const AppSidebar = memo(({ userProfile }: { userProfile: IUser }) => {
 
   return (
     <Sidebar className="z-40">
-      <SidebarHeader>
+      <SidebarHeader className="border-b ">
         <SidebarMenu>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center gap-3">
             <img
               src="/credit-evaluator-icon.png"
               alt="credit-evaluator-icon"
-              className="w-20 h-auto hover:scale-110 duration-300 transition-transform cursor-pointer"
+              className="w-16 h-auto hover:scale-110 duration-300 transition-transform cursor-pointer"
             />
             <div className="grid flex-1 text-left leading">
               <span className="truncate text-lg font-bold">

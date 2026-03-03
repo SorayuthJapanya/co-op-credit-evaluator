@@ -26,22 +26,22 @@ export const getMembers = async ({
   return response.data;
 };
 
-export const CrateMember = async (data: ICreateMemberRequest) => {
+export const crateMember = async (data: ICreateMemberRequest) => {
   const response = await axiosInstance.post("/protected/members", data);
   return response.data;
 };
 
-export const UpdateMember = async (data: IUpdateMemberRequest, id: string) => {
+export const updateMember = async (data: IUpdateMemberRequest, id: string) => {
   const response = await axiosInstance.put(`/protected/members/${id}`, data);
   return response.data;
 };
 
-export const DeleteMember = async (id: string) => {
+export const deleteMember = async (id: string) => {
   const response = await axiosInstance.delete(`/protected/members/${id}`);
   return response.data;
 };
 
-export const GetMemberById = async (id: string) => {
+export const getMemberById = async (id: string) => {
   const response = await axiosInstance.get(`/protected/members/${id}`);
   return response.data;
 };

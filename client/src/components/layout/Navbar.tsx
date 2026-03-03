@@ -17,11 +17,11 @@ const Navbar = () => {
   // Get current page title from navbar items
   const getCurrentPageTitle = () => {
     const currentItem = navbarItem.find(item => item.path === location.pathname);
-    return currentItem ? currentItem.title : "Data Fetching";
+    return currentItem ? currentItem.title : "";
   };
 
   return (
-    <nav className="sticky top-0 flex justify-between h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 bg-sidebar shadow-sm z-30">
+    <nav className="sticky top-0 flex justify-between h-[81px] shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 bg-sidebar border-b z-30">
       <div className="flex items-center gap-2 px-4">
         <SidebarTrigger className="-ml-1" />
         <Separator

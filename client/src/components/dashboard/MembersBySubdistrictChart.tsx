@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import type { IDashboardOverview } from "@/types/dash_types";
+import type { IDashboardOverview, MemberCountBySubdistrictData, LabelProps } from "@/types/dash_types";
 import {
   PieChart,
   Pie,
@@ -13,6 +13,15 @@ interface MembersBySubdistrictChartProps {
   data: IDashboardOverview;
 }
 
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    name?: string;
+    value?: number;
+    payload?: MemberCountBySubdistrictData;
+  }>;
+}
+
 const COLORS = [
   "#3b82f6",
   "#10b981",
@@ -24,21 +33,8 @@ const COLORS = [
   "#f97316",
 ];
 
-import React from "react";
 
-interface TooltipProps {
-  active?: boolean;
-  payload?: Array<{
-    name?: string;
-    value?: number;
-    payload?: {
-      percent?: number;
-      count?: number;
-    };
-  }>;
-}
-
-const CustomTooltip: React.FC<TooltipProps> = ({
+const CustomTooltip: React.FC<CustomTooltipProps> = ({
   active,
   payload,
 }) => {
@@ -48,22 +44,13 @@ const CustomTooltip: React.FC<TooltipProps> = ({
         <p className="text-sm font-medium text-gray-900">{payload[0].name}</p>
         <p className="text-sm text-gray-700">สมาชิก: {payload[0].value} คน</p>
         <p className="text-sm text-gray-700">
-          คิดเป็น: {payload[0].payload?.percent}%
+          คิดเป็น: {payload[0].payload?.percentage}%
         </p>
       </div>
     );
   }
   return null;
 };
-
-interface LabelProps {
-  cx?: number;
-  cy?: number;
-  midAngle?: number;
-  innerRadius?: number;
-  outerRadius?: number;
-  percent?: number;
-}
 
 const renderCustomizedLabel = (props: LabelProps) => {
   const { cx = 0, cy = 0, midAngle = 0, innerRadius = 0, outerRadius = 0, percent = 0 } = props || {};
@@ -84,7 +71,7 @@ const renderCustomizedLabel = (props: LabelProps) => {
       dominantBaseline="central"
       className="text-xs font-medium"
     >
-      {`${percent}%`}
+      {`${(percent * 100).toFixed(0)}%`}
     </text>
   );
 };

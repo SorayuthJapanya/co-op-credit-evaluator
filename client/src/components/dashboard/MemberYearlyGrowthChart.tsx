@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import type { IDashboardOverview } from "@/types/dash_types";
+import type { IDashboardOverview, MembershipGrowthData } from "@/types/dash_types";
 import {
   AreaChart,
   Area,
@@ -14,7 +14,15 @@ interface MemberYearlyGrowthChartProps {
   data: IDashboardOverview;
 }
 
-const CustomTooltip: React.FC<{ active?: boolean; payload?: any[] }> = ({
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    value?: number;
+    payload?: MembershipGrowthData;
+  }>;
+}
+
+const CustomTooltip: React.FC<CustomTooltipProps> = ({
   active,
   payload,
 }) => {
@@ -22,12 +30,12 @@ const CustomTooltip: React.FC<{ active?: boolean; payload?: any[] }> = ({
     return (
       <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
         <p className="text-sm font-medium text-gray-900">
-          ปี {payload[0].payload.year}
+          ปี {payload[0].payload?.year}
         </p>
         <p className="text-sm text-gray-700">สมาชิก: {payload[0].value} คน</p>
         <p className="text-sm text-gray-700">
-          อัตราการเติบโต: {payload[0].payload.growthRate > 0 ? "+" : ""}
-          {payload[0].payload.growthRate}%
+          อัตราการเติบโต: {payload[0].payload?.growthRate && payload[0].payload.growthRate > 0 ? "+" : ""}
+          {payload[0].payload?.growthRate}%
         </p>
       </div>
     );
@@ -40,7 +48,7 @@ export const MemberYearlyGrowthChart: React.FC<
 > = ({ data }) => {
   const rawData = data.charts?.membershipGrowth?.data || [];
 
-  const chartData = rawData.map((item: any, index: number) => {
+  const chartData = rawData.map((item: MembershipGrowthData, index: number) => {
     const prevCount = index > 0 ? rawData[index - 1].memberCount : item.memberCount;
     const growthRate =
       prevCount === 0 ? 0 : ((item.memberCount - prevCount) / prevCount) * 100;

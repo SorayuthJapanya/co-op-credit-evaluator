@@ -14,6 +14,8 @@ import CreditEvaluatorPage from "./pages/protected/CreditEvaluatorPage";
 import ManageMembersPage from "./pages/protected/ManageMembersPage";
 import ManageCareerCategoryPage from "./pages/protected/ManageCareerCategoryPage";
 import ManageSubCareer from "./pages/protected/ManageSubCareer";
+import AddCreditEvaluatorPage from "./pages/protected/AddCreditEvaluatorPage";
+import EditCreditEvaluatorPage from "./pages/protected/EditCreditEvaluatorPage";
 
 const App = () => {
   return (
@@ -27,6 +29,8 @@ const App = () => {
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/credit-evaluator" element={<CreditEvaluatorPage />} />
+        <Route path="/credit-evaluator/add" element={<AddCreditEvaluatorPage />} />
+        <Route path="/credit-evaluator/edit/:id" element={<EditCreditEvaluatorPage />} />
         <Route path="/manage-member" element={<ManageMembersPage />} />
         <Route
           path="/manage-career-category"

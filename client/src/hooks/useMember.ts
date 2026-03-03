@@ -1,4 +1,4 @@
-import { CrateMember, DeleteMember, GetMemberById, getMembers, UpdateMember } from "@/services/memberServices";
+import { crateMember, deleteMember, getMemberById, getMembers, updateMember } from "@/services/memberServices";
 import type { IFilterMemberRequest, IUpdateMemberRequest } from "@/types/member_types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
@@ -35,7 +35,7 @@ export const useMembers = ({
 export const useMemberById = (id: string) => {
   return useQuery({
     queryKey: ["member", id],
-    queryFn: () => GetMemberById(id),
+    queryFn: () => getMemberById(id),
     refetchOnWindowFocus: false,
   });
 };
@@ -43,14 +43,14 @@ export const useMemberById = (id: string) => {
 export const useCreateMember = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: CrateMember,
+    mutationFn: crateMember,
     onSuccess: async (response) => {
       await queryClient.invalidateQueries({ queryKey: ["members"] });
       Swal.fire({
         icon: "success",
-        title: response.message || "เพิ่มสมาชิกสำเร็จ",
+        title: response?.message || "เพิ่มสมาชิกสำเร็จ",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
@@ -59,7 +59,7 @@ export const useCreateMember = () => {
         icon: "error",
         title: errorData?.message || "เกิดข้อผิดพลาด",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
   });
@@ -68,14 +68,14 @@ export const useCreateMember = () => {
 export const useUpdateMember = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({data, id}: {data: IUpdateMemberRequest, id: string}) => UpdateMember(data, id),
+    mutationFn: ({data, id}: {data: IUpdateMemberRequest, id: string}) => updateMember(data, id),
     onSuccess: async (response) => {
       await queryClient.invalidateQueries({ queryKey: ["members"] });
       Swal.fire({
         icon: "success",
         title: response.message || "แก้ไขสมาชิกสำเร็จ",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
@@ -84,7 +84,7 @@ export const useUpdateMember = () => {
         icon: "error",
         title: errorData?.message || "เกิดข้อผิดพลาด",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
   });
@@ -93,14 +93,14 @@ export const useUpdateMember = () => {
 export const useDeleteMember = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: DeleteMember,
+    mutationFn: deleteMember,
     onSuccess: async (response) => {
       await queryClient.invalidateQueries({ queryKey: ["members"] });
       Swal.fire({
         icon: "success",
-        title: response.message || "ลบสมาชิกสำเร็จ",
+        title: response?.message || "ลบสมาชิกสำเร็จ",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
@@ -109,7 +109,7 @@ export const useDeleteMember = () => {
         icon: "error",
         title: errorData?.message || "เกิดข้อผิดพลาด",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
   });
