@@ -1,8 +1,8 @@
+import type { IUser } from '@/types/auth_types';
 import { createContext } from 'react';
-import type { User } from '@/types/auth_types';
 
 export interface AuthContextType {
-  authUser: User | null;
+  authUser: IUser | null;
   isLoading: boolean;
   isError: boolean;
   error: unknown;
