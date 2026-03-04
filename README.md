@@ -1,10 +1,10 @@
 # ระบบประเมินความสามารถในการชำระหนี้ (Credit Evaluator System)
 
-A comprehensive credit evaluation system built with modern web technologies, designed to assess and manage credit applications efficiently.
+ระบบประเมินสินเชื่อที่ครบวงจร สร้างด้วยเทคโนโลยีสมัยใหม่ ออกแบบมาเพื่อประเมินและจัดการคำขอสินเชื่ออย่างมีประสิทธิภาพ
 
-## 🏗️ Architecture Overview
+## 🏗️ โครงสร้างระบบ
 
-This project follows a monorepo structure with separate client and server applications:
+โปรเจคนี้ใช้โครงสร้าง Monorepo ที่แยกระหว่างแอปพลิเคชัน Frontend และ Backend:
 
 ```
 co-op-credit-evaluator/
@@ -13,37 +13,42 @@ co-op-credit-evaluator/
 └── README.md              # This file
 ```
 
-## 🚀 Tech Stack
+## 🚀 เทคโนโลยีที่ใช้
 
 ### Frontend (Client)
-- **Framework**: React 19 with TypeScript
+- **Framework**: React 19 พร้อม TypeScript
 - **Build Tool**: Vite
-- **Styling**: Tailwind CSS + shadcn/ui components
+- **Styling**: Tailwind CSS v4 + shadcn/ui components
 - **State Management**: TanStack Query (React Query)
 - **Routing**: React Router v6
 - **Forms**: React Hook Form + Zod validation
-- **UI Components**: shadcn/ui with Lucide icons
+- **UI Components**: shadcn/ui พร้อม Lucide icons
 - **Notifications**: SweetAlert2
+- **Charts**: Recharts
+- **Data Grid**: MUI X Data Grid
 - **Package Manager**: pnpm
 
 ### Backend (Server)
-- **Language**: Go
-- **Framework**: Gin (implied from structure)
-- **Authentication**: JWT tokens with refresh mechanism
-- **API Documentation**: (To be implemented)
+- **Language**: Go 1.25.6
+- **Framework**: Fiber v3
+- **Database**: PostgreSQL พร้อม GORM
+- **Authentication**: JWT tokens
+- **Environment**: dotenv
+- **Hot Reload**: Air
 
-## 📋 Prerequisites
+## 📋 ข้อกำหนดเบื้องต้น
 
-Before running this application, ensure you have the following installed:
+ก่อนรันแอปพลิเคชัน ต้องติดตั้งสิ่งต่อไปนี้:
 
-- **Node.js** (v18 or higher)
-- **pnpm** (latest version)
-- **Go** (v1.21 or higher)
+- **Node.js** (v18 หรือสูงกว่า)
+- **pnpm** (เวอร์ชันล่าสุด)
+- **Go** (v1.21 หรือสูงกว่า)
+- **PostgreSQL** (สำหรับฐานข้อมูล)
 - **Git**
 
-## 🛠️ Installation & Setup
+## 🛠️ การติดตั้งและตั้งค่า
 
-### 1. Clone the Repository
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/SorayuthJapanya/co-op-credit-evaluator.git
@@ -64,15 +69,15 @@ cd server
 go mod download
 ```
 
-### 4. Environment Configuration
+### 4. การตั้งค่า Environment Variables
 
 #### Frontend Environment Variables
 
-Create a `.env` file in the `client` directory:
+สร้างไฟล์ `.env` ในโฟลเดอร์ `client`:
 
 ```env
 # API Configuration
-VITE_BASE_URL="http://localhost:3000/api"
+VITE_BASE_URL="http://localhost:8080/api"
 
 # Optional Configuration
 VITE_API_TIMEOUT=10000
@@ -84,14 +89,17 @@ VITE_LOG_LEVEL=debug
 
 #### Backend Environment Variables
 
-Create a `.env` file in the `server` directory (copy from `.env.example`):
+สร้างไฟล์ `.env` ในโฟลเดอร์ `server` (คัดลอกจาก `.env.example`):
 
 ```env
-# Add your backend environment variables here
-# Refer to server/.env.example for required variables
+ENV="development"
+FRONTEND_URL="http://localhost:5173"
+DB_DSN="host=localhost user=postgres password=yourpassword dbname=credit_evaluator port=5432 sslmode=disable TimeZone=Asia/Bangkok"
+JWT_SECRET="your-super-secret-jwt-key-at-least-32-characters-long"
+PORT="8080"
 ```
 
-## 🏃‍♂️ Running the Application
+## 🏃‍♂️ การรันแอปพลิเคชัน
 
 ### Development Mode
 
@@ -102,16 +110,18 @@ cd client
 pnpm dev
 ```
 
-The frontend will be available at `http://localhost:5173`
+Frontend จะพร้อมใช้งานที่ `http://localhost:5173`
 
 #### Start Backend
 
 ```bash
 cd server
 go run cmd/api/main.go
+# หรือใช้ Air สำหรับ hot reload
+air
 ```
 
-The API will be available at `http://localhost:3000`
+API จะพร้อมใช้งานที่ `http://localhost:8080`
 
 ### Production Build
 
@@ -131,28 +141,25 @@ cd server
 go build -o bin/api cmd/api/main.go
 ```
 
-## 🔐 Authentication & Security
+## การตรวจสอบสิทธิ์และความปลอดภัย
 
-### Features Implemented
+### ฟีเจอร์ที่ implement แล้ว
 
-- **JWT Authentication**: Secure token-based authentication
-- **Token Refresh**: Automatic token renewal
-- **CSRF Protection**: Cross-site request forgery protection
-- **Input Validation**: Comprehensive form validation with Zod
-- **Thai ID Validation**: Proper checksum validation for Thai national IDs
-- **Rate Limiting**: Login attempt rate limiting
-- **XSS Protection**: Input sanitization against XSS attacks
-- **Secure Storage**: Session-based token storage
+- **JWT Authentication**: การตรวจสอบสิทธิ์แบบ token-based
+- **Thai ID Validation**: การตรวจสอบเลขบัตรประชาชนไทย
+- **Input Validation**: การตรวจสอบข้อมูลฟอร์มด้วย Zod
+- **Rate Limiting**: จำกัดครั้งในการ login
+- **XSS Protection**: ป้องกัน XSS attacks
+- **CORS Configuration**: ตั้งค่า CORS อย่างปลอดภัย
 
-### Authentication Flow
+### การทำงานของ Authentication
 
-1. User logs in with Thai ID and password
-2. Server validates credentials and returns JWT tokens
-3. Client stores tokens securely in sessionStorage
-4. Automatic token refresh before expiration
-5. Protected routes require valid authentication
+1. User login ด้วยเลขบัตรประชาชนและรหัสผ่าน
+2. Server ตรวจสอบ credentials และส่งคืน JWT tokens
+3. Client เก็บ tokens ใน sessionStorage
+4. Protected routes ต้องการการตรวจสอบสิทธิ์
 
-## 📁 Project Structure
+## โครงสร้างโปรเจค
 
 ### Frontend Structure
 
@@ -161,18 +168,20 @@ client/
 ├── public/                 # Static assets
 ├── src/
 │   ├── components/         # Reusable UI components
-│   │   ├── form/         # Form components
-│   │   ├── layout/       # Layout components
-│   │   ├── share/        # Shared components
+│   │   ├── form/         # Form components (ApplicantForm, CareerForm, etc.)
+│   │   ├── layout/       # Layout components (Navbar, Sidebar)
+│   │   ├── table/        # Table components (EvaluatesTable, MembersTable)
 │   │   └── ui/          # Base UI components (shadcn/ui)
 │   ├── contexts/          # React contexts
-│   ├── features/          # Feature-based modules
-│   ├── hooks/            # Custom React hooks
+│   ├── hooks/            # Custom React hooks (useEvaluate, useAuth, etc.)
 │   ├── layouts/          # Page layouts
 │   ├── lib/              # Utility libraries
 │   ├── pages/            # Page components
 │   │   ├── auth/         # Authentication pages
 │   │   └── protected/    # Protected route pages
+│   │       ├── CreditEvaluatorPage.tsx
+│   │       ├── AddCreditEvaluatorPage.tsx
+│   │       └── EditCreditEvaluatorPage.tsx
 │   ├── services/         # API service functions
 │   ├── types/            # TypeScript type definitions
 │   └── utils/            # Utility functions
@@ -187,35 +196,63 @@ client/
 server/
 ├── cmd/                  # Application entry points
 │   └── api/
+│       └── main.go      # Main application entry
 ├── internal/             # Private application code
 │   ├── controllers/      # HTTP handlers
+│   │   ├── auth_controllers.go
+│   │   ├── evaluate_controllers.go
+│   │   ├── member_controllers.go
+│   │   └── career_controllers.go
 │   ├── database/         # Database layer
-│   └── middlewares/      # HTTP middlewares
+│   │   └── database.go
+│   ├── middlewares/      # HTTP middlewares
+│   ├── models/          # Data models
+│   │   ├── auth_models.go
+│   │   ├── evaluate_models.go
+│   │   ├── member_models.go
+│   │   └── career_models.go
+│   ├── routes/          # Route definitions
+│   │   ├── auth_routes.go
+│   │   ├── evaluate_routes.go
+│   │   ├── member_routes.go
+│   │   └── routes.go
+│   └── services/        # Business logic
+│       ├── auth_services.go
+│       ├── evaluate_services.go
+│       ├── member_services.go
+│       └── career_services.go
 ├── go.mod
 └── go.sum
 ```
 
-## 🎯 Core Features
+## ฟีเจอร์หลัก
 
-### User Management
-- User registration with Thai ID validation
-- Secure login with rate limiting
-- User profile management
-- Role-based access control
+### การจัดการผู้ใช้
+- การลงทะเบียนผู้ใช้พร้อมการตรวจสอบเลขบัตรประชาชน
+- การ login ที่ปลอดภัยพร้อม rate limiting
+- การจัดการโปรไฟล์ผู้ใช้
+- การควบคุมสิทธิ์ตามบทบาท
 
-### Credit Evaluation
-- Credit application processing
-- Risk assessment algorithms
-- Decision management
-- Report generation
+### การประเมินสินเชื่อ
+- การประมวลผลคำขอสินเชื่อ
+- การจัดการผู้สมัครหลายคนต่อการประเมิน
+- การคำนวณความสามารถในการชำระหนี้
+- การสร้างรายงานผลการประเมิน
+- การจัดการข้อมูลอาชีพและรายได้
 
-### Dashboard & Analytics
-- Real-time dashboard
-- Application statistics
-- Performance metrics
-- Data visualization
+### แดชบอร์ดและการวิเคราะห์
+- แดชบอร์ดแบบ real-time
+- สถิติการประเมิน
+- การแสดงผลข้อมูลด้วยกราฟ
+- การวิเคราะห์ข้อมูลสมาชิก
 
-## 🧪 Testing
+### การจัดการข้อมูลสมาชิก
+- การจัดการข้อมูลสมาชิกสหกรณ์
+- การค้นหาและกรองข้อมูล
+- การจัดการประเภทอาชีพ
+- การแสดงข้อมูลสถิติต่างๆ
+
+## Testing
 
 ### Frontend Testing
 
@@ -417,7 +454,40 @@ All endpoints return consistent error format:
 
 ## 📄 License
 
-This project is licensed under the [License Name] - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 ---
 
 **Note**: This is a financial application handling sensitive user data. Ensure all security best practices are followed and comply with relevant data protection regulations.
+
+## 📊 ฐานข้อมูล
+
+### ตารางหลัก
+
+- **users**: ข้อมูลผู้ใช้
+- **evaluates**: ข้อมูลการประเมิน
+- **applicants**: ข้อมูลผู้สมัครในการประเมิน
+- **evaluate_results**: ผลการประเมิน
+- **result_applicants**: ข้อมูลผู้สมัครในผลการประเมิน
+- **career_categories**: ประเภทอาชีพ
+- **sub_careers**: ประเภทอาชีพย่อย
+- **members**: ข้อมูลสมาชิกสหกรณ์
+
+## 🐛 การรายงานปัญหา
+
+หากพบปัญหา กรุณารายงานที่:
+1. GitHub Issues
+2. ระบุข้อมูล: Environment, Steps to reproduce, Expected vs Actual behavior
+3. แนบ screenshot ถ้าจำเป็น
+
+## 📄 ใบอนุญาต
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👥 ทีมพัฒนา
+
+- **Sorayuth Japanya** - Project Lead & Full Stack Developer
+
+---
+
+**ขอบคุณที่ใช้ระบบประเมินความสามารถในการชำระหนี้! 🙏**
