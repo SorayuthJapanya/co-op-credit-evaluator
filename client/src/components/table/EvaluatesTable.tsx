@@ -206,7 +206,12 @@ const EvaluatesTable = ({
                   </p>
                   <p className="text-xl font-bold text-green-600">
                     ฿{" "}
-                    {selectedEvaluate.result.applicants[0].resultIncome.toLocaleString()}
+                    {selectedEvaluate.result.applicants
+                      .reduce(
+                        (total, applicant) => total + applicant.resultIncome,
+                        0,
+                      )
+                      .toLocaleString()}
                   </p>
                 </div>
                 <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
@@ -225,141 +230,153 @@ const EvaluatesTable = ({
                 <h3 className="text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
                   ข้อมูลผู้สมัคร ({selectedEvaluate.evaluateType})
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 bg-white border border-gray-200 p-5 rounded-xl shadow-sm">
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      ชื่อผู้กู้
-                    </label>
-                    <p className="text-gray-900 font-medium mt-1">
-                      {selectedEvaluate.applicants[0].name}
-                    </p>
+                {selectedEvaluate.applicants.map((applicant, index) => (
+                  <div key={index} className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">ผู้สมัครที่ {index + 1}</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 bg-white border border-gray-200 p-5 rounded-xl shadow-sm">
+                      <div>
+                        <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          ชื่อผู้กู้
+                        </label>
+                        <p className="text-gray-900 font-medium mt-1">
+                          {applicant.name}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          เลขบัตรประชาชน
+                        </label>
+                        <p className="text-gray-900 font-medium mt-1">
+                          {applicant.idCard}
+                        </p>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          หมวดหมู่อาชีพ
+                        </label>
+                        <p className="text-gray-900 mt-1">
+                          {applicant.careerCategory}
+                        </p>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          อาชีพหลัก
+                        </label>
+                        <p className="text-gray-900 mt-1">
+                          {applicant.career}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      เลขบัตรประชาชน
-                    </label>
-                    <p className="text-gray-900 font-medium mt-1">
-                      {selectedEvaluate.applicants[0].idCard}
-                    </p>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      หมวดหมู่อาชีพ
-                    </label>
-                    <p className="text-gray-900 mt-1">
-                      {selectedEvaluate.applicants[0].careerCategory}
-                    </p>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      อาชีพหลัก
-                    </label>
-                    <p className="text-gray-900 mt-1">
-                      {selectedEvaluate.applicants[0].career}
-                    </p>
-                  </div>
-                </div>
+                ))}
               </div>
 
               {/* Section 3: รายละเอียดทางการเงิน แบ่ง 2 คอลัมน์ (รายได้ vs ภาระหนี้/ค่าใช้จ่าย) */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Column Left: ฝั่งรายได้ */}
-                <div className="space-y-3">
-                  <h3 className="text-base font-semibold text-gray-900 border-b pb-2">
-                    โครงสร้างรายได้
-                  </h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-sm py-1">
-                      <span className="text-gray-600">เงินเดือนพื้นฐาน</span>
-                      <span className="font-medium text-gray-900">
-                        ฿{" "}
-                        {selectedEvaluate.result.applicants[0].salary.toLocaleString()}
-                      </span>
+              <div className="space-y-6">
+                {selectedEvaluate.result.applicants.map((applicant, index) => (
+                  <div key={index} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="lg:col-span-2">
+                      <h3 className="text-base font-semibold text-gray-900 mb-3">
+                        ข้อมูลทางการเงิน - ผู้สมัครที่ {index + 1}
+                      </h3>
                     </div>
-                    <div className="flex justify-between items-center text-sm py-1">
-                      <span className="text-gray-600">รายได้อื่นๆ</span>
-                      <span className="font-medium text-gray-900">
-                        ฿{" "}
-                        {selectedEvaluate.result.applicants[0].otherSalary.toLocaleString()}
-                      </span>
+                    {/* Column Left: ฝั่งรายได้ */}
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-medium text-gray-900 border-b pb-2">
+                        โครงสร้างรายได้
+                      </h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center text-sm py-1">
+                          <span className="text-gray-600">อัตราเงินเดือน</span>
+                          <span className="font-medium text-gray-900">
+                            ฿{" "}
+                            {applicant.totalSalary.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm py-1">
+                          <span className="text-gray-600">เงินได้ประจำอื่นๆ</span>
+                          <span className="font-medium text-gray-900">
+                            ฿{" "}
+                            {applicant.otherSalary.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm py-1">
+                          <span className="text-gray-600">เงินได้อื่นๆ ที่มีหลักฐาน</span>
+                          <span className="font-medium text-gray-900">
+                            ฿{" "}
+                            {applicant.optionsSalary.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm py-1">
+                          <span className="text-gray-600">กำไรสุทธิจากการประกอบอาชีพตามสัดส่วนการถือหุ้นในธุรกิจ</span>
+                          <span className="font-medium text-gray-900">
+                            ฿{" "}
+                            {applicant.resultShareValue.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center pt-3 border-t border-gray-100">
+                          <span className="text-sm font-semibold text-gray-900">
+                            รวมรายได้ประเมิน (Total Salary)
+                          </span>
+                          <span className="font-semibold text-gray-900">
+                            ฿{" "}
+                            {applicant.totalSalary.toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex justify-between items-center text-sm py-1">
-                      <span className="text-gray-600">รายได้ทางเลือก</span>
-                      <span className="font-medium text-gray-900">
-                        ฿{" "}
-                        {selectedEvaluate.result.applicants[0].optionsSalary.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm py-1">
-                      <span className="text-gray-600">
-                        ส่วนแบ่งกำไร (Share Value)
-                      </span>
-                      <span className="font-medium text-gray-900">
-                        ฿{" "}
-                        {selectedEvaluate.result.applicants[0].resultShareValue.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-                      <span className="text-sm font-semibold text-gray-900">
-                        รวมรายได้ประเมิน (Total Salary)
-                      </span>
-                      <span className="font-semibold text-gray-900">
-                        ฿{" "}
-                        {selectedEvaluate.result.applicants[0].totalSalary.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Column Right: ฝั่งภาระหนี้และค่าใช้จ่าย */}
-                <div className="space-y-3">
-                  <h3 className="text-base font-semibold text-gray-900 border-b pb-2">
-                    ภาระหนี้สินและค่าใช้จ่าย
-                  </h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-sm py-1">
-                      <span className="text-gray-600">
-                        ค่าใช้จ่ายลูกค้า (Customer Expenses)
-                      </span>
-                      <span className="font-medium text-red-600">
-                        ฿{" "}
-                        {selectedEvaluate.result.applicants[0].resultCustomerExpenses.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm py-1">
-                      <span className="text-gray-600">หนี้สินที่รายงาน</span>
-                      <span className="font-medium text-red-600">
-                        ฿{" "}
-                        {selectedEvaluate.result.debtDetail.debtReported.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm py-1">
-                      <span className="text-gray-600">หนี้สินที่ไม่รายงาน</span>
-                      <span className="font-medium text-red-600">
-                        ฿{" "}
-                        {selectedEvaluate.result.debtDetail.debtNotReported.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm py-1">
-                      <span className="text-gray-600">
-                        ยอดหนี้เดิม / หักหนี้เก่า
-                      </span>
-                      <span className="font-medium text-red-600">
-                        ฿{" "}
-                        {selectedEvaluate.result.debtDetail.lastDeduction.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-                      <span className="text-sm font-semibold text-gray-900">
-                        ค่าใช้จ่าย/หนี้สินรวมเพื่อหักลบ
-                      </span>
-                      <span className="font-semibold text-red-600">
-                        ฿{" "}
-                        {selectedEvaluate.result.applicants[0].totalExpenses.toLocaleString()}
-                      </span>
+                    {/* Column Right: ฝั่งภาระหนี้และค่าใช้จ่าย */}
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-medium text-gray-900 border-b pb-2">
+                        ภาระหนี้สินและค่าใช้จ่าย
+                      </h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center text-sm py-1">
+                          <span className="text-gray-600">
+                            ค่าใช้จ่ายลูกค้า (Customer Expenses)
+                          </span>
+                          <span className="font-medium text-red-600">
+                            ฿{" "}
+                            {selectedEvaluate.result.applicants[index].resultCustomerExpenses.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm py-1">
+                          <span className="text-gray-600">หนี้สินที่รายงาน</span>
+                          <span className="font-medium text-red-600">
+                            ฿{" "}
+                            {selectedEvaluate.result.debtDetail.debtReported.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm py-1">
+                          <span className="text-gray-600">หนี้สินที่ไม่รายงาน</span>
+                          <span className="font-medium text-red-600">
+                            ฿{" "}
+                            {selectedEvaluate.result.debtDetail.debtNotReported.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm py-1">
+                          <span className="text-gray-600">
+                            ยอดหนี้เดิม / หักหนี้เก่า
+                          </span>
+                          <span className="font-medium text-red-600">
+                            ฿{" "}
+                            {selectedEvaluate.result.debtDetail.lastDeduction.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center pt-3 border-t border-gray-100">
+                          <span className="text-sm font-semibold text-gray-900">
+                            ค่าใช้จ่าย/หนี้สินรวมเพื่อหักลบ
+                          </span>
+                          <span className="font-semibold text-red-600">
+                            ฿{" "}
+                            {selectedEvaluate.result.applicants[index].totalExpenses.toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
             </div>
           )}

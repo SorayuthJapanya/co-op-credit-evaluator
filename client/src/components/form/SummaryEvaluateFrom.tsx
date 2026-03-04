@@ -50,8 +50,11 @@ const SummaryEvaluateFrom = ({
 
         // calculate total salary
         const totalSalary =
-          data.salary.base + data.otherSalary.total + data.optionsSalary.total;
-
+          data.salary.base +
+          data.otherSalary.total +
+          data.optionsSalary.total +
+          resultShareValue;
+          
         return {
           name: data.name,
           idCard: data.idCard,
