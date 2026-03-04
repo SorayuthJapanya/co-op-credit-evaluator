@@ -93,29 +93,28 @@ func RegisterAdmin(c fiber.Ctx) error {
 		})
 	}
 
-	// Set JWT cookie
-	go_env := os.Getenv("ENV")
-	go_domain := os.Getenv("DOMAIN")
+	// is production
+	isProd := os.Getenv("ENV") == "production"
 
-	// Configure cookie settings for different environments
-	domainCookies := go_domain
-	secureCookie := go_env == "production"
-	sameSiteMode := fiber.CookieSameSiteLaxMode
+	// cookie settings
+	sameSite := fiber.CookieSameSiteNoneMode
+	secure := isProd
 
-	// In development, allow less strict settings
-	if go_env != "production" {
-		sameSiteMode = fiber.CookieSameSiteNoneMode
+	// development settings
+	if !isProd {
+		sameSite = fiber.CookieSameSiteLaxMode
+		secure = false
 	}
 
+	// Set cookie
 	c.Cookie(&fiber.Cookie{
 		Name:     "jwt",
 		Value:    token,
 		Expires:  time.Now().Add(24 * time.Hour),
-		Path:     "/", // Ensure cookie is available for all paths
-		Domain:   domainCookies,
-		Secure:   secureCookie,
+		Path:     "/",
+		Secure:   secure,
 		HTTPOnly: true,
-		SameSite: sameSiteMode,
+		SameSite: sameSite,
 	})
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
@@ -157,25 +156,28 @@ func LoginAdmin(c fiber.Ctx) error {
 		})
 	}
 
-	go_env := os.Getenv("ENV")
+	// is production
+	isProd := os.Getenv("ENV") == "production"
 
-	// Configure cookie settings for different environments
-	secureCookie := go_env == "production"
-	sameSiteMode := fiber.CookieSameSiteLaxMode
+	// cookie settings
+	sameSite := fiber.CookieSameSiteNoneMode
+	secure := isProd
 
-	// In development, allow less strict settings
-	if go_env != "production" {
-		sameSiteMode = fiber.CookieSameSiteNoneMode
+	// development settings
+	if !isProd {
+		sameSite = fiber.CookieSameSiteLaxMode
+		secure = false
 	}
 
+	// Set cookie
 	c.Cookie(&fiber.Cookie{
 		Name:     "jwt",
 		Value:    token,
 		Expires:  time.Now().Add(24 * time.Hour),
+		Path:     "/",
+		Secure:   secure,
 		HTTPOnly: true,
-		Secure:   secureCookie,
-		SameSite: sameSiteMode,
-		Path:     "/", // Ensure cookie is available for all paths
+		SameSite: sameSite,
 	})
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
