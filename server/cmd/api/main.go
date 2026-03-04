@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/database"
+	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/middleware"
 	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/routes"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
@@ -32,6 +33,7 @@ func main() {
 
 	// Middlewares
 	app.Use(logger.New())
+	app.Use(middleware.PerformanceMiddleware()) // Add performance monitoring
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173", os.Getenv("FRONTEND_URL")},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},

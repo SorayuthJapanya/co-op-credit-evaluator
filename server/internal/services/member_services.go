@@ -70,9 +70,9 @@ func GetMembersWithPagination(page int, limit int) ([]models.Member, int64, erro
 		return nil, 0, err
 	}
 
-	// Get paginated data
+	// Get paginated data - remove LENGTH() for better performance
 	offset := (page - 1) * limit
-	if err := database.DB.Model(&models.Member{}).Order("LENGTH(member_id) ASC, member_id ASC").Offset(offset).Limit(limit).Find(&members).Error; err != nil {
+	if err := database.DB.Model(&models.Member{}).Order("member_id ASC").Offset(offset).Limit(limit).Find(&members).Error; err != nil {
 		return nil, 0, err
 	}
 
@@ -103,9 +103,9 @@ func GetMembersWithFiltersAndPagination(fullName string, subdistrict string, dis
 		return nil, 0, err
 	}
 
-	// Get paginated data with filters
+	// Get paginated data with filters - remove LENGTH() for better performance
 	offset := (page - 1) * limit
-	if err := query.Order("LENGTH(member_id) ASC, member_id ASC").Offset(offset).Limit(limit).Find(&members).Error; err != nil {
+	if err := query.Order("member_id ASC").Offset(offset).Limit(limit).Find(&members).Error; err != nil {
 		return nil, 0, err
 	}
 
