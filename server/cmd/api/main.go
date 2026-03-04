@@ -48,11 +48,14 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	log.Printf("Server starting on port %s", port)
+
+	listenAddr := "0.0.0.0:" + port
+	log.Printf("Server starting on port %s", listenAddr)
 
 	// Configure Fiber to bind to all interfaces for production compatibility
-	if err := app.Listen("0.0.0.0:" + port); err != nil {
-		log.Fatal("Failed to start server:", err)
+	err := app.Listen(listenAddr)
+	if err != nil {
+		log.Fatal("Failed to start server: ", err)
 	}
 }
 
