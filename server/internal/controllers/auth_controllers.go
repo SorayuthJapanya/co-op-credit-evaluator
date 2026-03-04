@@ -95,8 +95,10 @@ func RegisterAdmin(c fiber.Ctx) error {
 
 	// Set JWT cookie
 	go_env := os.Getenv("ENV")
+	go_domain := os.Getenv("FRONTEND_URL")
 
 	// Configure cookie settings for different environments
+	domainCookies := go_domain
 	secureCookie := go_env == "production"
 	sameSiteMode := fiber.CookieSameSiteLaxMode
 
@@ -109,10 +111,11 @@ func RegisterAdmin(c fiber.Ctx) error {
 		Name:     "jwt",
 		Value:    token,
 		Expires:  time.Now().Add(24 * time.Hour),
-		HTTPOnly: true,
-		Secure:   secureCookie,
-		SameSite: sameSiteMode,
 		Path:     "/", // Ensure cookie is available for all paths
+		Domain:   domainCookies,
+		Secure:   secureCookie,
+		HTTPOnly: true,
+		SameSite: sameSiteMode,
 	})
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
