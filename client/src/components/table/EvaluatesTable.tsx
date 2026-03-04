@@ -189,7 +189,7 @@ const EvaluatesTable = ({
                 <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl">
                   <p className="text-sm font-medium text-blue-600 mb-1">DTI</p>
                   <p className="text-2xl font-bold text-blue-900">
-                    {selectedEvaluate.result.dti.toFixed(2)}%
+                    {selectedEvaluate.result.dti.toFixed(2)} เท่า
                   </p>
                 </div>
                 <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
@@ -197,7 +197,7 @@ const EvaluatesTable = ({
                     DSCR
                   </p>
                   <p className="text-2xl font-bold text-emerald-900">
-                    {selectedEvaluate.result.dscr.toFixed(2)}
+                    {selectedEvaluate.result.dscr.toFixed(2)} %
                   </p>
                 </div>
                 <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
@@ -232,7 +232,9 @@ const EvaluatesTable = ({
                 </h3>
                 {selectedEvaluate.applicants.map((applicant, index) => (
                   <div key={index} className="mb-4">
-                    <h4 className="text-sm font-medium text-gray-700 mb-2">ผู้สมัครที่ {index + 1}</h4>
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">
+                      ผู้สมัครที่ {index + 1}
+                    </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 bg-white border border-gray-200 p-5 rounded-xl shadow-sm">
                       <div>
                         <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -262,9 +264,7 @@ const EvaluatesTable = ({
                         <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                           อาชีพหลัก
                         </label>
-                        <p className="text-gray-900 mt-1">
-                          {applicant.career}
-                        </p>
+                        <p className="text-gray-900 mt-1">{applicant.career}</p>
                       </div>
                     </div>
                   </div>
@@ -274,7 +274,10 @@ const EvaluatesTable = ({
               {/* Section 3: รายละเอียดทางการเงิน แบ่ง 2 คอลัมน์ (รายได้ vs ภาระหนี้/ค่าใช้จ่าย) */}
               <div className="space-y-6">
                 {selectedEvaluate.result.applicants.map((applicant, index) => (
-                  <div key={index} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div
+                    key={index}
+                    className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+                  >
                     <div className="lg:col-span-2">
                       <h3 className="text-base font-semibold text-gray-900 mb-3">
                         ข้อมูลทางการเงิน - ผู้สมัครที่ {index + 1}
@@ -289,29 +292,31 @@ const EvaluatesTable = ({
                         <div className="flex justify-between items-center text-sm py-1">
                           <span className="text-gray-600">อัตราเงินเดือน</span>
                           <span className="font-medium text-gray-900">
-                            ฿{" "}
-                            {applicant.totalSalary.toLocaleString()}
+                            ฿ {applicant.totalSalary.toLocaleString()}
                           </span>
                         </div>
                         <div className="flex justify-between items-center text-sm py-1">
-                          <span className="text-gray-600">เงินได้ประจำอื่นๆ</span>
+                          <span className="text-gray-600">
+                            เงินได้ประจำอื่นๆ
+                          </span>
                           <span className="font-medium text-gray-900">
-                            ฿{" "}
-                            {applicant.otherSalary.toLocaleString()}
+                            ฿ {applicant.otherSalary.toLocaleString()}
                           </span>
                         </div>
                         <div className="flex justify-between items-center text-sm py-1">
-                          <span className="text-gray-600">เงินได้อื่นๆ ที่มีหลักฐาน</span>
+                          <span className="text-gray-600">
+                            เงินได้อื่นๆ ที่มีหลักฐาน
+                          </span>
                           <span className="font-medium text-gray-900">
-                            ฿{" "}
-                            {applicant.optionsSalary.toLocaleString()}
+                            ฿ {applicant.optionsSalary.toLocaleString()}
                           </span>
                         </div>
                         <div className="flex justify-between items-center text-sm py-1">
-                          <span className="text-gray-600">กำไรสุทธิจากการประกอบอาชีพตามสัดส่วนการถือหุ้นในธุรกิจ</span>
+                          <span className="text-gray-600">
+                            กำไรสุทธิจากการประกอบอาชีพตามสัดส่วนการถือหุ้นในธุรกิจ
+                          </span>
                           <span className="font-medium text-gray-900">
-                            ฿{" "}
-                            {applicant.resultShareValue.toLocaleString()}
+                            ฿ {applicant.resultShareValue.toLocaleString()}
                           </span>
                         </div>
                         <div className="flex justify-between items-center pt-3 border-t border-gray-100">
@@ -319,8 +324,7 @@ const EvaluatesTable = ({
                             รวมรายได้ประเมิน (Total Salary)
                           </span>
                           <span className="font-semibold text-gray-900">
-                            ฿{" "}
-                            {applicant.totalSalary.toLocaleString()}
+                            ฿ {applicant.totalSalary.toLocaleString()}
                           </span>
                         </div>
                       </div>
@@ -334,43 +338,42 @@ const EvaluatesTable = ({
                       <div className="space-y-2">
                         <div className="flex justify-between items-center text-sm py-1">
                           <span className="text-gray-600">
-                            ค่าใช้จ่ายลูกค้า (Customer Expenses)
+                            รายการหักของหน่วยงานที่ไม่ใช่ภาระหนี้
                           </span>
                           <span className="font-medium text-red-600">
-                            ฿{" "}
-                            {selectedEvaluate.result.applicants[index].resultCustomerExpenses.toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center text-sm py-1">
-                          <span className="text-gray-600">หนี้สินที่รายงาน</span>
-                          <span className="font-medium text-red-600">
-                            ฿{" "}
-                            {selectedEvaluate.result.debtDetail.debtReported.toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center text-sm py-1">
-                          <span className="text-gray-600">หนี้สินที่ไม่รายงาน</span>
-                          <span className="font-medium text-red-600">
-                            ฿{" "}
-                            {selectedEvaluate.result.debtDetail.debtNotReported.toLocaleString()}
+                            ฿ {applicant.expenses.toLocaleString()}
                           </span>
                         </div>
                         <div className="flex justify-between items-center text-sm py-1">
                           <span className="text-gray-600">
-                            ยอดหนี้เดิม / หักหนี้เก่า
+                            ค่าใช้จ่ายในการอุปโภคบริโภค
                           </span>
                           <span className="font-medium text-red-600">
                             ฿{" "}
-                            {selectedEvaluate.result.debtDetail.lastDeduction.toLocaleString()}
+                            {applicant.resultCustomerExpenses.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm py-1">
+                          <span className="text-gray-600">
+                            ค่าใช้จ่ายที่พักอาศัย
+                          </span>
+                          <span className="font-medium text-red-600">
+                            ฿ {applicant.livingExpenses.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm py-1">
+                          <span className="text-gray-600">ค่าใช่จ่ายอื่นๆ</span>
+                          <span className="font-medium text-red-600">
+                            ฿ {applicant.otherExpenses.toLocaleString()}
                           </span>
                         </div>
                         <div className="flex justify-between items-center pt-3 border-t border-gray-100">
                           <span className="text-sm font-semibold text-gray-900">
-                            ค่าใช้จ่าย/หนี้สินรวมเพื่อหักลบ
+                            ค่าใช้จ่ายรวม
                           </span>
                           <span className="font-semibold text-red-600">
                             ฿{" "}
-                            {selectedEvaluate.result.applicants[index].totalExpenses.toLocaleString()}
+                            {applicant.totalExpenses.toLocaleString()}
                           </span>
                         </div>
                       </div>
