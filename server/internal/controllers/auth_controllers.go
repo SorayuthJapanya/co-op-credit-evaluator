@@ -95,18 +95,29 @@ func RegisterAdmin(c fiber.Ctx) error {
 
 	// Set JWT cookie
 	go_env := os.Getenv("ENV")
+
+	// Configure cookie settings for different environments
+	secureCookie := go_env == "production"
+	sameSiteMode := fiber.CookieSameSiteLaxMode
+
+	// In development, allow less strict settings
+	if go_env != "production" {
+		sameSiteMode = fiber.CookieSameSiteNoneMode
+	}
+
 	c.Cookie(&fiber.Cookie{
 		Name:     "jwt",
 		Value:    token,
 		Expires:  time.Now().Add(24 * time.Hour),
 		HTTPOnly: true,
-		Secure:   go_env == "production", // Set to true in production with HTTPS
-		SameSite: fiber.CookieSameSiteLaxMode,
+		Secure:   secureCookie,
+		SameSite: sameSiteMode,
+		Path:     "/", // Ensure cookie is available for all paths
 	})
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "สมัครสมาชิกสำเร็จ",
-		"data": newAdmin,
+		"data":    newAdmin,
 	})
 }
 
@@ -144,18 +155,29 @@ func LoginAdmin(c fiber.Ctx) error {
 	}
 
 	go_env := os.Getenv("ENV")
+
+	// Configure cookie settings for different environments
+	secureCookie := go_env == "production"
+	sameSiteMode := fiber.CookieSameSiteLaxMode
+
+	// In development, allow less strict settings
+	if go_env != "production" {
+		sameSiteMode = fiber.CookieSameSiteNoneMode
+	}
+
 	c.Cookie(&fiber.Cookie{
 		Name:     "jwt",
 		Value:    token,
 		Expires:  time.Now().Add(24 * time.Hour),
 		HTTPOnly: true,
-		Secure:   go_env == "production", // Set to true in production with HTTPS
-		SameSite: fiber.CookieSameSiteLaxMode,
+		Secure:   secureCookie,
+		SameSite: sameSiteMode,
+		Path:     "/", // Ensure cookie is available for all paths
 	})
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "เข้าสู่ระบบสำเร็จ",
-		"data": admin,
+		"data":    admin,
 	})
 }
 
