@@ -95,7 +95,7 @@ func RegisterAdmin(c fiber.Ctx) error {
 
 	// Set JWT cookie
 	go_env := os.Getenv("ENV")
-	go_domain := os.Getenv("FRONTEND_URL")
+	go_domain := os.Getenv("DOMAIN")
 
 	// Configure cookie settings for different environments
 	domainCookies := go_domain
