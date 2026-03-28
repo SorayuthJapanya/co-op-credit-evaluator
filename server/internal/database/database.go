@@ -3,6 +3,7 @@ package database
 import (
 	"log"
 	"os"
+	_ "time/tzdata"
 
 	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/models"
 	"gorm.io/driver/postgres"

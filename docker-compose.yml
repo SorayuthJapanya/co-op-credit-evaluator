@@ -1,0 +1,47 @@
+services:
+  # Database Service
+  db:
+    image: postgres:15-alpine
+    container_name: coop_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: credit_evaluator
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Backend Server Service
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: coop_server
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      - ENV=development
+      - FRONTEND_URL=http://localhost:8080
+      - DB_DSN=host=db port=5432 user=postgres password=password dbname=credit_evaluator sslmode=disable TimeZone=Asia/Bangkok
+      - JWT_SECRET=your-super-secret-jwt-key-at-least-32-characters-long
+      - PORT=10000
+    ports:
+      - "10000:10000"
+
+  # Frontend Client Service
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: coop_client
+    restart: unless-stopped
+    depends_on:
+      - server
+    ports:
+      - "8080:80"
+
+volumes:
+  postgres_data:
