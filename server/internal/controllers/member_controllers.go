@@ -377,6 +377,10 @@ func DeleteMember(c fiber.Ctx) error {
 
 // isValidSeedFilePath validates the file path to prevent path traversal attacks
 func isValidSeedFilePath(filePath string) bool {
+	// Trim quotes and whitespace that might be accidentally included in request parameters
+	filePath = strings.TrimSpace(filePath)
+	filePath = strings.Trim(filePath, "\"'\t\n\r")
+	
 	// Clean the path to resolve any relative components
 	cleanPath := filepath.Clean(filePath)
 
