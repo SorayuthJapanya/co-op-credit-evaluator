@@ -229,18 +229,18 @@ func GetMember(c fiber.Ctx) error {
 }
 
 func SeedMembers(c fiber.Ctx) error {
-	filePath := c.Query("file")
-	if filePath == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "กรุณาระบุุพธิไฟล์ที่ต้องการ seed (parameter: file)",
-		})
-	}
+	// Use hardcoded path to seed file (relative to where server binary runs)
+	filePath := "seed/members_seed.json"
 
-	// Validate file path to prevent path traversal attacks
-	if !isValidSeedFilePath(filePath) {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "พาธไฟล์ไม่ถูกต้องหรือไม่อนุญาตให้เข้าถึง",
-		})
+	// Allow override via query parameter if needed
+	if customPath := c.Query("file"); customPath != "" {
+		// Validate file path to prevent path traversal attacks
+		if !isValidSeedFilePath(customPath) {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "พาธไฟล์ไม่ถูกต้องหรือไม่อนุญาตให้เข้าถึง",
+			})
+		}
+		filePath = customPath
 	}
 
 	if err := services.SeedMembersFromJSON(filePath); err != nil {
