@@ -29,6 +29,9 @@ WORKDIR /root/
 # Copy the binary from builder stage
 COPY --from=builder /app/main .
 
+# Copy the seed directory and other necessary directories if they exist
+COPY --from=builder /app/seed ./seed
+
 # Accept PORT as an argument with default 10000
 ARG PORT=10000
 ENV PORT=$PORT
