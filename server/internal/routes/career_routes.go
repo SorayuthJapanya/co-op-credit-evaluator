@@ -17,4 +17,7 @@ func setUpCareerRoutes(careerRoute fiber.Router) {
 	careerRoute.Get("/categories/:categoryId/subcategories", controllers.GetSubCategoriesByCategory)
 	careerRoute.Put("/subcategories/:id", controllers.UpdateSubCategory)
 	careerRoute.Delete("/subcategories/:id", controllers.DeleteSubCategory)
+
+	// Seed operation
+	careerRoute.Post("/seed", controllers.SeedCareerCategories)
 }

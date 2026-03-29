@@ -273,3 +273,17 @@ func DeleteSubCategory(c fiber.Ctx) error {
 		"message": "ลบหมวดหมู่ย่อยอาชีพสำเร็จ",
 	})
 }
+
+// SeedCareerCategories seeds the pre-defined categories and subcategories into the database
+func SeedCareerCategories(c fiber.Ctx) error {
+	if err := services.SeedCareerCategoriesData(); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "ไม่สามารถ seed ข้อมูลหมวดหมู่อาชีพได้",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "seed ข้อมูลหมวดหมู่อาชีพและหมวดหมู่ย่อยสำเร็จ",
+	})
+}
