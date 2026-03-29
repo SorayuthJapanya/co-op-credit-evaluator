@@ -7,8 +7,8 @@ export interface MembershipGrowthData {
 
 export interface MemberCountBySubdistrictData {
   subdistrict: string;
-  memberCount: number;
-  percentage: number;
+  count: number;
+  percent: number;
 }
 
 export interface SharesDistributionData {
