@@ -1,4 +1,4 @@
-[
+﻿[
   {
     "cooperativeId": 5600000225501,
     "idCard": 3560100384889,
@@ -2947,7 +2947,7 @@
     "leavingDate": "",
     "address": "103",
     "moo": 3,
-    "subdistrict": ".สาง",
+    "subdistrict": "สาง",
     "district": "เมือง",
     "province": "พะเยา"
   },
@@ -5035,7 +5035,7 @@
     "leavingDate": "",
     "address": "47",
     "moo": 3,
-    "subdistrict": "สาง.",
+    "subdistrict": "สาง",
     "district": "เมือง",
     "province": "พะเยา"
   },
@@ -5053,7 +5053,7 @@
     "leavingDate": "",
     "address": "129",
     "moo": 8,
-    "subdistrict": ".ตุ่น",
+    "subdistrict": "ตุ่น",
     "district": "เมือง",
     "province": "พะเยา"
   },
@@ -5107,7 +5107,7 @@
     "leavingDate": "",
     "address": "137",
     "moo": 0,
-    "subdistrict": ".แม่ใส",
+    "subdistrict": "แม่ใส",
     "district": "เมือง",
     "province": "พะเยา"
   },
@@ -5125,7 +5125,7 @@
     "leavingDate": "",
     "address": "97",
     "moo": 10,
-    "subdistrict": ".แม่ใส",
+    "subdistrict": "แม่ใส",
     "district": "เมือง",
     "province": "พะเยา"
   },
@@ -5953,7 +5953,7 @@
     "leavingDate": "",
     "address": "28/3",
     "moo": 10,
-    "subdistrict": "แม่ใส.",
+    "subdistrict": "แม่ใส",
     "district": "เมือง",
     "province": "พะเยา"
   },
@@ -5971,7 +5971,7 @@
     "leavingDate": "",
     "address": "26",
     "moo": 8,
-    "subdistrict": ".ตุ่น",
+    "subdistrict": "ตุ่น",
     "district": "เมือง",
     "province": "พะเยา"
   },
@@ -5989,7 +5989,7 @@
     "leavingDate": "",
     "address": "128",
     "moo": 8,
-    "subdistrict": ".ตุ่น",
+    "subdistrict": "ตุ่น",
     "district": "เมือง",
     "province": "พะเยา"
   },
@@ -6007,7 +6007,7 @@
     "leavingDate": "",
     "address": "28",
     "moo": 3,
-    "subdistrict": ".สาง",
+    "subdistrict": "สาง",
     "district": "เมือง",
     "province": "พะเยา"
   },
@@ -6025,7 +6025,7 @@
     "leavingDate": "",
     "address": "89",
     "moo": 7,
-    "subdistrict": ".สาง.",
+    "subdistrict": "สาง",
     "district": "เมือง",
     "province": "พะเยา"
   },
@@ -6043,7 +6043,7 @@
     "leavingDate": "",
     "address": "143",
     "moo": 4,
-    "subdistrict": ".สาง.",
+    "subdistrict": "สาง",
     "district": "เมือง",
     "province": "พะเยา"
   },
@@ -6061,7 +6061,7 @@
     "leavingDate": "",
     "address": "193/1",
     "moo": 4,
-    "subdistrict": ".สาง.",
+    "subdistrict": "สาง",
     "district": "เมือง",
     "province": "พะเยา"
   },
@@ -6079,7 +6079,7 @@
     "leavingDate": "",
     "address": "60",
     "moo": 10,
-    "subdistrict": ".แม่ใส",
+    "subdistrict": "แม่ใส",
     "district": "เมือง",
     "province": "พะเยา"
   },
@@ -6097,7 +6097,7 @@
     "leavingDate": "",
     "address": "81",
     "moo": 6,
-    "subdistrict": ".แม่ใส",
+    "subdistrict": "แม่ใส",
     "district": "เมือง",
     "province": "พะเยา"
   },
@@ -6133,7 +6133,7 @@
     "leavingDate": "",
     "address": "35/1",
     "moo": 4,
-    "subdistrict": ".สาง",
+    "subdistrict": "สาง",
     "district": "เมือง",
     "province": "พะเยา"
   },
