@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/database"
@@ -66,7 +67,7 @@ func SeedMembersData() error {
 			LeavingDate:   leavingDate,
 			Address:       seed.Address,
 			Moo:           seed.Moo,
-			Subdistrict:   seed.Subdistrict,
+			Subdistrict:   strings.Trim(seed.Subdistrict, "."),
 			District:      seed.District,
 			Province:      seed.Province,
 			CreatedAt:     time.Now(),
