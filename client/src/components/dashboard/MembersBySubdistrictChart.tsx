@@ -71,7 +71,7 @@ const renderCustomizedLabel = (props: LabelProps) => {
       dominantBaseline="central"
       className="text-xs font-medium"
     >
-      {`${(percent * 100).toFixed(0)}%`}
+      {`${percent}%`}
     </text>
   );
 };
