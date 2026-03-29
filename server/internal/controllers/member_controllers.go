@@ -1,9 +1,7 @@
 package controllers
 
 import (
-	"path/filepath"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/services"
@@ -229,21 +227,12 @@ func GetMember(c fiber.Ctx) error {
 }
 
 func SeedMembers(c fiber.Ctx) error {
-	// Use hardcoded path to seed file (relative to where server binary runs)
-	filePath := "seed/members_seed.json"
+	var err error
 
-	// Allow override via query parameter if needed
-	if customPath := c.Query("file"); customPath != "" {
-		// Validate file path to prevent path traversal attacks
-		if !isValidSeedFilePath(customPath) {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"message": "พาธไฟล์ไม่ถูกต้องหรือไม่อนุญาตให้เข้าถึง",
-			})
-		}
-		filePath = customPath
-	}
+	// Use file from filesystem if custom path is provided
+	err = services.SeedMembersFromJSON()
 
-	if err := services.SeedMembersFromJSON(filePath); err != nil {
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "ไม่สามารถ seed ข้อมูลสมาชิกได้",
 			"error":   err.Error(),
@@ -373,48 +362,4 @@ func DeleteMember(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "ลบข้อมูลสมาชิกสำเร็จ",
 	})
-}
-
-// isValidSeedFilePath validates the file path to prevent path traversal attacks
-func isValidSeedFilePath(filePath string) bool {
-	// Trim quotes and whitespace that might be accidentally included in request parameters
-	filePath = strings.TrimSpace(filePath)
-	filePath = strings.Trim(filePath, "\"'\t\n\r")
-
-	// Clean the path to resolve any relative components
-	cleanPath := filepath.Clean(filePath)
-
-	// Check for path traversal attempts
-	if strings.Contains(cleanPath, "..") {
-		return false
-	}
-
-	// Only allow .json files
-	if !strings.HasSuffix(strings.ToLower(cleanPath), ".json") {
-		return false
-	}
-
-	// Define allowed directories (you can customize this)
-	allowedDirs := []string{
-		"seed-data",
-		"data",
-		"uploads",
-		"temp",
-		"seed",
-	}
-
-	// Check if the file is in an allowed directory
-	for _, allowedDir := range allowedDirs {
-		// Match "seed/file.json" against prefix "seed/"
-		if strings.HasPrefix(cleanPath, allowedDir+"/") {
-			return true
-		}
-	}
-
-	// If no directories match, only allow files in current directory
-	if !strings.Contains(cleanPath, "/") && !strings.Contains(cleanPath, "\\") {
-		return true
-	}
-
-	return false
 }

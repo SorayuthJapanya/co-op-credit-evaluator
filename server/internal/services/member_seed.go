@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/database"
@@ -32,7 +33,9 @@ type SeedMemberData struct {
 }
 
 // SeedMembersFromJSON loads member data from JSON file and seeds the database
-func SeedMembersFromJSON(filePath string) error {
+func SeedMembersFromJSON() error {
+	filePath := "seed/members_seed.json"
+
 	// Read JSON file
 	data, err := os.ReadFile(filePath)
 	if err != nil {
@@ -80,7 +83,7 @@ func SeedMembersFromJSON(filePath string) error {
 			LeavingDate:   leavingDate,
 			Address:       seed.Address,
 			Moo:           seed.Moo,
-			Subdistrict:   seed.Subdistrict,
+			Subdistrict:   strings.Trim(seed.Subdistrict, "."),
 			District:      seed.District,
 			Province:      seed.Province,
 			CreatedAt:     time.Now(),
