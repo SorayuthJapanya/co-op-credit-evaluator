@@ -380,7 +380,7 @@ func isValidSeedFilePath(filePath string) bool {
 	// Trim quotes and whitespace that might be accidentally included in request parameters
 	filePath = strings.TrimSpace(filePath)
 	filePath = strings.Trim(filePath, "\"'\t\n\r")
-	
+
 	// Clean the path to resolve any relative components
 	cleanPath := filepath.Clean(filePath)
 
@@ -396,17 +396,17 @@ func isValidSeedFilePath(filePath string) bool {
 
 	// Define allowed directories (you can customize this)
 	allowedDirs := []string{
-		"./seed-data",
-		"./data",
-		"./uploads",
-		"./temp",
-		"./seed",
-		"/home/ubuntu/co-op-credit-evaluator/server/seed",
+		"seed-data",
+		"data",
+		"uploads",
+		"temp",
+		"seed",
 	}
 
 	// Check if the file is in an allowed directory
 	for _, allowedDir := range allowedDirs {
-		if strings.HasPrefix(cleanPath, allowedDir) {
+		// Match "seed/file.json" against prefix "seed/"
+		if strings.HasPrefix(cleanPath, allowedDir+"/") {
 			return true
 		}
 	}
