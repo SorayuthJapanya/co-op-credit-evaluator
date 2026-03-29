@@ -1,6 +1,7 @@
 package services
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -41,6 +42,9 @@ func SeedMembersFromJSON() error {
 	if err != nil {
 		return fmt.Errorf("failed to read file: %v", err)
 	}
+
+	// Remove UTF-8 BOM if it exists
+	data = bytes.TrimPrefix(data, []byte("\xef\xbb\xbf"))
 
 	// Parse JSON
 	var seedData []SeedMemberData
