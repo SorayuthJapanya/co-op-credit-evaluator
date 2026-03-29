@@ -29,8 +29,12 @@ WORKDIR /root/
 # Copy the binary from builder stage
 COPY --from=builder /app/main .
 
-# Expose port (Render will set PORT env var)
-EXPOSE 10000
+# Accept PORT as an argument with default 10000
+ARG PORT=10000
+ENV PORT=$PORT
+
+# Expose port (Render will set PORT env var, or overridden by arg)
+EXPOSE $PORT
 
 # Command to run the application
 CMD ["./main"]

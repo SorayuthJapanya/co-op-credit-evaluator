@@ -5,11 +5,11 @@ services:
     container_name: coop_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: credit_evaluator
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-credit_evaluator}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -18,30 +18,34 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
+      args:
+        - PORT=${SERVER_PORT:-10000}
     container_name: coop_server
     restart: unless-stopped
     depends_on:
       - db
     environment:
-      - ENV=development
-      - FRONTEND_URL=http://localhost:8080
-      - DB_DSN=host=db port=5432 user=postgres password=password dbname=credit_evaluator sslmode=disable TimeZone=Asia/Bangkok
-      - JWT_SECRET=your-super-secret-jwt-key-at-least-32-characters-long
-      - PORT=10000
+      - ENV=${ENV:-development}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:8080}
+      - DB_DSN=${DB_DSN:-host=db port=5432 user=postgres password=password dbname=credit_evaluator sslmode=disable TimeZone=Asia/Bangkok}
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-at-least-32-characters-long}
+      - PORT=${SERVER_PORT:-10000}
     ports:
-      - "10000:10000"
+      - "${SERVER_PORT:-10000}:${SERVER_PORT:-10000}"
 
   # Frontend Client Service
   client:
     build:
       context: ./client
       dockerfile: Dockerfile
+      args:
+        - VITE_BASE_URL=${VITE_BASE_URL:-http://localhost:8080/api/v1}
     container_name: coop_client
     restart: unless-stopped
     depends_on:
       - server
     ports:
-      - "8080:80"
+      - "${CLIENT_PORT:-8080}:80"
 
 volumes:
   postgres_data:

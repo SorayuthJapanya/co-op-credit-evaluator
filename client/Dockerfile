@@ -16,6 +16,11 @@ RUN pnpm install --frozen-lockfile
 # Copy the rest of the application code
 COPY . .
 
+# Accept VITE_BASE_URL as an argument
+ARG VITE_BASE_URL
+# Make it available during build
+ENV VITE_BASE_URL=$VITE_BASE_URL
+
 # Build the application
 RUN pnpm build
 
