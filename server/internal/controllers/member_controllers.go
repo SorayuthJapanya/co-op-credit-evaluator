@@ -396,6 +396,8 @@ func isValidSeedFilePath(filePath string) bool {
 		"./data",
 		"./uploads",
 		"./temp",
+		"./seed",
+		"/home/ubuntu/co-op-credit-evaluator/server/seed",
 	}
 
 	// Check if the file is in an allowed directory
