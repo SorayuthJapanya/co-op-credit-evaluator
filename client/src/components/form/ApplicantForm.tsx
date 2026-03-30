@@ -10,6 +10,7 @@ import type { ResultEvaluate } from "@/types/evaluate_types";
 import Swal from "sweetalert2";
 import { useCreateEvaluate, useUpdateEvaluate } from "@/hooks/useEvaluate";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 type ApplicantData = ReturnType<typeof createEmptyApplicant>;
 
@@ -50,6 +51,8 @@ const ApplicantForm = ({
   formType = "add",
   updateId = "",
 }: ApplicantFormProps) => {
+  const [marginType, setMarginType] = useState<string>("");
+
   const { mutateAsync: createEvaluate, isPending: isCreateEvaluatePending } =
     useCreateEvaluate();
   const { mutateAsync: updateEvaluate, isPending: isUpdating } =
@@ -76,18 +79,34 @@ const ApplicantForm = ({
     onUpdateFormData(updatedFormData);
   };
 
-  const handleConfirm = (type: string) => {
-    if (type === "" || formType === "") return;
+  const handleClearApplicant = () => {
+    Swal.fire({
+      icon: "warning",
+      title: "ยืนยันการล้างข้อมูล",
+      text: `คุณต้องการล้างข้อมูลของผู้กู้คนที่ ${currentStep} หรือไม่?`,
+      showCancelButton: true,
+      confirmButtonText: "ยืนยัน",
+      cancelButtonText: "ยกเลิก",
+      confirmButtonColor: "#d33",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleApplicantUpdate(createEmptyApplicant());
+      }
+    });
+  };
+
+  const handleConfirm = () => {
+    if (marginType === "" || formType === "") return;
 
     const updatedFormData = {
       ...formData,
-      marginType: type,
+      marginType,
     };
 
     Swal.fire({
       icon: "question",
       title: "ยืนยันการประเมิน",
-      text: `คุณต้องการประเมินด้วยเกณฑ์ ${type} หรือไม่?`,
+      text: `คุณต้องการประเมินด้วยเกณฑ์ ${marginType} หรือไม่?`,
       showCancelButton: true,
       confirmButtonText: "ยืนยัน",
       cancelButtonText: "ยกเลิก",
@@ -104,12 +123,14 @@ const ApplicantForm = ({
         if (formType === "add") {
           await createEvaluate(updatedFormData);
         } else {
-          console.log("Updating...")
           await updateEvaluate({ data: updatedFormData, id: updateId });
         }
         Swal.fire({
           icon: "success",
-          title: formType === "add" ? "สร้างแบบประเมินสำเร็จ" : "อัพเดตแบบประเมินสำเร็จ",
+          title:
+            formType === "add"
+              ? "สร้างแบบประเมินสำเร็จ"
+              : "อัพเดตแบบประเมินสำเร็จ",
           showConfirmButton: false,
           timer: 2000,
         });
@@ -125,7 +146,7 @@ const ApplicantForm = ({
         <h2 className="text-lg font-bold flex items-center text-primary">
           <User className="mr-2 w-5 h-5" />{" "}
           {currentStep === numApplicants
-            ? "DTI & DSCR"
+            ? marginType
             : `ผู้กู้คนที่ ${currentStep} จาก ${numApplicants - 1}`}
         </h2>
         <div className="flex space-x-1">
@@ -148,6 +169,7 @@ const ApplicantForm = ({
             formData={formData}
             onResultUpdate={handleResultUpdate}
             typeForm={formType}
+            marginType={marginType}
           />
         ) : (
           <>
@@ -178,38 +200,62 @@ const ApplicantForm = ({
 
       {/* Navigation Buttons */}
       <div className="flex justify-between mt-8">
-        <Button
-          onClick={handlePreviousStep}
-          disabled={currentStep === 1 || isCreateEvaluatePending || isUpdating}
-          variant="outline"
-          className="cursor-pointer"
-        >
-          ย้อนกลับ
-        </Button>
-        <div className="flex items-center justify-end gap-4">
-          {currentStep === numApplicants && (
+        <div className="flex gap-4">
+          <Button
+            onClick={handlePreviousStep}
+            disabled={
+              currentStep === 1 || isCreateEvaluatePending || isUpdating
+            }
+            variant="outline"
+            className="cursor-pointer"
+          >
+            ย้อนกลับ
+          </Button>
+          {currentStep !== numApplicants && (
             <Button
-              onClick={() => handleConfirm("DTI & DSCR (ตามเกณฑ์ Margin)")}
-              variant="secondary"
+              onClick={handleClearApplicant}
               disabled={isCreateEvaluatePending || isUpdating}
-              className="cursor-pointer hover:scale-105 active:scale-95 duration-200"
+              variant="outline"
+              className="cursor-pointer text-red-500 hover:text-red-600 hover:bg-red-50 border-red-200"
+            >
+              ล้างข้อมูล
+            </Button>
+          )}
+        </div>
+        <div className="flex items-center justify-end gap-4">
+          {currentStep === numApplicants - 1 && (
+            <Button
+              onClick={() => {
+                setMarginType("DTI & DSCR (ตามเกณฑ์ Margin)");
+                handleNextStep();
+              }}
+              variant="default"
+              disabled={isCreateEvaluatePending || isUpdating}
+              className="cursor-pointer bg-emerald-600 hover:bg-emerald-600/90 transition-all duration-200 hover:scale-105 active:scale-95"
             >
               DTI & DSCR (ตามเกณฑ์ Margin)
             </Button>
           )}
           <Button
             onClick={
-              currentStep === numApplicants
-                ? () => handleConfirm("DTI & DSCR (ผ่อนปรน Margin)")
-                : handleNextStep
+              currentStep === numApplicants - 1
+                ? () => {
+                    setMarginType("DTI & DSCR (ผ่อนปรน Margin)");
+                    handleNextStep();
+                  }
+                : currentStep === numApplicants
+                  ? handleConfirm
+                  : handleNextStep
             }
             variant="default"
             disabled={isCreateEvaluatePending || isUpdating}
             className="cursor-pointer hover:scale-105 active:scale-95 duration-200"
           >
-            {currentStep === numApplicants
+            {currentStep === numApplicants - 1
               ? "DTI & DSCR (ผ่อนปรน Margin)"
-              : "ถัดไป"}
+              : currentStep === numApplicants
+                ? "ยืนยันการประเมิน"
+                : "ถัดไป"}
           </Button>
         </div>
       </div>

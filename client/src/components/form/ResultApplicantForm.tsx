@@ -121,7 +121,7 @@ const ResultApplicantForm = ({
                   onChange={(value) =>
                     onApplicantChange(index, "customerExpenses", Number(value))
                   }
-                  required
+                  readOnly
                 />
                 <InputField
                   label="ผลลัพธ์ค่าใช้จ่ายในการอุปโภคบริโภค"

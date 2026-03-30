@@ -116,7 +116,7 @@ const CareerFormSection = ({
     field: string,
     value: string | number,
   ) => {
-    const currentParent = (applicantData[parent]) || {};
+    const currentParent = applicantData[parent] || {};
     let newBorrowerData = {
       ...applicantData,
       [parent]: {
@@ -148,8 +148,7 @@ const CareerFormSection = ({
   };
 
   const getCurrentSubCategories = () => {
-    if (!applicantData.careerCategory || !careerCategories)
-      return [];
+    if (!applicantData.careerCategory || !careerCategories) return [];
     const category = careerCategories.find(
       (cat: ICareerCategory) =>
         cat.categoryName === applicantData.careerCategory,
@@ -529,8 +528,9 @@ const CareerFormSection = ({
                   value={
                     bData.profileLost.grossProfit
                       ? (
-                          bData.businessActivity.totalIncome /
-                          bData.profileLost.grossProfit
+                          (bData.profileLost.grossProfit /
+                            bData.businessActivity.totalIncome) *
+                          100
                         ).toFixed(0)
                       : 0
                   }

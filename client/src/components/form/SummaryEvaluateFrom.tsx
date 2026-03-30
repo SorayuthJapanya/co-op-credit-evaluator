@@ -20,12 +20,14 @@ interface SummaryEvaluateFromProps {
   };
   onResultUpdate: (updatedData: ResultEvaluate) => void;
   typeForm: string;
+  marginType: string;
 }
 
 const SummaryEvaluateFrom = ({
   formData,
   onResultUpdate,
   typeForm = "add",
+  marginType,
 }: SummaryEvaluateFromProps) => {
   // Calculate initial result data from formData using useMemo
   const initialResultAddData = useMemo((): ResultEvaluate | null => {
@@ -35,6 +37,7 @@ const SummaryEvaluateFrom = ({
     const resultApplicants: ResultBorrowerData[] = formData.applicants.map(
       (applicant) => {
         const data = applicant;
+
         // calculate expenses
         const expenses =
           data.salary.tax +
@@ -45,8 +48,14 @@ const SummaryEvaluateFrom = ({
           data.salary.otherFund;
 
         // calculate result share value
+
+        const resultShareValueRegular =
+          data.businessActivity.totalIncome - data.expenseItem.totalExpense;
+
         const resultShareValue =
-          data.shareHolder.bankNetProfit - data.optionalOtherExpense;
+          marginType === "DTI & DSCR (ตามเกณฑ์ Margin)"
+            ? resultShareValueRegular
+            : data.shareHolder.bankNetProfit;
 
         // calculate total salary
         const totalSalary =
@@ -54,7 +63,24 @@ const SummaryEvaluateFrom = ({
           data.otherSalary.total +
           data.optionsSalary.total +
           resultShareValue;
-          
+
+        const resultIncome = totalSalary - expenses;
+
+        const overviewIncome =
+          resultIncome < 15000
+            ? 0.3
+            : resultIncome < 100000
+              ? 0.25
+              : resultIncome >= 100000
+                ? 0.2
+                : 0.3;
+
+
+        const resultCustomerExpenses =
+          overviewIncome >= resultIncome * overviewIncome
+            ? overviewIncome
+            : resultIncome * overviewIncome;
+
         return {
           name: data.name,
           idCard: data.idCard,
@@ -64,12 +90,12 @@ const SummaryEvaluateFrom = ({
           optionsSalary: data.optionsSalary.total,
           resultShareValue: resultShareValue,
           totalSalary: totalSalary,
-          resultIncome: totalSalary - expenses,
-          customerExpenses: 0,
-          resultCustomerExpenses: 0,
+          resultIncome: resultIncome,
+          customerExpenses: overviewIncome,
+          resultCustomerExpenses: resultCustomerExpenses,
           livingExpenses: 0,
           otherExpenses: 0,
-          totalExpenses: 0,
+          totalExpenses: resultCustomerExpenses,
         };
       },
     );
@@ -93,7 +119,7 @@ const SummaryEvaluateFrom = ({
       dti,
       dscr,
     };
-  }, [formData]);
+  }, [formData, marginType]);
 
   // Initialize resultFormData with initialResultData
   const [resultFormData, setResultFormData] = useState<ResultEvaluate | null>(
@@ -126,34 +152,14 @@ const SummaryEvaluateFrom = ({
         [field]: value,
       } as ResultBorrowerData;
 
-      // Calculate derived values
-      const resultIncome = Number(updatedApplicant.resultIncome);
-      const overviewIncome =
-        resultIncome < 15000
-          ? 0.3
-          : resultIncome < 100000
-            ? 0.25
-            : resultIncome >= 100000
-              ? 0.2
-              : 0.3;
-
-      const customerExp = Number(updatedApplicant.customerExpenses);
-      const income = Number(updatedApplicant.resultIncome);
-
-      const resultCustomerExpenses =
-        customerExp >= income * overviewIncome
-          ? customerExp
-          : income * overviewIncome;
-
       const livingExpenses = Number(updatedApplicant.livingExpenses);
       const otherExpenses = Number(updatedApplicant.otherExpenses);
       const resultTotalExpenses =
-        resultCustomerExpenses + livingExpenses + otherExpenses;
+        Number(updatedApplicant.resultCustomerExpenses) + livingExpenses + otherExpenses;
 
       // Update calculated values
       const finalApplicant = {
         ...updatedApplicant,
-        resultCustomerExpenses,
         totalExpenses: resultTotalExpenses,
       };
 

@@ -21,7 +21,6 @@ const EditCreditEvaluatorPage = () => {
   const formData = useMemo(() => {
     if (evaluateData && evaluationId) {
       const data = evaluateData?.data;
-      console.log("data: ", data)
       return {
         evaluateType: data.evaluateType || "",
         marginType: data.marginType || "",
