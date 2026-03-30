@@ -52,7 +52,7 @@ const ResultApplicantForm = ({
                   label="รายการหักของหน่วยงานที่ไม่ใช่ภาระหนี้"
                   type="number"
                   placeholder="0"
-                  value={Number(applicant.optionsSalary)}
+                  value={Number(applicant.expenses)}
                   suffix="บาท/เดือน"
                   onChange={(value) =>
                     onApplicantChange(index, "optionsSalary", Number(value))

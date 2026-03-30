@@ -37,7 +37,7 @@ const SummaryEvaluateFrom = ({
     const resultApplicants: ResultBorrowerData[] = formData.applicants.map(
       (applicant) => {
         const data = applicant;
-
+        
         // calculate expenses
         const expenses =
           data.salary.tax +
@@ -61,7 +61,7 @@ const SummaryEvaluateFrom = ({
         const totalSalary =
           data.salary.base +
           data.otherSalary.total +
-          data.optionsSalary.total +
+          data.optionsSalary.otherDocumentedIncome +
           resultShareValue;
 
         const resultIncome = totalSalary - expenses;
@@ -87,7 +87,7 @@ const SummaryEvaluateFrom = ({
           salary: data.salary.base,
           expenses: expenses,
           otherSalary: data.otherSalary.total,
-          optionsSalary: data.optionsSalary.total,
+          optionsSalary: data.optionsSalary.otherDocumentedIncome,
           resultShareValue: resultShareValue,
           totalSalary: totalSalary,
           resultIncome: resultIncome,

@@ -85,8 +85,7 @@ const SalaryFormSection = ({
       optionSalary.bonus +
       optionSalary.dividendsInterest +
       optionSalary.netSupplementaryIncome +
-      optionSalary.other +
-      optionSalary.otherDocumentedIncome;
+      optionSalary.other;
     return result || 0;
   };
 

@@ -33,7 +33,7 @@ const SummarizeDebt = ({
             required
           />
           <InputField
-            label="หนี้เดิม GSB (จาก CBS)"
+            label="หนี้เดิมสหกรณ์"
             type="number"
             placeholder="0"
             value={resultEvaluate.debtDetail.lastDebt}
@@ -42,7 +42,7 @@ const SummarizeDebt = ({
             required
           />
           <InputField
-            label="หนี้สินที่รายงานต่อ NCB (ไม่รวมหนี้เดิม GSB)"
+            label="หนี้ที่รายงานเครดิตบูโร(ไม่รวมหนี้สหกรณ์)"
             type="number"
             placeholder="0"
             value={resultEvaluate.debtDetail.debtReported}
@@ -53,7 +53,7 @@ const SummarizeDebt = ({
             required
           />
           <InputField
-            label="หนี้สินที่ไม่ได้รายงานต่อ NCB"
+            label="หนี้ที่ไม่ได้รายงานเครดิตบูโร"
             type="number"
             placeholder="0"
             value={resultEvaluate.debtDetail.debtNotReported}
