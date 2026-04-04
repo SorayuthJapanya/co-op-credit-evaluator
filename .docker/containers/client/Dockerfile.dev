@@ -1,0 +1,23 @@
+# Development Dockerfile for Vite + React application
+FROM node:20-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy package management files
+COPY package.json pnpm-lock.yaml ./
+
+# Install dependencies
+RUN pnpm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Expose the development server port (default for Vite is 5173)
+EXPOSE 5173
+
+# Start the development server
+CMD ["pnpm", "dev"]

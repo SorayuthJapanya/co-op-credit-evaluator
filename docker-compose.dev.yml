@@ -2,7 +2,7 @@ services:
   # Database Service
   db:
     image: postgres:15-alpine
-    container_name: coop_db
+    container_name: coop_db_dev
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -17,35 +17,40 @@ services:
   server:
     build:
       context: ./server
-      dockerfile: ../.docker/containers/server/Dockerfile
+      dockerfile: ../.docker/containers/server/Dockerfile.dev
       args:
         - PORT=${SERVER_PORT:-10000}
-    container_name: coop_server
+    container_name: coop_server_dev
     restart: unless-stopped
     depends_on:
       - db
     environment:
       - ENV=${ENV:-development}
-      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:8080}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:5173}
       - DB_DSN=${DB_DSN:-host=db port=5432 user=postgres password=password dbname=credit_evaluator sslmode=disable TimeZone=Asia/Bangkok}
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-at-least-32-characters-long}
       - PORT=${SERVER_PORT:-10000}
     ports:
       - "${SERVER_PORT:-10000}:${SERVER_PORT:-10000}"
+    volumes:
+      - ./server:/app
 
-  # Frontend Client Service
+  # Frontend Client Service (Development)
   client:
     build:
       context: ./client
-      dockerfile: ../.docker/containers/client/Dockerfile
-      args:
-        - VITE_BASE_URL=${VITE_BASE_URL:-http://localhost:8080/api/v1}
-    container_name: coop_client
+      dockerfile: ../.docker/containers/client/Dockerfile.dev
+    container_name: coop_client_dev
     restart: unless-stopped
     depends_on:
       - server
     ports:
-      - "${CLIENT_PORT:-8080}:80"
+      - "${CLIENT_PORT:-5173}:5173"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    environment:
+      - VITE_BASE_URL=${VITE_BASE_URL:-http://localhost:10000/api/v1}
 
 volumes:
   postgres_data:
