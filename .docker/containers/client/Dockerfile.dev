@@ -19,5 +19,8 @@ COPY . .
 # Expose the development server port (default for Vite is 5173)
 EXPOSE 5173
 
+# Ensure Vite binds to all interfaces inside the container
+ENV HOST=0.0.0.0
+
 # Start the development server
-CMD ["pnpm", "dev"]
+CMD ["pnpm", "exec", "vite", "--host", "0.0.0.0"]

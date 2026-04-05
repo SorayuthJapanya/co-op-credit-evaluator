@@ -1,8 +1,8 @@
 // Chart data types
 export interface MembershipGrowthData {
-  year: string;
-  memberCount: number;
-  growthRate: number;
+  year: number;
+  count: number;
+  growthRate?: number;
 }
 
 export interface MemberCountBySubdistrictData {

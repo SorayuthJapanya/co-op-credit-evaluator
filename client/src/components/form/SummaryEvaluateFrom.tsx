@@ -20,14 +20,12 @@ interface SummaryEvaluateFromProps {
   };
   onResultUpdate: (updatedData: ResultEvaluate) => void;
   typeForm: string;
-  marginType: string;
 }
 
 const SummaryEvaluateFrom = ({
   formData,
   onResultUpdate,
   typeForm = "add",
-  marginType,
 }: SummaryEvaluateFromProps) => {
   // Calculate initial result data from formData using useMemo
   const initialResultAddData = useMemo((): ResultEvaluate | null => {
@@ -48,18 +46,12 @@ const SummaryEvaluateFrom = ({
           data.salary.otherFund;
 
         // calculate result share value
-
-        const resultShareValueRegular =
-          data.businessActivity.totalIncome - data.expenseItem.totalExpense;
-
-        const resultShareValue =
-          marginType === "DTI & DSCR (ตามเกณฑ์ Margin)"
-            ? resultShareValueRegular
-            : data.shareHolder.bankNetProfit;
+        const resultShareValue = data.shareHolder.bankNetProfit;
 
         // calculate total salary
         const totalSalary =
           data.salary.base +
+          (data.salary.freelanceIncome || 0) +
           data.otherSalary.total +
           data.optionsSalary.otherDocumentedIncome +
           resultShareValue;
@@ -84,7 +76,7 @@ const SummaryEvaluateFrom = ({
         return {
           name: data.name,
           idCard: data.idCard,
-          salary: data.salary.base,
+          salary: data.salary.base + data.salary.freelanceIncome,
           expenses: expenses,
           otherSalary: data.otherSalary.total,
           optionsSalary: data.optionsSalary.otherDocumentedIncome,
@@ -119,7 +111,7 @@ const SummaryEvaluateFrom = ({
       dti,
       dscr,
     };
-  }, [formData, marginType]);
+  }, [formData]);
 
   // Initialize resultFormData with initialResultData
   const [resultFormData, setResultFormData] = useState<ResultEvaluate | null>(

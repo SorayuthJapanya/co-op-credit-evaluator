@@ -29,7 +29,7 @@ const LoginForm = () => {
   const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
     await login(data);
     form.reset();
-    navigate("/");
+    navigate("/dashboard");
   };
 
   return (

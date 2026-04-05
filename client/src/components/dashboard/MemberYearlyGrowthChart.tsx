@@ -49,9 +49,9 @@ export const MemberYearlyGrowthChart: React.FC<
   const rawData = data.charts?.membershipGrowth?.data || [];
 
   const chartData = rawData.map((item: MembershipGrowthData, index: number) => {
-    const prevCount = index > 0 ? rawData[index - 1].memberCount : item.memberCount;
+    const prevCount = index > 0 ? rawData[index - 1].count : item.count;
     const growthRate =
-      prevCount === 0 ? 0 : ((item.memberCount - prevCount) / prevCount) * 100;
+      prevCount === 0 ? 0 : ((item.count - prevCount) / prevCount) * 100;
 
     return {
       ...item,

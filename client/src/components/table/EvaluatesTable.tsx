@@ -105,6 +105,7 @@ const EvaluatesTable = ({
             <TableHead className="text-center">ภาระหนี้รวม</TableHead>
             <TableHead className="text-center">DTI</TableHead>
             <TableHead className="text-center">DSCR</TableHead>
+            <TableHead className="text-center">ผลการประเมิน</TableHead>
             <TableHead className="text-center w-24">จัดการ</TableHead>
           </TableRow>
         </TableHeader>
@@ -132,13 +133,24 @@ const EvaluatesTable = ({
               </TableCell>
               <TableCell className="text-center text-gray-700">
                 <span className="px-3 py-1 bg-green-100 text-green-700 font-medium rounded-md">
-                  {getDTI(evaluate).toFixed(2)} เท่า
+                  {getDTI(evaluate).toFixed(2)} %
                 </span>
               </TableCell>
               <TableCell className="text-center text-gray-700">
                 <span className="px-3 py-1 bg-blue-100 text-blue-700 font-medium rounded-md">
-                  {getDSCR(evaluate).toFixed(2)} %
+                  {getDSCR(evaluate).toFixed(2)} เท่า
                 </span>
+              </TableCell>
+              <TableCell className="text-center">
+                {evaluate.result.dscr < 1 ? (
+                  <span className="px-3 py-1 bg-red-100 text-red-700 font-medium rounded-md">
+                    ไม่เป็นไปตามเกณฑ์
+                  </span>
+                ) : (
+                  <span className="px-3 py-1 bg-green-100 text-green-700 font-medium rounded-md">
+                    เป็นไปตามเกณฑ์
+                  </span>
+                )}
               </TableCell>
               <TableCell onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center justify-center gap-2">
@@ -171,9 +183,9 @@ const EvaluatesTable = ({
         {/* ปรับแก้ typo จาก ภxl เป็น 4xl และเพิ่ม max-h-[85vh] overflow-y-auto เพื่อให้ Modal scroll ได้เมื่อข้อมูลยาว */}
         <DialogContent className="w-full sm:max-w-4xl max-h-[85vh] overflow-y-auto [&>button]:hidden">
           <DialogHeader>
-            <DialogTitle className="text-xl font-medium flex items-center gap-2 border-b border-gray-200 pb-4">
+            <DialogTitle className="text-lg sm:text-xl font-medium flex items-center gap-2 border-b border-gray-200 pb-4">
               <User className="w-6 h-6" /> รายละเอียดการประเมิน
-              <span className="ml-auto text-sm font-normal text-gray-500">
+              <span className="ml-auto text-xs sm:text-sm font-normal text-gray-500">
                 วันที่:{" "}
                 {selectedEvaluate?.createdAt
                   ? formatDateToThai(selectedEvaluate.createdAt)
@@ -228,10 +240,13 @@ const EvaluatesTable = ({
               {/* Section 2: ข้อมูลผู้สมัคร และ อาชีพ */}
               <div>
                 <h3 className="text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  ข้อมูลผู้สมัคร ({selectedEvaluate.evaluateType})
+                  ประเภทสินเชื่อ: {selectedEvaluate.evaluateType}
+                </h3>
+                <h3 className="text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  ประเภทเงินกู้: {selectedEvaluate.marginType}
                 </h3>
                 {selectedEvaluate.applicants.map((applicant, index) => (
-                  <div key={index} className="mb-4">
+                  <div key={index} className="my-6">
                     <h4 className="text-sm font-medium text-gray-700 mb-2">
                       ผู้สมัครที่ {index + 1}
                     </h4>
@@ -252,20 +267,26 @@ const EvaluatesTable = ({
                           {applicant.idCard}
                         </p>
                       </div>
-                      <div className="sm:col-span-2">
-                        <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          หมวดหมู่อาชีพ
-                        </label>
-                        <p className="text-gray-900 mt-1">
-                          {applicant.careerCategory}
-                        </p>
-                      </div>
-                      <div className="sm:col-span-2">
-                        <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          อาชีพหลัก
-                        </label>
-                        <p className="text-gray-900 mt-1">{applicant.career}</p>
-                      </div>
+                      {applicant.careerCategory && applicant.career && (
+                        <>
+                          <div className="sm:col-span-2">
+                            <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              หมวดหมู่อาชีพ
+                            </label>
+                            <p className="text-gray-900 mt-1">
+                              {applicant.careerCategory}
+                            </p>
+                          </div>
+                          <div className="sm:col-span-2">
+                            <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              อาชีพหลัก
+                            </label>
+                            <p className="text-gray-900 mt-1">
+                              {applicant.career}
+                            </p>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -276,10 +297,10 @@ const EvaluatesTable = ({
                 {selectedEvaluate.result.applicants.map((applicant, index) => (
                   <div
                     key={index}
-                    className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+                    className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-6 sm:pb-8 border-b border-gray-200 last:border-b-0 last:pb-0"
                   >
                     <div className="lg:col-span-2">
-                      <h3 className="text-base font-semibold text-gray-900 mb-3">
+                      <h3 className="text-base font-semibold text-gray-900">
                         ข้อมูลทางการเงิน - ผู้สมัครที่ {index + 1}
                       </h3>
                     </div>
@@ -372,8 +393,7 @@ const EvaluatesTable = ({
                             ค่าใช้จ่ายรวม
                           </span>
                           <span className="font-semibold text-red-600">
-                            ฿{" "}
-                            {applicant.totalExpenses.toLocaleString()}
+                            ฿ {applicant.totalExpenses.toLocaleString()}
                           </span>
                         </div>
                       </div>

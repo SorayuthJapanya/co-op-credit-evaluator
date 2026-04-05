@@ -31,11 +31,11 @@ const SidebarUser = ({ userProfile }: { userProfile: IUser }) => {
 
       queryClient.setQueryData(["authUser"], null);
 
-      navigate("/login", { replace: true });
+      navigate("/", { replace: true });
     } catch (error) {
       console.error("Logout failed:", error);
       queryClient.setQueryData(["authUser"], null);
-      navigate("/login", { replace: true });
+      navigate("/", { replace: true });
     }
   };
   const { isMobile } = useSidebar();

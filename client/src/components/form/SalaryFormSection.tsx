@@ -54,7 +54,8 @@ const SalaryFormSection = ({
   const calculateTotalSalary = (data: BorrowerData) => {
     const salary = data.salary;
     const result =
-      salary.base -
+      salary.base +
+      (salary.freelanceIncome || 0) -
       (salary.tax +
         salary.socialSecurityFund +
         salary.providentFund +
@@ -121,6 +122,17 @@ const SalaryFormSection = ({
               value={applicantData.salary.base}
               onChange={(value) =>
                 handleNestedFieldChange("salary", "base", value)
+              }
+              suffix="บาท/เดือน"
+            />
+
+            <InputField
+              label="รายได้เสริม (ฟรีแลนซ์)"
+              type="number"
+              placeholder="0"
+              value={applicantData.salary.freelanceIncome}
+              onChange={(value) =>
+                handleNestedFieldChange("salary", "freelanceIncome", value)
               }
               suffix="บาท/เดือน"
             />

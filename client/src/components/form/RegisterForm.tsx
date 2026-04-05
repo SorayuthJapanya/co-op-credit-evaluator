@@ -31,7 +31,7 @@ const RegisterForm = () => {
   const onSubmit = async (data: z.infer<typeof registerFormSchema>) => {
     await register(data);
     form.reset();
-    navigate("/");
+    navigate("/dashboard");
   };
 
   return (

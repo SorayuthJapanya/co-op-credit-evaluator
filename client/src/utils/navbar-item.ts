@@ -10,7 +10,7 @@ export const getFirstCharAfterPrefix = (fullname: string): string => {
 export const navbarItem = [
   {
     title: "แดชบอร์ด",
-    path: "/",
+    path: "/dashboard",
     icon: LayoutDashboard,
   },
   {

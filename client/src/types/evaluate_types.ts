@@ -30,6 +30,7 @@ export interface ShareHolder {
 export interface SalaryDetails {
   base: number;
   tax: number;
+  freelanceIncome: number;
   socialSecurityFund: number;
   providentFund: number;
   shareFund: number;

@@ -169,7 +169,6 @@ const ApplicantForm = ({
             formData={formData}
             onResultUpdate={handleResultUpdate}
             typeForm={formType}
-            marginType={marginType}
           />
         ) : (
           <>

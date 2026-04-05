@@ -34,6 +34,7 @@ export const createEmptyApplicant = (): Applicant => ({
   optionalOtherExpense: 0,
   salary: {
     base: 0,
+    freelanceIncome: 0,
     tax: 0,
     socialSecurityFund: 0,
     providentFund: 0,
@@ -98,6 +99,7 @@ export const createSampleApplicant = (): Applicant => ({
   optionalOtherExpense: 5000,
   salary: {
     base: 50000,
+    freelanceIncome: 0,
     tax: 2500,
     socialSecurityFund: 750,
     providentFund: 5000,

@@ -17,6 +17,9 @@ func SetupRoutes(app fiber.Router) {
 	// api routes
 	api := app.Group("/api/v1")
 
+	// public routes (no auth required)
+	setUpPublicRoutes(api)
+
 	// auth routes
 	authRoute := api.Group("/auth")
 	setUpAuthRoutes(authRoute)

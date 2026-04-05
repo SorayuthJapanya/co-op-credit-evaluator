@@ -75,18 +75,34 @@ const SummarizeDebt = ({
             required
           />
         </div>
-        <div className="mt-4 px-3 py-1.5 bg-violet-50 rounded-lg flex items-cent justify-between text-violet-700">
+        <div className="mt-4 px-3 py-1.5 bg-violet-50 border border-violet-200 rounded-lg flex items-cent justify-between text-violet-700">
           <p className="font-semibold">DTI (Debt to Income Ratio) </p>
           <p className="text-lg font-semibold">
             {resultEvaluate.dti.toFixed(2)} %
           </p>
         </div>
-        <div className="mt-4 px-3 py-1.5 bg-green-50 rounded-lg flex items-cent justify-between text-green-700">
+        <div className="mt-4 px-3 py-1.5 bg-green-50 border border-green-200 rounded-lg flex items-cent justify-between text-green-700">
           <p className="font-semibold">DSCR (Debt Service Coverage Ratio)</p>
           <p className="text-lg font-semibold">
             {resultEvaluate.dscr.toFixed(2)} เท่า
           </p>
         </div>
+        {resultEvaluate.dscr !== 0 && (
+          <div
+            className={`mt-4 px-3 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
+              resultEvaluate.dscr < 1
+                ? "bg-red-50 text-red-700 border border-red-200"
+                : "bg-green-50 text-emerald-700 border border-green-200"
+            }`}
+          >
+            <p className="font-semibold">สถานะการพิจารณา</p>
+            <p
+              className={`text-lg font-semibold ${resultEvaluate.dscr < 1 ? "text-red-600" : "text-emerald-600"}`}
+            >
+              {resultEvaluate.dscr < 1 ? "ไม่เป็นไปตามเกณฑ์" : "เป็นไปตามเกณฑ์"}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

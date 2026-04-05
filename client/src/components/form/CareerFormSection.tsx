@@ -193,28 +193,6 @@ const CareerFormSection = ({
         </div>
 
         <div className="p-6 space-y-6">
-          {/* ข้อมูลส่วนตัว Section */}
-          <h3 className="text-lg font-semibold mb-4 text-primary">
-            ข้อมูลส่วนตัว
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-6 border-b">
-            <InputField
-              label="ชื่อผู้กู้"
-              type="text"
-              placeholder="ชื่อ-สกุล"
-              value={bData.name}
-              onChange={(value) => handleFieldChange("name", value)}
-              required
-            />
-            <InputField
-              label="เลขบัตรประชาชน"
-              type="text"
-              placeholder="เลขบัตรประชาชน"
-              value={bData.idCard}
-              onChange={(value) => handleFieldChange("idCard", value)}
-              required
-            />
-          </div>
           {/* อาชีพ Section */}
           <h3 className="text-lg font-semibold mb-4 text-primary">อาชีพ</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pb-6 border-b">

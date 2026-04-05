@@ -17,6 +17,7 @@ pnpm-debug.log*
 /server/main
 /server/main.exe
 /server/data/
+.air.toml
 
 # Postgres/Docker Volumes
 postgres_data/

@@ -92,6 +92,7 @@ type ShareHolder struct {
 
 type Salary struct {
 	Base               float64 `gorm:"not null;default:0" json:"base"`
+	FreelanceIncome    float64 `gorm:"not null;default:0" json:"freelanceIncome"`
 	Tax                float64 `gorm:"not null;default:0" json:"tax"`
 	SocialSecurityFund float64 `gorm:"not null;default:0" json:"socialSecurityFund"`
 	ProvidentFund      float64 `gorm:"not null;default:0" json:"providentFund"`
