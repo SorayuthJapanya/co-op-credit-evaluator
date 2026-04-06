@@ -21,4 +21,5 @@ func setUpAuthWithProtectedRoutes(protectedRoute fiber.Router) {
 	protectedRoute.Get("/evaluate-logs", controllers.GetEvaluateLogs, middlewares.SuperAdminMiddleware())
 	protectedRoute.Post("/admins", controllers.CreateAdmin, middlewares.SuperAdminMiddleware())
 	protectedRoute.Delete("/admins/:id", controllers.DeleteAdmin, middlewares.SuperAdminMiddleware())
+	protectedRoute.Get("/all-evaluates", controllers.GetAllEvaluates, middlewares.SuperAdminMiddleware())
 }

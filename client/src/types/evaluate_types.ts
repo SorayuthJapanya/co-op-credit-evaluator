@@ -137,6 +137,7 @@ export interface ICreateEvaluate {
 export interface Evaluate {
   id: string;
   userId: string;
+  user?: { id: string; username: string; fullname: string; role: string };
   evaluateType: string;
   marginType: string;
   applicants: Applicant[];

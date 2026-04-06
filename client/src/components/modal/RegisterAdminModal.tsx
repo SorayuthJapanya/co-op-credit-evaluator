@@ -98,11 +98,11 @@ const RegisterAdminModal = ({ isOpen, onClose, onSuccess }: RegisterAdminModalPr
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-2">
           
           <Field data-invalid={!!errors.username}>
-            <FieldLabel htmlFor="username">Username (ชื่อผู้ใช้)</FieldLabel>
+            <FieldLabel htmlFor="username">เลขบัตรประชาชน</FieldLabel>
             <Input
               id="username"
               {...register("username")}
-              placeholder="กรอกชื่อผู้ใช้งาน"
+              placeholder="กรอกเลขบัตรประชาชน"
             />
             {errors.username && <FieldError>{errors.username.message}</FieldError>}
           </Field>

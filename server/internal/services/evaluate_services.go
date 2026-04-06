@@ -154,7 +154,7 @@ func CreateEvaluate(userID uuid.UUID, request *models.EvaluateRequest) (*models.
 func GetEvaluates(search string, userID uuid.UUID, page int, limit int) ([]models.Evaluate, int64, error) {
 	var evaluates []models.Evaluate
 	var total int64
-	query := database.DB.Model(&models.Evaluate{}).Preload("Applicants").Preload("Result").Preload("Result.Applicants")
+	query := database.DB.Model(&models.Evaluate{}).Preload("Applicants").Preload("Result").Preload("Result.Applicants").Preload("User")
 
 	// Apply user filter if provided
 	if userID != uuid.Nil {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Edit, Trash2, User, Download } from "lucide-react";
+import { User, Download } from "lucide-react";
 import { axiosInstance } from "@/utils/axios";
 import type { Evaluate } from "@/types/evaluate_types";
 import {
@@ -19,22 +19,18 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Swal from "sweetalert2";
+import { useAuthUser } from "@/hooks/useAuth";
 
-interface EvaluatesTableProps {
+interface AllEvaluatesTableProps {
   evaluates: Evaluate[];
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
 }
 
-const EvaluatesTable = ({
-  evaluates,
-  onEdit,
-  onDelete,
-}: EvaluatesTableProps) => {
+const AllEvaluatesTable = ({ evaluates }: AllEvaluatesTableProps) => {
   const [selectedEvaluate, setSelectedEvaluate] = useState<Evaluate | null>(
     null,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isLoading } = useAuthUser();
 
   const handleRowClick = (evaluate: Evaluate) => {
     setSelectedEvaluate(evaluate);
@@ -54,13 +50,11 @@ const EvaluatesTable = ({
         didOpen: () => Swal.showLoading(),
       });
 
-      // 1. ดึง HTML จาก Backend
       const resp = await axiosInstance.get(exportUrl, { responseType: "text" });
       const html = resp.data as string;
 
-      // 2. สร้าง Hidden Iframe เพื่อใช้สั่ง Print โดยไม่ต้องเปิดหน้าต่างใหม่
       const iframe = document.createElement("iframe");
-      iframe.style.display = "none"; // ซ่อน iframe ไว้
+      iframe.style.display = "none";
       document.body.appendChild(iframe);
 
       const iframeDoc =
@@ -71,15 +65,12 @@ const EvaluatesTable = ({
       iframeDoc.write(html);
       iframeDoc.close();
 
-      // 3. รอให้ Content โหลดเสร็จแล้วสั่ง Print (Save PDF)
-      // ใช้ช่วงเวลาสั้นๆ เพื่อให้ Browser Render ตารางให้เสร็จก่อน
       setTimeout(() => {
         Swal.close();
         if (iframe.contentWindow) {
           iframe.contentWindow.focus();
           iframe.contentWindow.print();
 
-          // ลบ iframe ทิ้งหลังจากสั่งพิมพ์เสร็จ (เพื่อประหยัด Memory)
           setTimeout(() => {
             document.body.removeChild(iframe);
           }, 1000);
@@ -96,33 +87,8 @@ const EvaluatesTable = ({
     }
   };
 
-  const handleEditClick = (e: React.MouseEvent, evaluate: Evaluate) => {
-    e.stopPropagation();
-    onEdit(evaluate.id);
-  };
-
-  const handleDeleteClick = (e: React.MouseEvent, evaluate: Evaluate) => {
-    e.stopPropagation();
-    Swal.fire({
-      icon: "question",
-      title: "ยืนยันการลบข้อมูล",
-      text: `คุณต้องการลบข้อมูลการประเมินนี้หรือไม่?`,
-      showCancelButton: true,
-      confirmButtonText: "ลบข้อมูล",
-      cancelButtonText: "ยกเลิก",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: "กำลังลบข้อมูล...",
-          showCancelButton: false,
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          },
-        });
-        onDelete(evaluate.id);
-      }
-    });
+  const getOwnerName = (evaluate: Evaluate) => {
+    return <p>{evaluate.user?.fullname ?? evaluate.userId}</p>;
   };
 
   const getBorrowerName = (evaluate: Evaluate) => {
@@ -149,6 +115,10 @@ const EvaluatesTable = ({
     return evaluate.result.dscr || 0;
   };
 
+  if (isLoading) {
+    return <div>กำลังโหลด...</div>;
+  }
+
   return (
     <div className="rounded-md border bg-white overflow-hidden">
       <Table>
@@ -156,13 +126,14 @@ const EvaluatesTable = ({
           <TableRow>
             <TableHead className="w-16 text-center">ลำดับ</TableHead>
             <TableHead className="text-center">วันที่ทำรายการ</TableHead>
+            <TableHead className="text-center">ผู้ดำเนินการ</TableHead>
             <TableHead>ชื่อผู้กู้</TableHead>
             <TableHead className="text-center">รายได้</TableHead>
             <TableHead className="text-center">ภาระหนี้รวม</TableHead>
             <TableHead className="text-center">DTI</TableHead>
             <TableHead className="text-center">DSCR</TableHead>
             <TableHead className="text-center">ผลการประเมิน</TableHead>
-            <TableHead className="text-center w-24">จัดการ</TableHead>
+            <TableHead className="text-center w-20">ส่งออก</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -177,6 +148,9 @@ const EvaluatesTable = ({
               </TableCell>
               <TableCell className="text-gray-700 text-center">
                 {formatDateToThai(evaluate.createdAt || "")}
+              </TableCell>
+              <TableCell className="font-medium">
+                {getOwnerName(evaluate)}
               </TableCell>
               <TableCell className="font-medium">
                 {getBorrowerName(evaluate)}
@@ -209,7 +183,7 @@ const EvaluatesTable = ({
                 )}
               </TableCell>
               <TableCell onClick={(e) => e.stopPropagation()}>
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -219,24 +193,6 @@ const EvaluatesTable = ({
                   >
                     <Download className="h-4 w-4" />
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-emerald-600 hover:text-emerald-700 bg-emerald-100 border border-emerald-200 transition-all duration-300 ease-in-out hover:bg-emerald-200 hover:border-emerald-300 cursor-pointer"
-                    title="แก้ไข"
-                    onClick={(e) => handleEditClick(e, evaluate)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-red-600 hover:text-red-700 bg-red-100 border border-red-200 transition-all duration-300 ease-in-out hover:bg-red-200 hover:border-red-300 cursor-pointer"
-                    title="ลบ"
-                    onClick={(e) => handleDeleteClick(e, evaluate)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
                 </div>
               </TableCell>
             </TableRow>
@@ -245,7 +201,6 @@ const EvaluatesTable = ({
       </Table>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        {/* ปรับแก้ typo จาก ภxl เป็น 4xl และเพิ่ม max-h-[85vh] overflow-y-auto เพื่อให้ Modal scroll ได้เมื่อข้อมูลยาว */}
         <DialogContent className="w-full sm:max-w-4xl max-h-[85vh] overflow-y-auto [&>button]:hidden">
           <DialogHeader>
             <DialogTitle className="text-lg sm:text-xl font-medium flex items-center gap-2 border-b border-gray-200 pb-4">
@@ -275,7 +230,7 @@ const EvaluatesTable = ({
 
           {selectedEvaluate && (
             <div className="space-y-8 py-4">
-              {/* Section 1: Highlight Metrics (ตัวเลขสำคัญสำหรับการตัดสินใจ) */}
+              {/* Section 1: Highlight Metrics */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl">
                   <p className="text-sm font-medium text-blue-600 mb-1">DTI</p>
@@ -371,7 +326,7 @@ const EvaluatesTable = ({
                 ))}
               </div>
 
-              {/* Section 3: รายละเอียดทางการเงิน แบ่ง 2 คอลัมน์ (รายได้ vs ภาระหนี้/ค่าใช้จ่าย) */}
+              {/* Section 3: รายละเอียดทางการเงิน */}
               <div className="space-y-6">
                 {selectedEvaluate.result.applicants.map((applicant, index) => (
                   <div
@@ -488,4 +443,4 @@ const EvaluatesTable = ({
   );
 };
 
-export default EvaluatesTable;
+export default AllEvaluatesTable;

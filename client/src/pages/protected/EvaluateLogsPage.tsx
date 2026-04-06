@@ -33,7 +33,7 @@ const EvaluateLogsPage = () => {
   const fetchLogs = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await getEvaluateLogs({ search, page, limit: 10 });
+      const response = await getEvaluateLogs({ search, page, limit: 20 });
       setLogs(response.data);
       setTotalPages(response.pagination.totalPages);
       setTotalItems(response.pagination.total);

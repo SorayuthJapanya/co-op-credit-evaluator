@@ -9,6 +9,7 @@ import (
 type Evaluate struct {
 	Id           uuid.UUID      `gorm:"type:uuid;default:gen_random_uuid();primarykey" json:"id"`
 	UserID       uuid.UUID      `gorm:"not null" json:"userID"`
+	User         *Admin         `gorm:"foreignKey:UserID" json:"user,omitempty"`
 	EvaluateType string         `gorm:"not null" json:"evaluateType"`
 	MarginType   string         `gorm:"not null" json:"marginType"`
 	Applicants   []Applicant    `gorm:"foreignKey:EvaluateID" json:"applicants"`

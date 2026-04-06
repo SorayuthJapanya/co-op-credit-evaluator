@@ -1,4 +1,4 @@
-import { Briefcase, FilePlus, FileText, LayoutDashboard, Users } from "lucide-react";
+import { Briefcase, Database, FileText, FilePlus, LayoutDashboard, Lock, Users, FileStack } from "lucide-react";
 
 export const getFirstCharAfterPrefix = (fullname: string): string => {
   if (!fullname) return "";
@@ -7,7 +7,14 @@ export const getFirstCharAfterPrefix = (fullname: string): string => {
   return match ? match[1] : fullname.trim().charAt(0);
 };
 
-export const navbarItem = [
+export interface NavbarItem {
+  title: string;
+  path: string;
+  icon: typeof LayoutDashboard;
+  role?: "SUPER_ADMIN";
+}
+
+export const navbarItem: NavbarItem[] = [
   {
     title: "แดชบอร์ด",
     path: "/dashboard",
@@ -32,5 +39,23 @@ export const navbarItem = [
     title: "จัดการหมวดหมู่อาชีพ",
     path: "/manage-career-category",
     icon: Briefcase,
+  },
+  {
+    title: "เอกสารประเมินทั้งหมด",
+    path: "/all-evaluations",
+    icon: FileStack,
+    role: "SUPER_ADMIN",
+  },
+  {
+    title: "จัดการผู้ใช้",
+    path: "/manage-admins",
+    icon: Lock,
+    role: "SUPER_ADMIN",
+  },
+  {
+    title: "Log",
+    path: "/evaluate-logs",
+    icon: Database,
+    role: "SUPER_ADMIN",
   },
 ];

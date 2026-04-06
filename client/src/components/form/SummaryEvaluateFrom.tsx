@@ -5,7 +5,7 @@ import type {
   DebtDetail,
 } from "@/types/evaluate_types";
 import { FileCheckCorner } from "lucide-react";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import ResultApplicantForm from "./ResultApplicantForm";
 import SummarizeDebt from "./SummarizeDebt";
 
@@ -115,12 +115,17 @@ const SummaryEvaluateFrom = ({
 
   // Initialize and keep resultFormData in sync with incoming formData
   const [resultFormData, setResultFormData] = useState<ResultEvaluate | null>(null);
+  const initializedRef = useRef(false);
 
-  // Sync logic: for `add` flow compute from applicants; for `update`, prefer provided result
+  // Sync logic: for `add` flow initialize once; for `update`, prefer provided result
   useEffect(() => {
     if (typeForm === "add") {
-      setResultFormData(initialResultAddData);
-      if (initialResultAddData) onResultUpdate(initialResultAddData);
+      // Only initialize once to avoid resetting user-typed debt values
+      if (!initializedRef.current && initialResultAddData) {
+        initializedRef.current = true;
+        setResultFormData(initialResultAddData);
+        onResultUpdate(initialResultAddData);
+      }
       return;
     }
 

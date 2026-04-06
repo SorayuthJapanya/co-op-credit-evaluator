@@ -63,6 +63,46 @@ func CreateEvaluate(c fiber.Ctx) error {
 	})
 }
 
+func GetAllEvaluates(c fiber.Ctx) error {
+	// Get query parameters
+	search := c.Query("search", "")
+	pageStr := c.Query("page", "1")
+	limitStr := c.Query("limit", "10")
+
+	// Parse pagination parameters
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit < 1 || limit > 100 {
+		limit = 10
+	}
+
+	// Call service with uuid.Nil to get all evaluates
+	evaluates, total, err := services.GetEvaluates(search, uuid.Nil, page, limit)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "ไม่สามารถดึงข้อมูลการประเมินได้",
+		})
+	}
+
+	// Calculate pagination info
+	totalPages := (total + int64(limit) - 1) / int64(limit)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ดึงข้อมูลการประเมินทั้งหมดสำเร็จ",
+		"data":    evaluates,
+		"pagination": fiber.Map{
+			"page":       page,
+			"limit":      limit,
+			"total":      total,
+			"totalPages": totalPages,
+		},
+	})
+}
+
 func GetEvaluates(c fiber.Ctx) error {
 	userIDStr := c.Locals("user_id").(string)
 	userID, err := uuid.Parse(userIDStr)

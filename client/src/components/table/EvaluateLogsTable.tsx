@@ -40,7 +40,7 @@ const EvaluateLogsTable = ({ logs }: EvaluateLogsTableProps) => {
             <TableHead className="w-16 text-center whitespace-nowrap">ลำดับ</TableHead>
             <TableHead className="text-center w-56 whitespace-nowrap">เวลาที่ทำรายการ</TableHead>
             <TableHead className="w-48 whitespace-nowrap">ชื่อผู้ทำรายการ</TableHead>
-            <TableHead className="w-32 text-center whitespace-nowrap">สิทธิ์</TableHead>
+            <TableHead className="w-48 text-center whitespace-nowrap">สิทธิ์</TableHead>
             <TableHead className="whitespace-nowrap">เหตุการณ์ (Action)</TableHead>
           </TableRow>
         </TableHeader>
@@ -54,7 +54,7 @@ const EvaluateLogsTable = ({ logs }: EvaluateLogsTableProps) => {
           ) : (
             logs.map((log, index) => (
               <TableRow key={log.logs_id || index} className="hover:bg-gray-50/50 transition-colors">
-                <TableCell className="text-center text-gray-500">{index + 1}</TableCell>
+                <TableCell className="p-3 text-center text-gray-500">{index + 1}</TableCell>
                 <TableCell className="text-gray-700 text-center whitespace-nowrap">
                   {formatDateTime(log.timestamp)}
                 </TableCell>
