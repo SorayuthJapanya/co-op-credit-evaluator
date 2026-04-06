@@ -13,6 +13,8 @@ github.com/gofiber/utils/v2 v2.0.0 h1:SCC3rpsEDWupFSHtc0RKxg/BKgV0s1qKfZg9Jv6D0s
 github.com/gofiber/utils/v2 v2.0.0/go.mod h1:xF9v89FfmbrYqI/bQUGN7gR8ZtXot2jxnZvmAUtiavE=
 github.com/golang-jwt/jwt/v5 v5.3.1 h1:kYf81DTWFe7t+1VvL7eS+jKFVWaUnK9cB1qbwn63YCY=
 github.com/golang-jwt/jwt/v5 v5.3.1/go.mod h1:fxCRLWMO43lRc8nhHWY6LGqRcf+1gQWArsqaEUEa5bE=
+github.com/gomutex/godocx v0.1.5 h1:jAqGmlGnvid1GmrgJulYx/yPnrlr2jzA5LGpOy7Z6AM=
+github.com/gomutex/godocx v0.1.5/go.mod h1:x2x+ZanJAhhG0vxU0nvW1WomfWD+qSB6tcMpP4shP50=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=

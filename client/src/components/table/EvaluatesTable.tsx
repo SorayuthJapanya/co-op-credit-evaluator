@@ -42,29 +42,57 @@ const EvaluatesTable = ({
   };
 
   const handleExportClick = async (e: React.MouseEvent, evaluate: Evaluate) => {
+    e.preventDefault();
     e.stopPropagation();
 
     const exportUrl = `/protected/evaluates/${evaluate.id}/export`;
 
     try {
-      Swal.fire({ title: "กำลังเตรียมไฟล์สำหรับส่งออก...", allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-      const resp = await axiosInstance.get(exportUrl, { responseType: "text" });
-      Swal.close();
+      Swal.fire({
+        title: "กำลังเตรียมไฟล์ PDF...",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
 
+      // 1. ดึง HTML จาก Backend
+      const resp = await axiosInstance.get(exportUrl, { responseType: "text" });
       const html = resp.data as string;
-      const win = window.open("", "_blank", "width=900,height=700");
-      if (!win) {
-        Swal.fire({ icon: "error", title: "ไม่สามารถเปิดหน้าต่างใหม่ได้" });
-        return;
-      }
-      win.document.open();
-      win.document.write(html);
-      win.document.close();
-      setTimeout(() => { win.focus(); win.print(); }, 500);
+
+      // 2. สร้าง Hidden Iframe เพื่อใช้สั่ง Print โดยไม่ต้องเปิดหน้าต่างใหม่
+      const iframe = document.createElement("iframe");
+      iframe.style.display = "none"; // ซ่อน iframe ไว้
+      document.body.appendChild(iframe);
+
+      const iframeDoc =
+        iframe.contentWindow?.document || iframe.contentDocument;
+      if (!iframeDoc) throw new Error("Cannot access iframe document");
+
+      iframeDoc.open();
+      iframeDoc.write(html);
+      iframeDoc.close();
+
+      // 3. รอให้ Content โหลดเสร็จแล้วสั่ง Print (Save PDF)
+      // ใช้ช่วงเวลาสั้นๆ เพื่อให้ Browser Render ตารางให้เสร็จก่อน
+      setTimeout(() => {
+        Swal.close();
+        if (iframe.contentWindow) {
+          iframe.contentWindow.focus();
+          iframe.contentWindow.print();
+
+          // ลบ iframe ทิ้งหลังจากสั่งพิมพ์เสร็จ (เพื่อประหยัด Memory)
+          setTimeout(() => {
+            document.body.removeChild(iframe);
+          }, 1000);
+        }
+      }, 500);
     } catch (err: any) {
       Swal.close();
       console.error(err);
-      Swal.fire({ icon: "error", title: "เกิดข้อผิดพลาดในการส่งออก", text: err?.message || "กรุณาลองอีกครั้ง" });
+      Swal.fire({
+        icon: "error",
+        title: "เกิดข้อผิดพลาดในการส่งออก",
+        text: err?.message || "กรุณาลองอีกครั้ง",
+      });
     }
   };
 
@@ -187,14 +215,14 @@ const EvaluatesTable = ({
                     size="icon"
                     title="ส่งออก"
                     onClick={(e) => handleExportClick(e, evaluate)}
-                    className="h-8 w-8 text-blue-600 hover:text-blue-700 bg-blue-100 border border-blue-200 transition-all duration-300 ease-in-out hover:bg-blue-200 hover:border-blue-300 cursor-pointer"
+                    className="h-8 w-8 text-indigo-600 hover:text-indigo-700 bg-indigo-100 border border-indigo-200 transition-all duration-300 ease-in-out hover:bg-indigo-200 hover:border-indigo-300 cursor-pointer"
                   >
                     <Download className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-blue-600 hover:text-blue-700 bg-blue-100 border border-blue-200 transition-all duration-300 ease-in-out hover:bg-blue-200 hover:border-blue-300 cursor-pointer"
+                    className="h-8 w-8 text-emerald-600 hover:text-emerald-700 bg-emerald-100 border border-emerald-200 transition-all duration-300 ease-in-out hover:bg-emerald-200 hover:border-emerald-300 cursor-pointer"
                     title="แก้ไข"
                     onClick={(e) => handleEditClick(e, evaluate)}
                   >
