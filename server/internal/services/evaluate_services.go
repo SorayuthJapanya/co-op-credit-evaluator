@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -17,6 +18,30 @@ func CreateEvaluate(userID uuid.UUID, request *models.EvaluateRequest) (*models.
 			tx.Rollback()
 		}
 	}()
+
+	// Query Admin for logging
+	var admin models.Admin
+	if err := tx.Where("id = ?", userID).First(&admin).Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	mainBorrowerName := ""
+	if len(request.Applicants) > 0 {
+		mainBorrowerName = request.Applicants[0].Name
+	}
+
+	evaluateLog := models.EvaluateLog{
+		Action:    fmt.Sprintf("สร้างแบบประเมินของ %s", mainBorrowerName),
+		Username:  admin.Username,
+		FullName:  admin.FullName,
+		Role:      admin.Role,
+		Timestamp: time.Now(),
+	}
+	if err := tx.Create(&evaluateLog).Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
 
 	// Create new evaluate first (without associations for now)
 	evaluate := models.Evaluate{
@@ -198,6 +223,30 @@ func UpdateEvaluate(evaluateID uuid.UUID, userID uuid.UUID, request *models.Eval
 	evaluate.MarginType = request.MarginType
 	evaluate.UpdatedAt = time.Now()
 
+	// Query Admin for logging
+	var admin models.Admin
+	if err := tx.Where("id = ?", userID).First(&admin).Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	mainBorrowerName := ""
+	if len(request.Applicants) > 0 {
+		mainBorrowerName = request.Applicants[0].Name
+	}
+
+	evaluateLog := models.EvaluateLog{
+		Action:    fmt.Sprintf("แก้ไขแบบประเมินของ %s", mainBorrowerName),
+		Username:  admin.Username,
+		FullName:  admin.FullName,
+		Role:      admin.Role,
+		Timestamp: time.Now(),
+	}
+	if err := tx.Create(&evaluateLog).Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
 	// Save updated evaluate
 	if err := tx.Save(&evaluate).Error; err != nil {
 		tx.Rollback()
@@ -316,7 +365,7 @@ func UpdateEvaluate(evaluateID uuid.UUID, userID uuid.UUID, request *models.Eval
 func DeleteEvaluate(evaluateID uuid.UUID, userID uuid.UUID) error {
 	// Check if evaluate exists and belongs to user
 	var evaluate models.Evaluate
-	if err := database.DB.Where("id = ? AND user_id = ?", evaluateID, userID).First(&evaluate).Error; err != nil {
+	if err := database.DB.Preload("Applicants").Where("id = ? AND user_id = ?", evaluateID, userID).First(&evaluate).Error; err != nil {
 		return err
 	}
 
@@ -327,6 +376,30 @@ func DeleteEvaluate(evaluateID uuid.UUID, userID uuid.UUID) error {
 			tx.Rollback()
 		}
 	}()
+
+	// Query Admin for logging
+	var admin models.Admin
+	if err := tx.Where("id = ?", userID).First(&admin).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	mainBorrowerName := ""
+	if len(evaluate.Applicants) > 0 {
+		mainBorrowerName = evaluate.Applicants[0].Name
+	}
+
+	evaluateLog := models.EvaluateLog{
+		Action:    fmt.Sprintf("ลบแบบประเมินของ %s", mainBorrowerName),
+		Username:  admin.Username,
+		FullName:  admin.FullName,
+		Role:      admin.Role,
+		Timestamp: time.Now(),
+	}
+	if err := tx.Create(&evaluateLog).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
 
 	// Delete associated applicants first
 	if err := tx.Where("evaluate_id = ?", evaluateID).Delete(&models.Applicant{}).Error; err != nil {

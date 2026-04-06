@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/controllers"
+	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/middlewares"
 	"github.com/gofiber/fiber/v3"
 )
 
@@ -13,4 +14,11 @@ func setUpAuthRoutes(authRoute fiber.Router) {
 func setUpAuthWithProtectedRoutes(protectedRoute fiber.Router) {
 	protectedRoute.Post("/logout", controllers.Logout)
 	protectedRoute.Get("/me", controllers.GetMe)
+
+	// Super Admin endpoints
+	protectedRoute.Get("/admins", controllers.GetAdmins, middlewares.SuperAdminMiddleware())
+	protectedRoute.Patch("/admins/:id/role", controllers.UpdateAdminRole, middlewares.SuperAdminMiddleware())
+	protectedRoute.Get("/evaluate-logs", controllers.GetEvaluateLogs, middlewares.SuperAdminMiddleware())
+	protectedRoute.Post("/admins", controllers.CreateAdmin, middlewares.SuperAdminMiddleware())
+	protectedRoute.Delete("/admins/:id", controllers.DeleteAdmin, middlewares.SuperAdminMiddleware())
 }

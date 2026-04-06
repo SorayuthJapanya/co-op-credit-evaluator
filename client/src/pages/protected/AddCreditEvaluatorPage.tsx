@@ -54,13 +54,13 @@ const Stepper = ({ currentStep, totalSteps, labels }: StepperProps) => {
 
   return (
     <div className="bg-card border rounded-xl shadow-sm p-4 sm:p-6">
-      <div className="w-full relative px-[2px]">
+      <div className="w-full relative px-0.5">
         {/* Background connector line */}
-        <div className="absolute top-5 left-[20px] right-[20px] h-[2px] bg-gray-200 z-0" />
+        <div className="absolute top-5 left-5 right-5 h-0.5 bg-gray-200 z-0" />
         
         {/* Active connector line */}
         <div 
-          className="absolute top-5 left-[20px] h-[2px] bg-primary z-0 transition-all duration-500 ease-in-out"
+          className="absolute top-5 left-5 h-0.5 bg-primary z-0 transition-all duration-500 ease-in-out"
           style={{ width: `calc((100% - 40px) * ${progressRatio})` }}
         />
 
@@ -71,7 +71,7 @@ const Stepper = ({ currentStep, totalSteps, labels }: StepperProps) => {
             const isCurrent = idx === currentStep;
 
             return (
-              <div key={idx} className="flex flex-col items-center relative w-[40px]">
+              <div key={idx} className="flex flex-col items-center relative w-10">
                 {/* Circle */}
                 <div
                   className={`

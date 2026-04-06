@@ -37,7 +37,7 @@ func main() {
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173", os.Getenv("FRONTEND_URL")},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowCredentials: true,
 		ExposeHeaders:    []string{"Content-Length", "Content-Type", "X-Frame-Options", "X-XSS-Protection", "X-Content-Type-Options", "X-Permitted-Cross-Domain-Policies"},
 	}))

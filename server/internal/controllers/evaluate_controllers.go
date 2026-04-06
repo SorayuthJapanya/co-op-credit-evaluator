@@ -228,3 +228,54 @@ func DeleteEvaluate(c fiber.Ctx) error {
 		"message": "ลบข้อมูลการประเมินสำเร็จ",
 	})
 }
+
+// ExportEvaluate returns a rendered HTML representation of the evaluation
+// that can be printed or saved as PDF by the browser.
+func ExportEvaluate(c fiber.Ctx) error {
+	idParam := c.Params("id")
+	id, err := uuid.Parse(idParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString("Invalid id")
+	}
+
+	userIDStr := c.Locals("user_id").(string)
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString("Invalid user id")
+	}
+
+	evaluate, err := services.GetEvaluateByEvaluateID(id, userID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).SendString("Cannot fetch evaluate")
+	}
+
+	// Build simple HTML output
+	html := "<html><head><meta charset=\"utf-8\"/><title>Export Evaluate</title>"
+	html += "<style>body{font-family:Arial,Helvetica,sans-serif;color:#111827;padding:20px}h1,h2,h3{color:#0f172a}.metrics{display:flex;gap:12px;margin-bottom:16px}.metric{padding:12px;border:1px solid #e5e7eb;border-radius:8px}.section{margin-bottom:18px}.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f3f4f6}.row:last-child{border-bottom:none}</style>"
+	html += "</head><body>"
+	html += fmt.Sprintf("<h1>ผลการประเมิน: %s</h1>", evaluate.EvaluateType)
+	html += fmt.Sprintf("<h3>เกณฑ์: %s</h3>", evaluate.MarginType)
+
+	html += "<div class=\"metrics\">"
+	html += fmt.Sprintf("<div class=\"metric\"><div style=\"font-size:12px;color:#374151;\">DTI</div><div style=\"font-weight:700;font-size:20px;color:#047857;\">%0.2f %%</div></div>", evaluate.Result.Dti)
+	html += fmt.Sprintf("<div class=\"metric\"><div style=\"font-size:12px;color:#374151;\">DSCR</div><div style=\"font-weight:700;font-size:20px;color:#0ea5e9;\">%0.2f เท่า</div></div>", evaluate.Result.Dscr)
+	html += fmt.Sprintf("<div class=\"metric\"><div style=\"font-size:12px;color:#374151;\">ภาระหนี้รวม</div><div style=\"font-weight:700;font-size:20px;color:#dc2626;\">฿ %0.2f</div></div>", evaluate.Result.DebtDetail.TotalDebt)
+	html += "</div>"
+
+	html += "<div class=\"section\"><h2>ผู้กู้</h2>"
+	for _, a := range evaluate.Result.Applicants {
+		html += "<div style=\"margin-bottom:8px;padding:10px;border:1px solid #e6e7eb;border-radius:8px;\">"
+		html += fmt.Sprintf("<div class=\"row\"><div>ชื่อ</div><div>%s</div></div>", a.Name)
+		html += fmt.Sprintf("<div class=\"row\"><div>เลขบัตร</div><div>%s</div></div>", a.IDCard)
+		html += fmt.Sprintf("<div class=\"row\"><div>รายได้รวม</div><div>฿ %0.2f</div></div>", a.TotalSalary)
+		html += fmt.Sprintf("<div class=\"row\"><div>รวมค่าใช้จ่าย</div><div>฿ %0.2f</div></div>", a.TotalExpenses)
+		html += "</div>"
+	}
+	html += "</div>"
+
+	html += "<div style=\"margin-top:24px;font-size:12px;color:#6b7280\">พิมพ์หรือบันทึกเป็น PDF โดยใช้ตัวเลือกของเบราว์เซอร์</div>"
+	html += "</body></html>"
+
+	c.Set("Content-Type", "text/html; charset=utf-8")
+	return c.SendString(html)
+}

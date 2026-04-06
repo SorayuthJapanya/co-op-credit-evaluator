@@ -5,7 +5,7 @@ import type {
   DebtDetail,
 } from "@/types/evaluate_types";
 import { FileCheckCorner } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import ResultApplicantForm from "./ResultApplicantForm";
 import SummarizeDebt from "./SummarizeDebt";
 
@@ -113,16 +113,29 @@ const SummaryEvaluateFrom = ({
     };
   }, [formData]);
 
-  // Initialize resultFormData with initialResultData
-  const [resultFormData, setResultFormData] = useState<ResultEvaluate | null>(
-    typeForm === "add" ? initialResultAddData : formData.result,
-  );
+  // Initialize and keep resultFormData in sync with incoming formData
+  const [resultFormData, setResultFormData] = useState<ResultEvaluate | null>(null);
 
-  // Use resultFormData if available, otherwise fall back to initialResultData
-  const currentResultData =
-    typeForm === "add"
-      ? resultFormData || initialResultAddData
-      : formData.result;
+  // Sync logic: for `add` flow compute from applicants; for `update`, prefer provided result
+  useEffect(() => {
+    if (typeForm === "add") {
+      setResultFormData(initialResultAddData);
+      if (initialResultAddData) onResultUpdate(initialResultAddData);
+      return;
+    }
+
+    // update flow
+    if (formData.result && formData.result.applicants && formData.result.applicants.length > 0) {
+      setResultFormData(formData.result);
+    } else {
+      // if no existing result, compute from applicants as fallback
+      setResultFormData(initialResultAddData);
+      if (initialResultAddData) onResultUpdate(initialResultAddData);
+    }
+  }, [formData, initialResultAddData, typeForm, onResultUpdate]);
+
+  // Current result data used by child components
+  const currentResultData = resultFormData || initialResultAddData || formData.result;
 
   if (!formData) return null;
 
@@ -204,11 +217,16 @@ const SummaryEvaluateFrom = ({
         0,
       );
 
-      const dti = ((totalDebt / totalApplicantsSalary) * 100).toFixed(2);
-      const dscr = (
-        (totalApplicantsResultIncome - totalApplicantsResultExpenses) /
-        totalDebt
-      ).toFixed(2);
+      // Prevent division by zero
+      const dti = totalApplicantsSalary > 0 
+        ? ((totalDebt / totalApplicantsSalary) * 100).toFixed(2)
+        : "0.00";
+      const dscr = totalDebt > 0
+        ? (
+            (totalApplicantsResultIncome - totalApplicantsResultExpenses) /
+            totalDebt
+          ).toFixed(2)
+        : "0.00";
 
       const updatedResult = {
         ...baseData,

@@ -56,6 +56,7 @@ func Connect() {
 		db.AutoMigrate(&models.Applicant{})
 		db.AutoMigrate(&models.EvaluateResult{})
 		db.AutoMigrate(&models.ResultApplicant{})
+		db.AutoMigrate(&models.EvaluateLog{})
 		log.Println("Database migrations completed")
 	} else {
 		log.Println("Production mode: Skipping auto-migrations")

@@ -17,6 +17,8 @@ import ManageCareerCategoryPage from "./pages/protected/ManageCareerCategoryPage
 import ManageSubCareer from "./pages/protected/ManageSubCareer";
 import AddCreditEvaluatorPage from "./pages/protected/AddCreditEvaluatorPage";
 import EditCreditEvaluatorPage from "./pages/protected/EditCreditEvaluatorPage";
+import AdminManagementPage from "./pages/protected/AdminManagementPage";
+import EvaluateLogsPage from "./pages/protected/EvaluateLogsPage";
 
 const App = () => {
   return (
@@ -39,6 +41,10 @@ const App = () => {
           element={<ManageCareerCategoryPage />}
         />
         <Route path="/manage-sub-career" element={<ManageSubCareer />} />
+        
+        {/* Super Admin Routes */}
+        <Route path="/manage-admins" element={<AdminManagementPage />} />
+        <Route path="/evaluate-logs" element={<EvaluateLogsPage />} />
       </Route>
 
       {/* Not Found Page */}

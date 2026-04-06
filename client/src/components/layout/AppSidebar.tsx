@@ -10,6 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../ui/sidebar";
+import { Lock, Database } from "lucide-react";
 import { navbarItem } from "@/utils/navbar-item";
 import type { IUser } from "@/types/auth_types";
 import { useLocationMemo } from "@/hooks/useLocationMemo";
@@ -74,6 +75,46 @@ const AppSidebar = memo(({ userProfile }: { userProfile: IUser }) => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {userProfile?.role === "SUPER_ADMIN" && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-sm font-semibold text-sidebar-foreground/80 my-2">
+              Administrator
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu className="gap-2">
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    size="lg"
+                    tooltip="จัดการผู้ใช้"
+                    isActive={location.pathname === "/manage-admins"}
+                    className="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:hover:bg-primary/90"
+                  >
+                    <a href="/manage-admins">
+                      <Lock className="size-5" />
+                      <span className="text-base">จัดการผู้ใช้</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    size="lg"
+                    tooltip="Log"
+                    isActive={location.pathname === "/evaluate-logs"}
+                    className="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:hover:bg-primary/90"
+                  >
+                    <a href="/evaluate-logs">
+                      <Database className="size-5" />
+                      <span className="text-base">Log</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
       <SidebarFooter className="w-full">

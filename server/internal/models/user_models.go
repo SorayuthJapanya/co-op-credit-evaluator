@@ -11,6 +11,7 @@ type Admin struct {
 	Username  string    `gorm:"uniqueIndex;not null" json:"username"`
 	Password  string    `gorm:"not null" json:"-"`
 	FullName  string    `gorm:"not null" json:"fullname"`
+	Role      string    `gorm:"type:varchar(20);not null;default:'ADMIN'" json:"role"`
 	CreatedAt time.Time `gorm:"type:timestamp;default:now()" json:"created_at"`
 	UpdatedAt time.Time `gorm:"type:timestamp;default:now()" json:"updated_at"`
 }
@@ -25,4 +26,9 @@ type AdminLogin struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+
+type AdminUpdateRoleRequest struct {
+	Role string `json:"role"`
+}
+
 

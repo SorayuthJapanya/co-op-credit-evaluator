@@ -2,10 +2,12 @@ package controllers
 
 import (
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/database"
+	"github.com/google/uuid"
 	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/models"
 	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/services"
 	"github.com/gofiber/fiber/v3"
@@ -209,5 +211,176 @@ func GetMe(c fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"user": user,
+	})
+}
+
+func GetAdmins(c fiber.Ctx) error {
+	search := c.Query("search", "")
+	pageStr := c.Query("page", "1")
+	limitStr := c.Query("limit", "10")
+
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit < 1 || limit > 100 {
+		limit = 10
+	}
+
+	admins, total, err := services.GetAdmins(search, page, limit)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "ไม่สามารถดึงข้อมูลแอดมินได้",
+		})
+	}
+
+	totalPages := (total + int64(limit) - 1) / int64(limit)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ดึงข้อมูลแอดมินสำเร็จ",
+		"data":    admins,
+		"pagination": fiber.Map{
+			"page":       page,
+			"limit":      limit,
+			"total":      total,
+			"totalPages": totalPages,
+		},
+	})
+}
+
+func UpdateAdminRole(c fiber.Ctx) error {
+	idParam := c.Params("id")
+	id, err := uuid.Parse(idParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "รูปแบบ id ไม่ถูกต้อง",
+		})
+	}
+
+	var request models.AdminUpdateRoleRequest
+	if err := c.Bind().Body(&request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "กรุณากรอกข้อมูลที่จำเป็น",
+		})
+	}
+
+	if request.Role != "ADMIN" && request.Role != "SUPER_ADMIN" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "สิทธิ์ไม่ถูกต้อง",
+		})
+	}
+
+	admin, err := services.UpdateAdminRole(id, request.Role)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "ไม่สามารถอัปเดตสิทธิ์ได้",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "อัปเดตสิทธิ์สำเร็จ",
+		"data":    admin,
+	})
+}
+
+func CreateAdmin(c fiber.Ctx) error {
+	var request models.AdminRegister
+
+	if err := c.Bind().Body(&request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "กรุณากรอกข้อมูลที่จำเป็น",
+		})
+	}
+
+	// validate data
+	if request.Username == "" || request.Password == "" || request.FullName == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "กรุณากรอกข้อมูลที่จำเป็น",
+		})
+	}
+
+	if len(request.Username) < 13 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "กรุณากรอกเลขบัตรประชาชนให้ถูกต้อง",
+		})
+	}
+
+	if len(request.Password) < 5 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "กรุณากรอกรหัสผ่านอย่างน้อย 5 ตัวอักษร",
+		})
+	}
+
+	// Exists username
+	var existingUser models.Admin
+	if err := database.DB.Where("username = ?", request.Username).First(&existingUser).Error; err == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "เลขบัตรประชาชนนี้ถูกใช้แล้ว",
+		})
+	}
+
+	// Make clean input
+	cleanFullname := strings.ReplaceAll(request.FullName, " ", "")
+
+	var count int64
+	database.DB.Model(&models.Admin{}).
+		Where("REPLACE(full_name, ' ', '') = ?", cleanFullname).
+		Count(&count)
+
+	if count > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "ชื่อ-นามสกุลถูกใช้แล้ว",
+		})
+	}
+
+	// Hash password
+	hashedPassword, err := services.HashPassword(request.Password)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "เกิดข้อผิดพลาดในการเข้ารหัส",
+		})
+	}
+
+	// Create new admin
+	newAdmin := models.Admin{
+		Username: request.Username,
+		Password: hashedPassword,
+		FullName: request.FullName,
+		Role:     "ADMIN",
+	}
+
+	// Append to database
+	if err := database.DB.Create(&newAdmin).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "เกิดข้อผิดพลาดในการสร้างผู้ใช้",
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"message": "เพิ่มผู้ใช้งานสำเร็จ",
+		"data":    newAdmin,
+	})
+}
+
+
+func DeleteAdmin(c fiber.Ctx) error {
+	idParam := c.Params("id")
+	id, err := uuid.Parse(idParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "รูปแบบ id ไม่ถูกต้อง",
+		})
+	}
+
+	if err := services.DeleteAdmin(id); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "ไม่สามารถลบผู้ใช้งานได้",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ลบผู้ใช้งานสำเร็จ",
 	})
 }

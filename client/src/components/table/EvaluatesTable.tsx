@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Edit, Trash2, User } from "lucide-react";
+import { Edit, Trash2, User, Download } from "lucide-react";
+import { axiosInstance } from "@/utils/axios";
 import type { Evaluate } from "@/types/evaluate_types";
 import {
   Table,
@@ -38,6 +39,33 @@ const EvaluatesTable = ({
   const handleRowClick = (evaluate: Evaluate) => {
     setSelectedEvaluate(evaluate);
     setIsModalOpen(true);
+  };
+
+  const handleExportClick = async (e: React.MouseEvent, evaluate: Evaluate) => {
+    e.stopPropagation();
+
+    const exportUrl = `/protected/evaluates/${evaluate.id}/export`;
+
+    try {
+      Swal.fire({ title: "กำลังเตรียมไฟล์สำหรับส่งออก...", allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      const resp = await axiosInstance.get(exportUrl, { responseType: "text" });
+      Swal.close();
+
+      const html = resp.data as string;
+      const win = window.open("", "_blank", "width=900,height=700");
+      if (!win) {
+        Swal.fire({ icon: "error", title: "ไม่สามารถเปิดหน้าต่างใหม่ได้" });
+        return;
+      }
+      win.document.open();
+      win.document.write(html);
+      win.document.close();
+      setTimeout(() => { win.focus(); win.print(); }, 500);
+    } catch (err: any) {
+      Swal.close();
+      console.error(err);
+      Swal.fire({ icon: "error", title: "เกิดข้อผิดพลาดในการส่งออก", text: err?.message || "กรุณาลองอีกครั้ง" });
+    }
   };
 
   const handleEditClick = (e: React.MouseEvent, evaluate: Evaluate) => {
@@ -154,6 +182,15 @@ const EvaluatesTable = ({
               </TableCell>
               <TableCell onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center justify-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    title="ส่งออก"
+                    onClick={(e) => handleExportClick(e, evaluate)}
+                    className="h-8 w-8 text-blue-600 hover:text-blue-700 bg-blue-100 border border-blue-200 transition-all duration-300 ease-in-out hover:bg-blue-200 hover:border-blue-300 cursor-pointer"
+                  >
+                    <Download className="h-4 w-4" />
+                  </Button>
                   <Button
                     variant="ghost"
                     size="icon"

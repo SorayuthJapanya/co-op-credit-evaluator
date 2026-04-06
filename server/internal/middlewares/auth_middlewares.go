@@ -9,7 +9,17 @@ import (
 
 func AuthMiddleware() fiber.Handler {
 	return func(c fiber.Ctx) error {
+		// Prefer cookie-based JWT, but also accept Authorization: Bearer <token>
 		tokenString := c.Cookies("jwt")
+		if tokenString == "" {
+			// try Authorization header
+			authHeader := c.Get("Authorization")
+			const prefix = "Bearer "
+			if len(authHeader) > len(prefix) && authHeader[:len(prefix)] == prefix {
+				tokenString = authHeader[len(prefix):]
+			}
+		}
+
 		if tokenString == "" {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"message": "กรุณาเข้าสู่ระบบ",

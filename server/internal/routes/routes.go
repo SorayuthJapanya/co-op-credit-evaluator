@@ -6,6 +6,9 @@ import (
 )
 
 func SetupRoutes(app fiber.Router) {
+	// docs route
+	app.Get("/", ServeAPIDocs)
+	
 	// health routes
 	app.Get("/health", func(c fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{

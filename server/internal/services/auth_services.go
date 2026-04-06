@@ -5,6 +5,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/database"
+	"github.com/SorayuthJapanya/co-op-credit-evaluator/internal/models"
+	"github.com/google/uuid"
+
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -32,4 +36,49 @@ func GenerateToken(user_id string) (string, error) {
 	})
 
 	return token.SignedString([]byte(jwtSecret))
+}
+
+func GetAdmins(search string, page int, limit int) ([]models.Admin, int64, error) {
+	var admins []models.Admin
+	var total int64
+	query := database.DB.Model(&models.Admin{})
+
+	if search != "" {
+		searchPattern := "%" + search + "%"
+		query = query.Where("username ILIKE ? OR full_name ILIKE ?", searchPattern, searchPattern)
+	}
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * limit
+	if err := query.Order("created_at DESC").Offset(offset).Limit(limit).Find(&admins).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return admins, total, nil
+}
+
+func UpdateAdminRole(adminID uuid.UUID, role string) (*models.Admin, error) {
+	var admin models.Admin
+	if err := database.DB.Where("id = ?", adminID).First(&admin).Error; err != nil {
+		return nil, err
+	}
+
+	admin.Role = role
+	admin.UpdatedAt = time.Now()
+
+	if err := database.DB.Save(&admin).Error; err != nil {
+		return nil, err
+	}
+
+	return &admin, nil
+}
+
+func DeleteAdmin(adminID uuid.UUID) error {
+	if err := database.DB.Where("id = ?", adminID).Delete(&models.Admin{}).Error; err != nil {
+		return err
+	}
+	return nil
 }

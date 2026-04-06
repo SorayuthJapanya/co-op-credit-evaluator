@@ -2,6 +2,7 @@ export interface IUser {
   id: string;
   username: string;
   fullname: string;
+  role: string;
 }
 
 export interface RequestUser {
