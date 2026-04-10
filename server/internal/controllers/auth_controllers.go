@@ -112,7 +112,7 @@ func RegisterAdmin(c fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{
 		Name:     "jwt",
 		Value:    token,
-		Expires:  time.Now().Add(24 * time.Hour),
+		Expires:  time.Now().Add(1 * time.Hour),
 		Path:     "/",
 		Secure:   secure,
 		HTTPOnly: true,
@@ -175,7 +175,7 @@ func LoginAdmin(c fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{
 		Name:     "jwt",
 		Value:    token,
-		Expires:  time.Now().Add(24 * time.Hour),
+		Expires:  time.Now().Add(1 * time.Hour),
 		Path:     "/",
 		Secure:   secure,
 		HTTPOnly: true,
@@ -192,7 +192,7 @@ func Logout(c fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{
 		Name:     "jwt",
 		Value:    "",
-		Expires:  time.Now().Add(-24 * time.Hour),
+		Expires:  time.Now().Add(-1 * time.Hour),
 		HTTPOnly: true,
 		Secure:   os.Getenv("ENV") == "production",
 		SameSite: fiber.CookieSameSiteLaxMode,
