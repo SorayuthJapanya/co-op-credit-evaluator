@@ -16,20 +16,26 @@ const EvaluateLogsTable = ({ logs }: EvaluateLogsTableProps) => {
 
   const formatDateTime = (dateString: string) => {
     try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return dateString;
+      // Server stores UTC but may emit a wrong timezone offset (e.g. +07:00).
+      // Strip any offset and force-parse as UTC, then manually shift to UTC+7.
+      const stripped = dateString.replace(/[+-]\d{2}:\d{2}$/, "");
+      const utcDate = new Date(stripped.endsWith("Z") ? stripped : stripped + "Z");
+      if (isNaN(utcDate.getTime())) return dateString;
+
+      const thaiMs = utcDate.getTime() + 7 * 60 * 60 * 1000;
+      const d = new Date(thaiMs);
 
       const thaiMonths = [
         "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.",
         "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค.",
       ];
 
-      const day = date.getDate();
-      const month = thaiMonths[date.getMonth()];
-      const year = date.getFullYear() + 543; // convert to Buddhist Era
-      const hh = String(date.getHours()).padStart(2, "0");
-      const mm = String(date.getMinutes()).padStart(2, "0");
-      const ss = String(date.getSeconds()).padStart(2, "0");
+      const day = d.getUTCDate();
+      const month = thaiMonths[d.getUTCMonth()];
+      const year = d.getUTCFullYear() + 543;
+      const hh = String(d.getUTCHours()).padStart(2, "0");
+      const mm = String(d.getUTCMinutes()).padStart(2, "0");
+      const ss = String(d.getUTCSeconds()).padStart(2, "0");
 
       return `${day} ${month} ${year} ${hh}:${mm}:${ss}`;
     } catch {
