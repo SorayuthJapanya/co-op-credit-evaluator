@@ -349,7 +349,6 @@ const CareerFormSection = ({
                 onChange={(value) =>
                   handleNestedFieldChange("expenseItem", "empSalary", value)
                 }
-                required
               />
 
               <InputField
@@ -360,7 +359,6 @@ const CareerFormSection = ({
                 onChange={(value) =>
                   handleNestedFieldChange("expenseItem", "rentExpenses", value)
                 }
-                required
               />
 
               <InputField
@@ -375,7 +373,6 @@ const CareerFormSection = ({
                     value,
                   )
                 }
-                required
               />
 
               <InputField
@@ -386,7 +383,6 @@ const CareerFormSection = ({
                 onChange={(value) =>
                   handleNestedFieldChange("expenseItem", "otherExpenses", value)
                 }
-                required
               />
             </div>
             <div className="mt-4 px-3 py-1.5 bg-primary/5 rounded-lg flex items-cent justify-between text-primary">
@@ -422,7 +418,6 @@ const CareerFormSection = ({
                     value,
                   )
                 }
-                required
               />
 
               <div className="space-y-2">
@@ -440,7 +435,6 @@ const CareerFormSection = ({
                 onChange={(value) =>
                   handleNestedFieldChange("profileLost", "taxExpense", value)
                 }
-                required
               />
 
               <div className="space-y-2">

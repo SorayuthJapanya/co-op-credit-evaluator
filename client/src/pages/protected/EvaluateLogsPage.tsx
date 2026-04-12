@@ -58,7 +58,7 @@ const EvaluateLogsPage = () => {
   if (authUser?.role !== "SUPER_ADMIN") return null;
 
   return (
-    <div className="w-full max-w-7xl xl:max-w-8xl mx-auto p-8 space-y-8">
+    <div className="w-full max-w-7xl xl:max-w-360 mx-auto p-8 space-y-8">
       <div className="w-full flex flex-col sm:flex-row items-center gap-4 sm:justify-between">
         <Header
           title="ประวัติการทำรายการ (Logs)"

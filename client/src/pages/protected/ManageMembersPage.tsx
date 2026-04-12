@@ -63,7 +63,7 @@ const ManageMembersPage = () => {
 
   if (errorMembers || errorDropdown) {
     return (
-      <div className="w-full max-w-7xl xl:max-w-8xl mx-auto p-8">
+      <div className="w-full max-w-7xl xl:max-w-360 mx-auto p-8">
         <div className="text-red-500">
           {errorMembers?.message || errorDropdown?.message}
         </div>
@@ -72,7 +72,7 @@ const ManageMembersPage = () => {
   }
 
   return (
-    <div className="w-full max-w-7xl xl:max-w-8xl mx-auto p-8 space-y-6">
+    <div className="w-full max-w-7xl xl:max-w-360 mx-auto p-8 space-y-6">
       <div className="w-full flex flex-col sm:flex-row items-center gap-4 sm:justify-between mb-8">
         <Header
           title="จัดการสมาชิกสหกรณ์"

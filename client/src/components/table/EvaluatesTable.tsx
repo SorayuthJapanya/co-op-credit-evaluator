@@ -1,7 +1,28 @@
 import { useState } from "react";
-import { Edit, Trash2, User, Download } from "lucide-react";
+import {
+  User,
+  Download,
+  Edit,
+  Trash2,
+  EllipsisVertical,
+  CheckCircle,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { axiosInstance } from "@/utils/axios";
-import type { Evaluate } from "@/types/evaluate_types";
+import type { Evaluate, EvaluateStatus } from "@/types/evaluate_types";
 import {
   Table,
   TableBody,
@@ -11,13 +32,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { formatDateToThai } from "@/utils";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
+import { useUpdateEvaluateStatus } from "@/hooks/useEvaluate";
 import Swal from "sweetalert2";
 
 interface EvaluatesTableProps {
@@ -35,6 +59,39 @@ const EvaluatesTable = ({
     null,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [statusTarget, setStatusTarget] = useState<Evaluate | null>(null);
+  const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] =
+    useState<EvaluateStatus>("รอการอนุมัติ");
+  const [feedback, setFeedback] = useState("");
+
+  const { mutateAsync: updateStatus, isPending: isUpdatingStatus } =
+    useUpdateEvaluateStatus();
+
+  const handleOpenStatusDialog = (e: React.MouseEvent, evaluate: Evaluate) => {
+    e.stopPropagation();
+    setStatusTarget(evaluate);
+    setSelectedStatus((evaluate.status as EvaluateStatus) || "รอการอนุมัติ");
+    setFeedback(evaluate.feedback || "");
+    setIsStatusDialogOpen(true);
+  };
+
+  const handleStatusSave = async () => {
+    if (!statusTarget) return;
+    await updateStatus({
+      id: statusTarget.id,
+      status: selectedStatus,
+      feedback,
+    });
+    setIsStatusDialogOpen(false);
+    Swal.fire({
+      icon: "success",
+      title: "อัปเดตสถานะสำเร็จ",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  };
 
   const handleRowClick = (evaluate: Evaluate) => {
     setSelectedEvaluate(evaluate);
@@ -85,13 +142,12 @@ const EvaluatesTable = ({
           }, 1000);
         }
       }, 500);
-    } catch (err: any) {
+    } catch {
       Swal.close();
-      console.error(err);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาดในการส่งออก",
-        text: err?.message || "กรุณาลองอีกครั้ง",
+        text: "กรุณาลองอีกครั้ง",
       });
     }
   };
@@ -157,11 +213,12 @@ const EvaluatesTable = ({
             <TableHead className="w-16 text-center">ลำดับ</TableHead>
             <TableHead className="text-center">วันที่ทำรายการ</TableHead>
             <TableHead>ชื่อผู้กู้</TableHead>
+            <TableHead>ชื่อดำเนินการ</TableHead>
             <TableHead className="text-center">รายได้</TableHead>
             <TableHead className="text-center">ภาระหนี้รวม</TableHead>
             <TableHead className="text-center">DTI</TableHead>
             <TableHead className="text-center">DSCR</TableHead>
-            <TableHead className="text-center">ผลการประเมิน</TableHead>
+            <TableHead className="text-center">ผลการอนุมัติ</TableHead>
             <TableHead className="text-center w-24">จัดการ</TableHead>
           </TableRow>
         </TableHeader>
@@ -181,6 +238,9 @@ const EvaluatesTable = ({
               <TableCell className="font-medium">
                 {getBorrowerName(evaluate)}
               </TableCell>
+              <TableCell className="font-medium text-gray-700 max-w-40 truncate">
+                {evaluate.user?.fullname ?? evaluate.userId}
+              </TableCell>
               <TableCell className="text-center text-green-600 font-medium whitespace-nowrap">
                 {getTotalSalary(evaluate)}
               </TableCell>
@@ -193,50 +253,71 @@ const EvaluatesTable = ({
                 </span>
               </TableCell>
               <TableCell className="text-center text-gray-700">
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 font-medium rounded-md">
+                <span
+                  className={`px-3 py-1 font-medium rounded-md ${getDSCR(evaluate) < 1 ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700"}`}
+                >
                   {getDSCR(evaluate).toFixed(2)} เท่า
                 </span>
               </TableCell>
               <TableCell className="text-center">
-                {evaluate.result.dscr < 1 ? (
+                {evaluate.status === "อนุมัติ" ? (
+                  <span className="px-3 py-1 bg-green-100 text-green-700 font-medium rounded-md">
+                    อนุมัติ
+                  </span>
+                ) : evaluate.status === "ไม่อนุมัติ" ? (
                   <span className="px-3 py-1 bg-red-100 text-red-700 font-medium rounded-md">
-                    ไม่เป็นไปตามเกณฑ์
+                    ไม่อนุมัติ
                   </span>
                 ) : (
-                  <span className="px-3 py-1 bg-green-100 text-green-700 font-medium rounded-md">
-                    เป็นไปตามเกณฑ์
+                  <span className="px-3 py-1 bg-yellow-100 text-yellow-700 font-medium rounded-md">
+                    รอการอนุมัติ
                   </span>
                 )}
               </TableCell>
               <TableCell onClick={(e) => e.stopPropagation()}>
-                <div className="flex items-center justify-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    title="ส่งออก"
-                    onClick={(e) => handleExportClick(e, evaluate)}
-                    className="h-8 w-8 text-indigo-600 hover:text-indigo-700 bg-indigo-100 border border-indigo-200 transition-all duration-300 ease-in-out hover:bg-indigo-200 hover:border-indigo-300 cursor-pointer"
-                  >
-                    <Download className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-emerald-600 hover:text-emerald-700 bg-emerald-100 border border-emerald-200 transition-all duration-300 ease-in-out hover:bg-emerald-200 hover:border-emerald-300 cursor-pointer"
-                    title="แก้ไข"
-                    onClick={(e) => handleEditClick(e, evaluate)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-red-600 hover:text-red-700 bg-red-100 border border-red-200 transition-all duration-300 ease-in-out hover:bg-red-200 hover:border-red-300 cursor-pointer"
-                    title="ลบ"
-                    onClick={(e) => handleDeleteClick(e, evaluate)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                <div className="flex items-center justify-center">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 cursor-pointer"
+                      >
+                        <EllipsisVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={(e) => handleExportClick(e, evaluate)}
+                        className="cursor-pointer gap-2"
+                      >
+                        <Download className="h-4 w-4" />
+                        ส่งออกสาร
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={(e) => handleEditClick(e, evaluate)}
+                        className="cursor-pointer gap-2"
+                      >
+                        <Edit className="h-4 w-4" />
+                        แก้ไขเอกสาร
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={(e) => handleOpenStatusDialog(e, evaluate)}
+                        className="cursor-pointer gap-2"
+                      >
+                        <CheckCircle className="h-4 w-4" />
+                        แก้ไขผลการอนุมัติ
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={(e) => handleDeleteClick(e, evaluate)}
+                        className="cursor-pointer gap-2 text-red-600 focus:text-red-600"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        ลบเอกสาร
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </TableCell>
             </TableRow>
@@ -275,6 +356,36 @@ const EvaluatesTable = ({
 
           {selectedEvaluate && (
             <div className="space-y-8 py-4">
+              {/* Section: ผลการอนุมัติ */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                  <p className="text-sm font-medium text-gray-600 mb-2">
+                    ผลการอนุมัติ
+                  </p>
+                  {selectedEvaluate.status === "อนุมัติ" ? (
+                    <span className="px-3 py-1 bg-green-100 text-green-700 font-medium rounded-md">
+                      อนุมัติ
+                    </span>
+                  ) : selectedEvaluate.status === "ไม่อนุมัติ" ? (
+                    <span className="px-3 py-1 bg-red-100 text-red-700 font-medium rounded-md">
+                      ไม่อนุมัติ
+                    </span>
+                  ) : (
+                    <span className="px-3 py-1 bg-yellow-100 text-yellow-700 font-medium rounded-md">
+                      รอการอนุมัติ
+                    </span>
+                  )}
+                </div>
+                {selectedEvaluate.feedback && (
+                  <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                    <p className="text-sm font-medium text-gray-600 mb-2">
+                      หมายเหตุ
+                    </p>
+                    <p className="text-gray-800">{selectedEvaluate.feedback}</p>
+                  </div>
+                )}
+              </div>
+
               {/* Section 1: Highlight Metrics (ตัวเลขสำคัญสำหรับการตัดสินใจ) */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl">
@@ -482,6 +593,62 @@ const EvaluatesTable = ({
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Status Dialog */}
+      <Dialog open={isStatusDialogOpen} onOpenChange={setIsStatusDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              แก้ไขผลการอนุมัติ
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-gray-700">สถานะ</label>
+              <Select
+                value={selectedStatus}
+                onValueChange={(v) => setSelectedStatus(v as EvaluateStatus)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="รอการอนุมัติ">รอการอนุมัติ</SelectItem>
+                  <SelectItem value="อนุมัติ">อนุมัติ</SelectItem>
+                  <SelectItem value="ไม่อนุมัติ">ไม่อนุมัติ</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {selectedStatus === "ไม่อนุมัติ" && (
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700">
+                  เหตุผลที่ไม่อนุมัติ
+                </label>
+                <Textarea
+                  placeholder="ระบุเหตุผล..."
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  rows={3}
+                />
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsStatusDialogOpen(false)}
+            >
+              ยกเลิก
+            </Button>
+            <Button onClick={handleStatusSave} disabled={isUpdatingStatus}>
+              บันทึก
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

@@ -10,16 +10,19 @@ export const getEvaluates = async ({
   search,
   page,
   limit,
+  userId,
 }: {
   search?: string;
   page?: number;
   limit?: number;
+  userId?: string;
 }) => {
   const response = await axiosInstance.get("/protected/evaluates", {
     params: {
       search,
       page,
       limit,
+      userId,
     },
   });
   return response.data;
@@ -32,6 +35,11 @@ export const getEvaluateById = async (id: string) => {
 
 export const updateEvaluate = async (id: string, data: ICreateEvaluate) => {
   const response = await axiosInstance.put(`/protected/evaluates/${id}`, data);
+  return response.data;
+};
+
+export const updateEvaluateStatus = async (id: string, status: string, feedback: string) => {
+  const response = await axiosInstance.patch(`/protected/evaluates/${id}/status`, { status, feedback });
   return response.data;
 };
 

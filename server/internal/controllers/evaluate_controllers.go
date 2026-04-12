@@ -68,6 +68,7 @@ func GetAllEvaluates(c fiber.Ctx) error {
 	search := c.Query("search", "")
 	pageStr := c.Query("page", "1")
 	limitStr := c.Query("limit", "10")
+	userIDStr := c.Query("userId", "")
 
 	// Parse pagination parameters
 	page, err := strconv.Atoi(pageStr)
@@ -80,8 +81,17 @@ func GetAllEvaluates(c fiber.Ctx) error {
 		limit = 10
 	}
 
-	// Call service with uuid.Nil to get all evaluates
-	evaluates, total, err := services.GetEvaluates(search, uuid.Nil, page, limit)
+	// Parse optional userId filter
+	filterUserID := uuid.Nil
+	if userIDStr != "" {
+		parsed, err := uuid.Parse(userIDStr)
+		if err == nil {
+			filterUserID = parsed
+		}
+	}
+
+	// Call service — uuid.Nil means no user filter (all evaluates)
+	evaluates, total, err := services.GetEvaluates(search, filterUserID, page, limit)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "ไม่สามารถดึงข้อมูลการประเมินได้",
@@ -160,15 +170,7 @@ func GetEvaluate(c fiber.Ctx) error {
 		})
 	}
 
-	userIDStr := c.Locals("user_id").(string)
-	userID, err := uuid.Parse(userIDStr)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "รูปแบบ user ID ไม่ถูกต้อง",
-		})
-	}
-
-	evaluate, err := services.GetEvaluateByEvaluateID(id, userID)
+	evaluate, err := services.GetEvaluateByID(id)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "ไม่สามารถดึงข้อมูลการประเมินได้",
@@ -269,6 +271,45 @@ func DeleteEvaluate(c fiber.Ctx) error {
 	})
 }
 
+func UpdateEvaluateStatus(c fiber.Ctx) error {
+	idParam := c.Params("id")
+	id, err := uuid.Parse(idParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "รูปแบบ id ไม่ถูกต้อง",
+		})
+	}
+
+	var body struct {
+		Status   string `json:"status"`
+		Feedback string `json:"feedback"`
+	}
+	if err := c.Bind().Body(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "ข้อมูลไม่ถูกต้อง",
+		})
+	}
+
+	validStatuses := map[string]bool{"รอการอนุมัติ": true, "อนุมัติ": true, "ไม่อนุมัติ": true}
+	if !validStatuses[body.Status] {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "สถานะไม่ถูกต้อง",
+		})
+	}
+
+	evaluate, err := services.UpdateEvaluateStatus(id, body.Status, body.Feedback)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "ไม่สามารถอัปเดตสถานะได้",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "อัปเดตสถานะสำเร็จ",
+		"data":    evaluate,
+	})
+}
+
 // ExportEvaluate returns a PDF file be printed or saved as PDF by the browser.
 func ExportEvaluate(c fiber.Ctx) error {
 	idParam := c.Params("id")
@@ -277,13 +318,7 @@ func ExportEvaluate(c fiber.Ctx) error {
         return c.Status(fiber.StatusBadRequest).SendString("Invalid id")
     }
 
-    userIDStr := c.Locals("user_id").(string)
-    userID, err := uuid.Parse(userIDStr)
-    if err != nil {
-        return c.Status(fiber.StatusBadRequest).SendString("Invalid user id")
-    }
-
-    evaluate, err := services.GetEvaluateByEvaluateID(id, userID)
+    evaluate, err := services.GetEvaluateByID(id)
     if err != nil {
         return c.Status(fiber.StatusInternalServerError).SendString("Cannot fetch evaluate")
     }

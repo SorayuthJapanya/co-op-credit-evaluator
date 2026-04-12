@@ -45,7 +45,6 @@ const ResultApplicantForm = ({
                   onChange={(value) =>
                     onApplicantChange(index, "salary", Number(value))
                   }
-                  required
                   readOnly
                 />
                 <InputField
@@ -57,7 +56,6 @@ const ResultApplicantForm = ({
                   onChange={(value) =>
                     onApplicantChange(index, "optionsSalary", Number(value))
                   }
-                  required
                   readOnly
                 />
                 <InputField
@@ -69,7 +67,6 @@ const ResultApplicantForm = ({
                   onChange={(value) =>
                     onApplicantChange(index, "otherSalary", Number(value))
                   }
-                  required
                   readOnly
                 />
                 <InputField
@@ -81,7 +78,6 @@ const ResultApplicantForm = ({
                   onChange={(value) =>
                     onApplicantChange(index, "optionsSalary", Number(value))
                   }
-                  required
                   readOnly
                 />
                 <InputField
@@ -117,10 +113,11 @@ const ResultApplicantForm = ({
                   type="number"
                   placeholder="0"
                   value={Number(applicant.customerExpenses)}
-                  suffix="บาท/เดือน"
+                  suffix="ร้อยละ"
                   onChange={(value) =>
                     onApplicantChange(index, "customerExpenses", Number(value))
                   }
+                  required
                   readOnly
                 />
                 <InputField
@@ -148,7 +145,6 @@ const ResultApplicantForm = ({
                   onChange={(value) =>
                     onApplicantChange(index, "livingExpenses", Number(value))
                   }
-                  required
                 />
                 <InputField
                   label="ค่าใช่จ่ายอื่นๆ"
@@ -159,7 +155,6 @@ const ResultApplicantForm = ({
                   onChange={(value) =>
                     onApplicantChange(index, "otherExpenses", Number(value))
                   }
-                  required
                 />
                 <div className="col-span-2 px-3 py-1.5 bg-orange-100 rounded-lg flex items-cent justify-between text-orange-700">
                   <p className="font-semibold">ค่าใช้จ่ายรวม</p>

@@ -85,14 +85,14 @@ const ManageSubCareer = () => {
 
   if (errorGetSubCategories) {
     return (
-      <div className="w-full max-w-7xl xl:max-w-8xl mx-auto p-8">
+      <div className="w-full max-w-7xl xl:max-w-360 mx-auto p-8">
         <div className="text-red-500">{errorGetSubCategories?.message}</div>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-7xl xl:max-w-8xl mx-auto p-4 sm:p-8 space-y-6">
+    <div className="w-full max-w-7xl xl:max-w-360 mx-auto p-8 space-y-6">
       {/* Header Section */}
       <div className="w-full flex flex-col sm:flex-row items-center gap-4 sm:justify-between mb-8">
         <Header

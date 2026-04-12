@@ -1,3 +1,4 @@
+
 import { Route, Routes } from "react-router-dom";
 
 // Layouts
@@ -19,7 +20,6 @@ import AddCreditEvaluatorPage from "./pages/protected/AddCreditEvaluatorPage";
 import EditCreditEvaluatorPage from "./pages/protected/EditCreditEvaluatorPage";
 import AdminManagementPage from "./pages/protected/AdminManagementPage";
 import EvaluateLogsPage from "./pages/protected/EvaluateLogsPage";
-import AllEvaluationsPage from "./pages/protected/AllEvaluationsPage";
 
 const App = () => {
   return (
@@ -44,7 +44,6 @@ const App = () => {
         <Route path="/manage-sub-career" element={<ManageSubCareer />} />
         
         {/* Super Admin Routes */}
-        <Route path="/all-evaluations" element={<AllEvaluationsPage />} />
         <Route path="/manage-admins" element={<AdminManagementPage />} />
         <Route path="/evaluate-logs" element={<EvaluateLogsPage />} />
       </Route>

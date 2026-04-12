@@ -12,6 +12,8 @@ type Evaluate struct {
 	User         *Admin         `gorm:"foreignKey:UserID" json:"user,omitempty"`
 	EvaluateType string         `gorm:"not null" json:"evaluateType"`
 	MarginType   string         `gorm:"not null" json:"marginType"`
+	Status       string         `gorm:"not null;default:'รอการอนุมัติ'" json:"status"`
+	Feedback     string         `gorm:"default:''" json:"feedback"`
 	Applicants   []Applicant    `gorm:"foreignKey:EvaluateID" json:"applicants"`
 	Result       EvaluateResult `gorm:"foreignKey:EvaluateID" json:"result"`
 	CreatedAt    time.Time      `gorm:"not null" json:"createdAt"`

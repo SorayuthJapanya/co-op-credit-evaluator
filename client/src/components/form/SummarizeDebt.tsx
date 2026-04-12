@@ -39,7 +39,6 @@ const SummarizeDebt = ({
             value={resultEvaluate.debtDetail.lastDebt}
             suffix="บาท/เดือน"
             onChange={(value) => onSummarizeChange("lastDebt", Number(value))}
-            required
           />
           <InputField
             label="หนี้ที่รายงานเครดิตบูโร(ไม่รวมหนี้สหกรณ์)"
@@ -50,7 +49,6 @@ const SummarizeDebt = ({
             onChange={(value) =>
               onSummarizeChange("debtReported", Number(value))
             }
-            required
           />
           <InputField
             label="หนี้ที่ไม่ได้รายงานเครดิตบูโร"
@@ -61,7 +59,6 @@ const SummarizeDebt = ({
             onChange={(value) =>
               onSummarizeChange("debtNotReported", Number(value))
             }
-            required
           />
           <InputField
             label="หัก เงินงวดเดิม กรณีคำขอนี้เป็นการ Refinance"
@@ -72,7 +69,6 @@ const SummarizeDebt = ({
             onChange={(value) =>
               onSummarizeChange("lastDeduction", Number(value))
             }
-            required
           />
         </div>
         <div className="mt-4 px-3 py-1.5 bg-violet-50 border border-violet-200 rounded-lg flex items-cent justify-between text-violet-700">

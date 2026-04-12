@@ -203,6 +203,24 @@ func GetEvaluateByEvaluateID(evaluateID uuid.UUID, userID uuid.UUID) (*models.Ev
 	return &evaluate, nil
 }
 
+func UpdateEvaluateStatus(evaluateID uuid.UUID, status string, feedback string) (*models.Evaluate, error) {
+	if err := database.DB.Model(&models.Evaluate{}).
+		Where("id = ?", evaluateID).
+		Updates(map[string]interface{}{"status": status, "feedback": feedback, "updated_at": time.Now()}).Error; err != nil {
+		return nil, err
+	}
+	return GetEvaluateByID(evaluateID)
+}
+
+func GetEvaluateByID(evaluateID uuid.UUID) (*models.Evaluate, error) {
+	var evaluate models.Evaluate
+	if err := database.DB.Preload("Applicants").Preload("Result").Preload("Result.Applicants").
+		Where("id = ?", evaluateID).First(&evaluate).Error; err != nil {
+		return nil, err
+	}
+	return &evaluate, nil
+}
+
 func UpdateEvaluate(evaluateID uuid.UUID, userID uuid.UUID, request *models.EvaluateRequest) (*models.Evaluate, error) {
 	// Start transaction
 	tx := database.DB.Begin()
@@ -212,9 +230,9 @@ func UpdateEvaluate(evaluateID uuid.UUID, userID uuid.UUID, request *models.Eval
 		}
 	}()
 
-	// Check if evaluate exists and belongs to user
+	// Check if evaluate exists
 	var evaluate models.Evaluate
-	if err := tx.Where("id = ? AND user_id = ?", evaluateID, userID).First(&evaluate).Error; err != nil {
+	if err := tx.Where("id = ?", evaluateID).First(&evaluate).Error; err != nil {
 		return nil, err
 	}
 
@@ -363,9 +381,9 @@ func UpdateEvaluate(evaluateID uuid.UUID, userID uuid.UUID, request *models.Eval
 }
 
 func DeleteEvaluate(evaluateID uuid.UUID, userID uuid.UUID) error {
-	// Check if evaluate exists and belongs to user
+	// Check if evaluate exists
 	var evaluate models.Evaluate
-	if err := database.DB.Preload("Applicants").Where("id = ? AND user_id = ?", evaluateID, userID).First(&evaluate).Error; err != nil {
+	if err := database.DB.Preload("Applicants").Where("id = ?", evaluateID).First(&evaluate).Error; err != nil {
 		return err
 	}
 

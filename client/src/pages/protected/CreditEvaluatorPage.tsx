@@ -8,7 +8,8 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { useDeleteEvaluate, useGetEvaluates } from "@/hooks/useEvaluate";
+import { useGetAllEvaluates } from "@/hooks/useAllEvaluates";
+import { useDeleteEvaluate } from "@/hooks/useEvaluate";
 import { Plus, Search } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +28,7 @@ const CreditEvaluatorPage = () => {
     limit: 10,
   });
 
-  const { data: evaluates, isLoading: isEvaluatesLoading } = useGetEvaluates({
+  const { data: evaluates, isLoading: isEvaluatesLoading } = useGetAllEvaluates({
     search: filtered.search,
     page: filtered.page,
     limit: filtered.limit,
@@ -58,7 +59,7 @@ const CreditEvaluatorPage = () => {
   };
 
   return (
-    <div className="w-full max-w-7xl xl:max-w-8xl mx-auto p-8 space-y-8">
+    <div className="w-full max-w-7xl xl:max-w-360 mx-auto p-8 space-y-8">
       <div className="w-full flex flex-col sm:flex-row items-center gap-4 sm:justify-between">
         <Header
           title="เอกสารการประเมิน"

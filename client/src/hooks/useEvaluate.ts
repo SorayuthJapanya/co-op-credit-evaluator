@@ -3,6 +3,7 @@ import {
   getEvaluates,
   getEvaluateById,
   updateEvaluate,
+  updateEvaluateStatus,
   deleteEvaluate,
 } from "@/services/evaluateService";
 import type { ICreateEvaluate } from "@/types/evaluate_types";
@@ -82,12 +83,38 @@ export const useUpdateEvaluate = () => {
   });
 };
 
+export const useUpdateEvaluateStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, status, feedback }: { id: string; status: string; feedback: string }) =>
+      updateEvaluateStatus(id, status, feedback),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["evaluates"] }),
+        queryClient.invalidateQueries({ queryKey: ["all-evaluates"] }),
+      ]);
+    },
+    onError: (error: AxiosError<ApiErrorResponse>) => {
+      const errorData = error?.response?.data;
+      Swal.fire({
+        icon: "error",
+        title: errorData?.message || "เกิดข้อผิดพลาด",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    },
+  });
+};
+
 export const useDeleteEvaluate = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteEvaluate(id),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["evaluates"] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["evaluates"] }),
+        queryClient.invalidateQueries({ queryKey: ["all-evaluates"] }),
+      ]);
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
       const errorData = error?.response?.data;

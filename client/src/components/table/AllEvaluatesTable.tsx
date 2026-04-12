@@ -132,7 +132,7 @@ const AllEvaluatesTable = ({ evaluates }: AllEvaluatesTableProps) => {
             <TableHead className="text-center">ภาระหนี้รวม</TableHead>
             <TableHead className="text-center">DTI</TableHead>
             <TableHead className="text-center">DSCR</TableHead>
-            <TableHead className="text-center">ผลการประเมิน</TableHead>
+            <TableHead className="text-center">ผลการอนุมัติ</TableHead>
             <TableHead className="text-center w-20">ส่งออก</TableHead>
           </TableRow>
         </TableHeader>
@@ -172,13 +172,17 @@ const AllEvaluatesTable = ({ evaluates }: AllEvaluatesTableProps) => {
                 </span>
               </TableCell>
               <TableCell className="text-center">
-                {evaluate.result.dscr < 1 ? (
+                {evaluate.status === "อนุมัติ" ? (
+                  <span className="px-3 py-1 bg-green-100 text-green-700 font-medium rounded-md">
+                    อนุมัติ
+                  </span>
+                ) : evaluate.status === "ไม่อนุมัติ" ? (
                   <span className="px-3 py-1 bg-red-100 text-red-700 font-medium rounded-md">
-                    ไม่เป็นไปตามเกณฑ์
+                    ไม่อนุมัติ
                   </span>
                 ) : (
-                  <span className="px-3 py-1 bg-green-100 text-green-700 font-medium rounded-md">
-                    เป็นไปตามเกณฑ์
+                  <span className="px-3 py-1 bg-yellow-100 text-yellow-700 font-medium rounded-md">
+                    รอการอนุมัติ
                   </span>
                 )}
               </TableCell>
@@ -269,6 +273,32 @@ const AllEvaluatesTable = ({ evaluates }: AllEvaluatesTableProps) => {
                     {selectedEvaluate.result.debtDetail.totalDebt.toLocaleString()}
                   </p>
                 </div>
+              </div>
+
+              {/* Section: ผลการอนุมัติ */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                  <p className="text-sm font-medium text-gray-600 mb-2">ผลการอนุมัติ</p>
+                  {selectedEvaluate.status === "อนุมัติ" ? (
+                    <span className="px-3 py-1 bg-green-100 text-green-700 font-medium rounded-md">
+                      อนุมัติ
+                    </span>
+                  ) : selectedEvaluate.status === "ไม่อนุมัติ" ? (
+                    <span className="px-3 py-1 bg-red-100 text-red-700 font-medium rounded-md">
+                      ไม่อนุมัติ
+                    </span>
+                  ) : (
+                    <span className="px-3 py-1 bg-yellow-100 text-yellow-700 font-medium rounded-md">
+                      รอการอนุมัติ
+                    </span>
+                  )}
+                </div>
+                {selectedEvaluate.feedback && (
+                  <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                    <p className="text-sm font-medium text-gray-600 mb-2">หมายเหตุ</p>
+                    <p className="text-gray-800">{selectedEvaluate.feedback}</p>
+                  </div>
+                )}
               </div>
 
               {/* Section 2: ข้อมูลผู้สมัคร และ อาชีพ */}

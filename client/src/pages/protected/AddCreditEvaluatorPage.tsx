@@ -380,7 +380,7 @@ const AddCreditEvaluatorPage = () => {
 
   // ─── Render ───────────────────────────────────────────────────────────
   return (
-    <div className="w-full max-w-6xl p-8 space-y-8">
+    <div className="w-full max-w-7xl xl:max-w-360 mx-auto p-8 space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-start justify-between gap-4 mb-8">
         <Header

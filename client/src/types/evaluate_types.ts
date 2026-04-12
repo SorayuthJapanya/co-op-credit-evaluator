@@ -134,12 +134,16 @@ export interface ICreateEvaluate {
   result: ResultEvaluate
 }
 
+export type EvaluateStatus = "รอการอนุมัติ" | "อนุมัติ" | "ไม่อนุมัติ";
+
 export interface Evaluate {
   id: string;
   userId: string;
   user?: { id: string; username: string; fullname: string; role: string };
   evaluateType: string;
   marginType: string;
+  status: EvaluateStatus;
+  feedback: string;
   applicants: Applicant[];
   result: ResultEvaluate;
   createdAt: string;

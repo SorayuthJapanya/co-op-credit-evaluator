@@ -124,6 +124,7 @@ const SalaryFormSection = ({
                 handleNestedFieldChange("salary", "base", value)
               }
               suffix="บาท/เดือน"
+              required
             />
 
             <InputField

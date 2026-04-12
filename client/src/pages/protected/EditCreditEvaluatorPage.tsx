@@ -218,6 +218,22 @@ const EditCreditEvaluatorContent = ({
     const updated = [...formTypes];
     updated[currentApplicant] = type;
     setFormTypes(updated);
+
+    // Reset current applicant — keep only name & idCard, clear all form-specific fields
+    const currentData = editedFormData.applicants[currentApplicant];
+    const resetApplicant = {
+      ...createEmptyApplicant(),
+      name: currentData.name,
+      idCard: currentData.idCard,
+    };
+    const updatedApplicants = [...editedFormData.applicants];
+    updatedApplicants[currentApplicant] = resetApplicant;
+
+    setEditedFormData((prev) => ({
+      ...prev,
+      applicants: updatedApplicants,
+      result: createEmptyResult(),
+    }));
   };
 
   const handleConfirm = async () => {
@@ -239,7 +255,7 @@ const EditCreditEvaluatorContent = ({
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-8 space-y-8">
+    <div className="w-full max-w-7xl xl:max-w-360 mx-auto p-8 space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-start justify-between gap-4 mb-8">
         <Header
@@ -295,6 +311,7 @@ const EditCreditEvaluatorContent = ({
               <div className="pt-4 border-t">
                  {currentFormType === "career" ? (
                    <CareerFormSection
+                     key={`career-${currentApplicant}`}
                      applicantData={currentApplicantData}
                      onUpdate={handleApplicantUpdate}
                      isCareerLoading={careerCategoriesLoading}
@@ -302,6 +319,7 @@ const EditCreditEvaluatorContent = ({
                    />
                  ) : (
                    <SalaryFormSection
+                     key={`salary-${currentApplicant}`}
                      applicantData={currentApplicantData}
                      onUpdate={handleApplicantUpdate}
                    />
@@ -338,14 +356,24 @@ const EditCreditEvaluatorContent = ({
               <Button variant="outline" onClick={handleBack}>
                 ย้อนกลับ
               </Button>
-              <Button
-                onClick={handleConfirm}
-                variant="default"
-                disabled={isUpdating}
-                className="cursor-pointer bg-emerald-600 hover:bg-emerald-600/90 transition-all duration-200 px-6"
-              >
-                บันทึกการแก้ไข
-              </Button>
+
+              <div className="flex items-center gap-2 justify-end">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate("/credit-evaluator")}
+                  className="cursor-pointer"
+                >
+                  ยกเลิกการแก้ไข
+                </Button>
+                <Button
+                  onClick={handleConfirm}
+                  variant="default"
+                  disabled={isUpdating}
+                  className="cursor-pointer bg-emerald-600 hover:bg-emerald-600/90 transition-all duration-200 px-6"
+                >
+                  บันทึกการแก้ไข
+                </Button>
+              </div>
             </div>
           </div>
         )}

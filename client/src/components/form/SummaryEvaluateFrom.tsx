@@ -129,13 +129,37 @@ const SummaryEvaluateFrom = ({
       return;
     }
 
-    // update flow
-    if (formData.result && formData.result.applicants && formData.result.applicants.length > 0) {
+    // update flow — always recalculate salary-derived fields from current applicants,
+    // but preserve manually-entered fields (livingExpenses, otherExpenses, debtDetail) from the stored result
+    if (initialResultAddData) {
+      let mergedResult = { ...initialResultAddData };
+
+      if (formData.result && formData.result.applicants && formData.result.applicants.length > 0) {
+        mergedResult = {
+          ...initialResultAddData,
+          debtDetail: formData.result.debtDetail,
+          dti: formData.result.dti,
+          dscr: formData.result.dscr,
+          applicants: initialResultAddData.applicants.map((calc, i) => {
+            const stored = formData.result.applicants[i];
+            if (!stored) return calc;
+            const livingExpenses = Number(stored.livingExpenses ?? 0);
+            const otherExpenses = Number(stored.otherExpenses ?? 0);
+            const totalExpenses = calc.resultCustomerExpenses + livingExpenses + otherExpenses;
+            return {
+              ...calc,
+              livingExpenses,
+              otherExpenses,
+              totalExpenses,
+            };
+          }),
+        };
+      }
+
+      setResultFormData(mergedResult);
+      onResultUpdate(mergedResult);
+    } else if (formData.result && formData.result.applicants && formData.result.applicants.length > 0) {
       setResultFormData(formData.result);
-    } else {
-      // if no existing result, compute from applicants as fallback
-      setResultFormData(initialResultAddData);
-      if (initialResultAddData) onResultUpdate(initialResultAddData);
     }
   }, [formData, initialResultAddData, typeForm, onResultUpdate]);
 

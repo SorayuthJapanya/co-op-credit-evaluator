@@ -25,7 +25,7 @@ const DashboardPage = () => {
 
   if (isLoadingOverview || isLoadingSubdistrict) {
     return (
-      <div className="w-full max-w-7xl xl:max-w-8xl mx-auto p-8">
+      <div className="w-full max-w-7xl xl:max-w-360 mx-auto p-8">
         <div>กำลังโหลดข้อมูล...</div>
       </div>
     );
@@ -33,7 +33,7 @@ const DashboardPage = () => {
 
   if (overviewError || subdistrictError) {
     return (
-      <div className="w-full max-w-7xl xl:max-w-8xl mx-auto p-8">
+      <div className="w-full max-w-7xl xl:max-w-360 mx-auto p-8">
         <div className="text-red-500">
           {overviewError?.message || subdistrictError?.message}
         </div>
@@ -42,7 +42,7 @@ const DashboardPage = () => {
   }
   
   return (
-    <div className="w-full max-w-7xl xl:max-w-8xl mx-auto p-8">
+    <div className="w-full max-w-7xl xl:max-w-360 mx-auto p-8">
       <div className="w-full flex flex-col sm:flex-row items-center gap-4 sm:justify-between mb-8">
         <Header
           title="ภาพรวมสมาชิกสหกรณ์"
