@@ -129,9 +129,13 @@ const SummaryEvaluateFrom = ({
       return;
     }
 
-    // update flow — always recalculate salary-derived fields from current applicants,
-    // but preserve manually-entered fields (livingExpenses, otherExpenses, debtDetail) from the stored result
-    if (initialResultAddData) {
+    // update flow — initialize once, recalculating salary-derived fields from current
+    // applicants while preserving manually-entered fields from the stored result.
+    // Using initializedRef prevents re-running when the user edits debt fields
+    // (which would otherwise reset their input via the onResultUpdate → formData cycle).
+    if (!initializedRef.current && initialResultAddData) {
+      initializedRef.current = true;
+
       let mergedResult = { ...initialResultAddData };
 
       if (formData.result && formData.result.applicants && formData.result.applicants.length > 0) {
@@ -158,8 +162,6 @@ const SummaryEvaluateFrom = ({
 
       setResultFormData(mergedResult);
       onResultUpdate(mergedResult);
-    } else if (formData.result && formData.result.applicants && formData.result.applicants.length > 0) {
-      setResultFormData(formData.result);
     }
   }, [formData, initialResultAddData, typeForm, onResultUpdate]);
 
