@@ -11,8 +11,15 @@ import { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Check } from "lucide-react";
 import Swal from "sweetalert2";
-import { createEmptyResult, createEmptyApplicant } from "@/services/addApplicants";
-import type { ResultEvaluate, Applicant, Evaluate } from "@/types/evaluate_types";
+import {
+  createEmptyResult,
+  createEmptyApplicant,
+} from "@/services/addApplicants";
+import type {
+  ResultEvaluate,
+  Applicant,
+  Evaluate,
+} from "@/types/evaluate_types";
 import type { ICareerCategory } from "@/types/career_types";
 import InputField from "@/components/form/InputField";
 
@@ -26,16 +33,17 @@ interface StepperProps {
 }
 
 const Stepper = ({ currentStep, totalSteps, labels }: StepperProps) => {
-  const progressRatio = Math.min(currentStep, totalSteps - 1) / (totalSteps - 1);
+  const progressRatio =
+    Math.min(currentStep, totalSteps - 1) / (totalSteps - 1);
 
   return (
     <div className="bg-card border rounded-xl shadow-sm p-4 sm:p-6">
       <div className="w-full relative px-0.5">
         {/* Background connector line */}
         <div className="absolute top-5 left-5 right-5 h-0.5 bg-gray-200 z-0" />
-        
+
         {/* Active connector line */}
-        <div 
+        <div
           className="absolute top-5 left-5 h-0.5 bg-primary z-0 transition-all duration-500 ease-in-out"
           style={{ width: `calc((100% - 40px) * ${progressRatio})` }}
         />
@@ -47,7 +55,10 @@ const Stepper = ({ currentStep, totalSteps, labels }: StepperProps) => {
             const isCurrent = idx === currentStep;
 
             return (
-              <div key={idx} className="flex flex-col items-center relative w-10">
+              <div
+                key={idx}
+                className="flex flex-col items-center relative w-10"
+              >
                 {/* Circle */}
                 <div
                   className={`
@@ -75,7 +86,7 @@ const Stepper = ({ currentStep, totalSteps, labels }: StepperProps) => {
           })}
         </div>
       </div>
-      
+
       {/* Spacer below to account for perfectly centered absolute labels */}
       <div className="h-6" />
     </div>
@@ -97,9 +108,10 @@ const EditCreditEvaluatorContent = ({
   careerCategoriesLoading,
 }: EditCreditEvaluatorContentProps) => {
   const navigate = useNavigate();
-  const { mutateAsync: updateEvaluate, isPending: isUpdating } = useUpdateEvaluate();
+  const { mutateAsync: updateEvaluate, isPending: isUpdating } =
+    useUpdateEvaluate();
 
-  const [globalStep, setGlobalStep] = useState(0); 
+  const [globalStep, setGlobalStep] = useState(0);
 
   const formDataInitial = useMemo(() => {
     const data = evaluateData?.data;
@@ -125,15 +137,20 @@ const EditCreditEvaluatorContent = ({
   const initialFormTypes = useMemo(() => {
     if (formDataInitial.applicants.length > 0) {
       return formDataInitial.applicants.map((app: Applicant) => {
-         if (app.careerCategory || app.career) return "career";
-         if (app.salary && Object.values(app.salary).some((val) => Number(val) > 0)) return "salary";
-         return "salary"; // Default fallback
+        if (app.careerCategory || app.career) return "career";
+        if (
+          app.salary &&
+          Object.values(app.salary).some((val) => Number(val) > 0)
+        )
+          return "salary";
+        return "salary"; // Default fallback
       });
     }
     return [];
   }, [formDataInitial]);
 
-  const [formTypes, setFormTypes] = useState<(EvaluateFormType | "")[]>(initialFormTypes);
+  const [formTypes, setFormTypes] =
+    useState<(EvaluateFormType | "")[]>(initialFormTypes);
 
   const numApplicants = editedFormData.applicants.length;
   if (numApplicants === 0) return null;
@@ -141,21 +158,24 @@ const EditCreditEvaluatorContent = ({
   // Step 0 = Applicant 0, Step 1 = Applicant 1, ..., Step N = Summary
   const STEP_LABELS = [
     "ผู้กู้หลัก",
-    ...Array.from({ length: Math.max(0, numApplicants - 1) }).map((_, i) => `ผู้กู้ร่วม ${i + 1}`),
-    "สรุปผล"
+    ...Array.from({ length: Math.max(0, numApplicants - 1) }).map(
+      (_, i) => `ผู้กู้ร่วม ${i + 1}`,
+    ),
+    "สรุปผล",
   ];
   const totalSteps = STEP_LABELS.length;
 
   const currentApplicant = globalStep < numApplicants ? globalStep : 0;
-  const currentApplicantData = editedFormData.applicants[currentApplicant] || createEmptyApplicant();
+  const currentApplicantData =
+    editedFormData.applicants[currentApplicant] || createEmptyApplicant();
   const currentFormType = formTypes[currentApplicant] ?? "";
 
   const handleNext = () => {
     if (globalStep < numApplicants) {
-       if (!currentFormType) {
-         Swal.fire({ icon: "warning", title: "กรุณาเลือกประเภทฟอร์ม" });
-         return;
-       }
+      if (!currentFormType) {
+        Swal.fire({ icon: "warning", title: "กรุณาเลือกประเภทฟอร์ม" });
+        return;
+      }
     }
 
     if (globalStep === numApplicants - 1) {
@@ -175,7 +195,9 @@ const EditCreditEvaluatorContent = ({
           </div>
         `,
         preConfirm: () => {
-          const selected = document.querySelector('input[name="margin-type"]:checked') as HTMLInputElement;
+          const selected = document.querySelector(
+            'input[name="margin-type"]:checked',
+          ) as HTMLInputElement;
           if (!selected) {
             Swal.showValidationMessage("กรุณาเลือกเกณฑ์การประเมิน");
             return false;
@@ -189,7 +211,9 @@ const EditCreditEvaluatorContent = ({
         if (result.isConfirmed && result.value) {
           setEditedFormData({ ...editedFormData, marginType: result.value });
           setGlobalStep(numApplicants); // Go to summary
-          setTimeout(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, 250);
+          setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }, 250);
         }
       });
       return;
@@ -205,7 +229,10 @@ const EditCreditEvaluatorContent = ({
   };
 
   const handleApplicantUpdate = (updatedData: ApplicantData) => {
-    const updated = { ...editedFormData, applicants: [...editedFormData.applicants] };
+    const updated = {
+      ...editedFormData,
+      applicants: [...editedFormData.applicants],
+    };
     updated.applicants[currentApplicant] = updatedData;
     setEditedFormData(updated);
   };
@@ -246,9 +273,33 @@ const EditCreditEvaluatorContent = ({
       cancelButtonText: "ยกเลิก",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        Swal.fire({ title: "กำลังบันทึกข้อมูล...", allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        Swal.fire({
+          title: "กำลังบันทึกข้อมูล...",
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading(),
+        });
         await updateEvaluate({ data: editedFormData, id: evaluationId });
-        Swal.fire({ icon: "success", title: "อัปเดตแบบประเมินสำเร็จ", showConfirmButton: false, timer: 2000 });
+        Swal.fire({
+          icon: "success",
+          title: "อัปเดตแบบประเมินสำเร็จ",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+        navigate("/credit-evaluator");
+      }
+    });
+  };
+
+  const handleCancle = () => {
+    Swal.fire({
+      icon: "warning",
+      title: "ยกเลิกการแก้ไข",
+      text: "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการแก้ไข? ข้อมูลที่แก้ไขจะไม่ถูกบันทึก",
+      showCancelButton: true,
+      confirmButtonText: "ยืนยัน",
+      cancelButtonText: "ยกเลิก",
+    }).then((result) => {
+      if (result.isConfirmed) {
         navigate("/credit-evaluator");
       }
     });
@@ -272,33 +323,39 @@ const EditCreditEvaluatorContent = ({
       />
 
       <div className="bg-card border rounded-xl shadow-sm p-4 sm:p-6">
-        
         {globalStep < numApplicants && (
           <div className="space-y-6">
             {/* Applicant indicator */}
             <div className="mb-6 px-4 py-2.5 bg-primary/5 border border-primary/20 rounded-lg flex items-center justify-between">
-               <div className="flex items-center gap-2">
-                 <div className="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">
-                   {currentApplicant + 1}
-                 </div>
-                 <span className="text-md font-bold text-primary">
-                   {currentApplicant === 0 ? "ข้อมูลผู้กู้หลัก" : `ข้อมูลผู้กู้ร่วมคนที่ ${currentApplicant}`}
-                 </span>
-               </div>
-               <span className="text-sm font-semibold px-3 py-1 bg-white rounded-md border text-slate-700">
-                  {currentApplicantData?.name}
-               </span>
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">
+                  {currentApplicant + 1}
+                </div>
+                <span className="text-md font-bold text-primary">
+                  {currentApplicant === 0
+                    ? "ข้อมูลผู้กู้หลัก"
+                    : `ข้อมูลผู้กู้ร่วมคนที่ ${currentApplicant}`}
+                </span>
+              </div>
+              <span className="text-sm font-semibold px-3 py-1 bg-white rounded-md border text-slate-700">
+                {currentApplicantData?.name}
+              </span>
             </div>
 
             {/* Evaluate Type only on first applicant */}
             {currentApplicant === 0 && (
-               <InputField
-                  label="ประเภทสินเชื่อ"
-                  type="text"
-                  placeholder="โปรดระบุ..."
-                  value={editedFormData.evaluateType}
-                  onChange={(val) => setEditedFormData({ ...editedFormData, evaluateType: String(val) })}
-                  required
+              <InputField
+                label="ประเภทสินเชื่อ"
+                type="text"
+                placeholder="โปรดระบุ..."
+                value={editedFormData.evaluateType}
+                onChange={(val) =>
+                  setEditedFormData({
+                    ...editedFormData,
+                    evaluateType: String(val),
+                  })
+                }
+                required
               />
             )}
 
@@ -309,32 +366,50 @@ const EditCreditEvaluatorContent = ({
 
             {(currentFormType === "career" || currentFormType === "salary") && (
               <div className="pt-4 border-t">
-                 {currentFormType === "career" ? (
-                   <CareerFormSection
-                     key={`career-${currentApplicant}`}
-                     applicantData={currentApplicantData}
-                     onUpdate={handleApplicantUpdate}
-                     isCareerLoading={careerCategoriesLoading}
-                     careerCategories={careerCategories}
-                   />
-                 ) : (
-                   <SalaryFormSection
-                     key={`salary-${currentApplicant}`}
-                     applicantData={currentApplicantData}
-                     onUpdate={handleApplicantUpdate}
-                   />
-                 )}
+                {currentFormType === "career" ? (
+                  <CareerFormSection
+                    key={`career-${currentApplicant}`}
+                    applicantData={currentApplicantData}
+                    onUpdate={handleApplicantUpdate}
+                    isCareerLoading={careerCategoriesLoading}
+                    careerCategories={careerCategories}
+                  />
+                ) : (
+                  <SalaryFormSection
+                    key={`salary-${currentApplicant}`}
+                    applicantData={currentApplicantData}
+                    onUpdate={handleApplicantUpdate}
+                  />
+                )}
               </div>
             )}
 
             {/* Navigation */}
             <div className="flex justify-between pt-6 mt-4">
-              <Button variant="outline" onClick={handleBack} disabled={globalStep === 0}>
+              <Button
+                variant="outline"
+                onClick={handleBack}
+                disabled={globalStep === 0}
+              >
                 ย้อนกลับ
               </Button>
-              <Button onClick={handleNext} className="cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all">
-                {globalStep < numApplicants - 1 ? `ถัดไป — ผู้กู้คนที่ ${currentApplicant + 2}` : "ถัดไป — สรุปผล"}
-              </Button>
+              <div className="flex items-center gap-2 justify-end">
+                <Button
+                  variant="outline"
+                  onClick={() => handleCancle()}
+                  className="cursor-pointer"
+                >
+                  ยกเลิกการแก้ไข
+                </Button>
+                <Button
+                  onClick={handleNext}
+                  className="cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
+                >
+                  {globalStep < numApplicants - 1
+                    ? `ถัดไป — ผู้กู้คนที่ ${currentApplicant + 2}`
+                    : "ถัดไป — สรุปผล"}
+                </Button>
+              </div>
             </div>
           </div>
         )}
@@ -342,15 +417,16 @@ const EditCreditEvaluatorContent = ({
         {/* ── Step N: สรุปและยืนยัน ── */}
         {globalStep === numApplicants && (
           <div className="space-y-6">
-              <h1 className="text-xl font-semibold mb-6 text-primary">
-                 สัดส่วนภาระผ่อนชำระหนี้รวมต่อรายได้สุทธิรวม (DTI) และ สัดส่วนความสามารถในการชำระหนี้ (DSCR)
-              </h1>
-              
-              <SummaryEvaluateFrom
-                formData={editedFormData}
-                onResultUpdate={handleResultUpdate}
-                typeForm="update"
-              />
+            <h1 className="text-xl font-semibold mb-6 text-primary">
+              สัดส่วนภาระผ่อนชำระหนี้รวมต่อรายได้สุทธิรวม (DTI) และ
+              สัดส่วนความสามารถในการชำระหนี้ (DSCR)
+            </h1>
+
+            <SummaryEvaluateFrom
+              formData={editedFormData}
+              onResultUpdate={handleResultUpdate}
+              typeForm="update"
+            />
 
             <div className="flex flex-col sm:flex-row justify-between gap-4 mt-6 sm:mt-8">
               <Button variant="outline" onClick={handleBack}>
@@ -360,7 +436,7 @@ const EditCreditEvaluatorContent = ({
               <div className="flex items-center gap-2 justify-end">
                 <Button
                   variant="outline"
-                  onClick={() => navigate("/credit-evaluator")}
+                  onClick={() => handleCancle()}
                   className="cursor-pointer"
                 >
                   ยกเลิกการแก้ไข
@@ -377,7 +453,6 @@ const EditCreditEvaluatorContent = ({
             </div>
           </div>
         )}
-
       </div>
     </div>
   );
@@ -388,8 +463,10 @@ const EditCreditEvaluatorPage = () => {
   const { id } = useParams();
   const evaluationId = id || "";
 
-  const { data: careerCategories, isLoading: careerCategoriesLoading } = useGetCareerCategories();
-  const { data: evaluateData, isLoading: evaluateDataLoading } = useGetEvaluateById(evaluationId);
+  const { data: careerCategories, isLoading: careerCategoriesLoading } =
+    useGetCareerCategories();
+  const { data: evaluateData, isLoading: evaluateDataLoading } =
+    useGetEvaluateById(evaluationId);
 
   if (evaluateDataLoading || careerCategoriesLoading || !evaluationId) {
     return (

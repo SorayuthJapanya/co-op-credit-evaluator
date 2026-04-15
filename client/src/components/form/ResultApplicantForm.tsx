@@ -112,7 +112,7 @@ const ResultApplicantForm = ({
                   label="ค่าใช้จ่ายในการอุปโภคบริโภค"
                   type="number"
                   placeholder="0"
-                  value={Number(applicant.customerExpenses)}
+                  value={Number(applicant.customerExpenses) * 100}
                   suffix="ร้อยละ"
                   onChange={(value) =>
                     onApplicantChange(index, "customerExpenses", Number(value))
