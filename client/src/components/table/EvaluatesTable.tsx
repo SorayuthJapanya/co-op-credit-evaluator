@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  User,
   Download,
   Edit,
   Trash2,
@@ -43,6 +42,7 @@ import {
 } from "@/components/ui/dialog";
 import { useUpdateEvaluateStatus } from "@/hooks/useEvaluate";
 import Swal from "sweetalert2";
+import EvaluateDetailDialog from "@/components/dialog/EvaluateDetailDialog";
 
 interface EvaluatesTableProps {
   evaluates: Evaluate[];
@@ -79,6 +79,15 @@ const EvaluatesTable = ({
 
   const handleStatusSave = async () => {
     if (!statusTarget) return;
+    Swal.fire({
+      title: "กำลังอัปเดตสถานะ...",
+      text: "กรุณารอสักครู่...",
+      showCancelButton: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
     await updateStatus({
       id: statusTarget.id,
       status: selectedStatus,
@@ -325,276 +334,12 @@ const EvaluatesTable = ({
         </TableBody>
       </Table>
 
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        {/* ปรับแก้ typo จาก ภxl เป็น 4xl และเพิ่ม max-h-[85vh] overflow-y-auto เพื่อให้ Modal scroll ได้เมื่อข้อมูลยาว */}
-        <DialogContent className="w-full sm:max-w-4xl max-h-[85vh] overflow-y-auto [&>button]:hidden">
-          <DialogHeader>
-            <DialogTitle className="text-lg sm:text-xl font-medium flex items-center gap-2 border-b border-gray-200 pb-4">
-              <User className="w-6 h-6" /> รายละเอียดการประเมิน
-              <div className="ml-auto flex items-center gap-3">
-                <span className="text-xs sm:text-sm font-normal text-gray-500">
-                  วันที่:{" "}
-                  {selectedEvaluate?.createdAt
-                    ? formatDateToThai(selectedEvaluate.createdAt)
-                    : ""}
-                </span>
-                {selectedEvaluate && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    title="ส่งออก PDF"
-                    onClick={(e) => handleExportClick(e, selectedEvaluate)}
-                    className="h-8 px-3 text-indigo-600 hover:text-indigo-700 bg-indigo-100 border border-indigo-200 transition-all duration-300 ease-in-out hover:bg-indigo-200 hover:border-indigo-300 cursor-pointer"
-                  >
-                    <Download className="h-4 w-4 mr-1" />
-                    <span className="text-xs font-medium">ส่งออก</span>
-                  </Button>
-                )}
-              </div>
-            </DialogTitle>
-          </DialogHeader>
-
-          {selectedEvaluate && (
-            <div className="space-y-8 py-4">
-              {/* Section: ผลการอนุมัติ */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
-                  <p className="text-sm font-medium text-gray-600 mb-2">
-                    ผลการอนุมัติ
-                  </p>
-                  {selectedEvaluate.status === "อนุมัติ" ? (
-                    <span className="px-3 py-1 bg-green-100 text-green-700 font-medium rounded-md">
-                      อนุมัติ
-                    </span>
-                  ) : selectedEvaluate.status === "ไม่อนุมัติ" ? (
-                    <span className="px-3 py-1 bg-red-100 text-red-700 font-medium rounded-md">
-                      ไม่อนุมัติ
-                    </span>
-                  ) : (
-                    <span className="px-3 py-1 bg-yellow-100 text-yellow-700 font-medium rounded-md">
-                      รอการอนุมัติ
-                    </span>
-                  )}
-                </div>
-                {selectedEvaluate.feedback && (
-                  <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
-                    <p className="text-sm font-medium text-gray-600 mb-2">
-                      หมายเหตุ
-                    </p>
-                    <p className="text-gray-800">{selectedEvaluate.feedback}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Section 1: Highlight Metrics (ตัวเลขสำคัญสำหรับการตัดสินใจ) */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl">
-                  <p className="text-sm font-medium text-blue-600 mb-1">DTI</p>
-                  <p className="text-2xl font-bold text-blue-900">
-                    {selectedEvaluate.result.dti.toFixed(2)} เท่า
-                  </p>
-                </div>
-                <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
-                  <p className="text-sm font-medium text-emerald-600 mb-1">
-                    DSCR
-                  </p>
-                  <p className="text-2xl font-bold text-emerald-900">
-                    {selectedEvaluate.result.dscr.toFixed(2)} %
-                  </p>
-                </div>
-                <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
-                  <p className="text-sm font-medium text-gray-600 mb-1">
-                    รายได้สุทธิประเมิน
-                  </p>
-                  <p className="text-xl font-bold text-green-600">
-                    ฿{" "}
-                    {selectedEvaluate.result.applicants
-                      .reduce(
-                        (total, applicant) => total + applicant.resultIncome,
-                        0,
-                      )
-                      .toLocaleString()}
-                  </p>
-                </div>
-                <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
-                  <p className="text-sm font-medium text-gray-600 mb-1">
-                    ภาระหนี้รวม
-                  </p>
-                  <p className="text-xl font-bold text-red-600">
-                    ฿{" "}
-                    {selectedEvaluate.result.debtDetail.totalDebt.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-
-              {/* Section 2: ข้อมูลผู้สมัคร และ อาชีพ */}
-              <div>
-                <h3 className="text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  ประเภทสินเชื่อ: {selectedEvaluate.evaluateType}
-                </h3>
-                <h3 className="text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  ประเภทเงินกู้: {selectedEvaluate.marginType}
-                </h3>
-                {selectedEvaluate.applicants.map((applicant, index) => (
-                  <div key={index} className="my-6">
-                    <h4 className="text-sm font-medium text-gray-700 mb-2">
-                      ผู้สมัครที่ {index + 1}
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 bg-white border border-gray-200 p-5 rounded-xl shadow-sm">
-                      <div>
-                        <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          ชื่อผู้กู้
-                        </label>
-                        <p className="text-gray-900 font-medium mt-1">
-                          {applicant.name}
-                        </p>
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          เลขบัตรประชาชน
-                        </label>
-                        <p className="text-gray-900 font-medium mt-1">
-                          {applicant.idCard}
-                        </p>
-                      </div>
-                      {applicant.careerCategory && applicant.career && (
-                        <>
-                          <div className="sm:col-span-2">
-                            <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              หมวดหมู่อาชีพ
-                            </label>
-                            <p className="text-gray-900 mt-1">
-                              {applicant.careerCategory}
-                            </p>
-                          </div>
-                          <div className="sm:col-span-2">
-                            <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              อาชีพหลัก
-                            </label>
-                            <p className="text-gray-900 mt-1">
-                              {applicant.career}
-                            </p>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Section 3: รายละเอียดทางการเงิน แบ่ง 2 คอลัมน์ (รายได้ vs ภาระหนี้/ค่าใช้จ่าย) */}
-              <div className="space-y-6">
-                {selectedEvaluate.result.applicants.map((applicant, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-6 sm:pb-8 border-b border-gray-200 last:border-b-0 last:pb-0"
-                  >
-                    <div className="lg:col-span-2">
-                      <h3 className="text-base font-semibold text-gray-900">
-                        ข้อมูลทางการเงิน - ผู้สมัครที่ {index + 1}
-                      </h3>
-                    </div>
-                    {/* Column Left: ฝั่งรายได้ */}
-                    <div className="space-y-3">
-                      <h4 className="text-sm font-medium text-gray-900 border-b pb-2">
-                        โครงสร้างรายได้
-                      </h4>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center text-sm py-1">
-                          <span className="text-gray-600">อัตราเงินเดือน</span>
-                          <span className="font-medium text-gray-900">
-                            ฿ {applicant.totalSalary.toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center text-sm py-1">
-                          <span className="text-gray-600">
-                            เงินได้ประจำอื่นๆ
-                          </span>
-                          <span className="font-medium text-gray-900">
-                            ฿ {applicant.otherSalary.toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center text-sm py-1">
-                          <span className="text-gray-600">
-                            เงินได้อื่นๆ ที่มีหลักฐาน
-                          </span>
-                          <span className="font-medium text-gray-900">
-                            ฿ {applicant.optionsSalary.toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center text-sm py-1">
-                          <span className="text-gray-600">
-                            กำไรสุทธิจากการประกอบอาชีพตามสัดส่วนการถือหุ้นในธุรกิจ
-                          </span>
-                          <span className="font-medium text-gray-900">
-                            ฿ {applicant.resultShareValue.toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-                          <span className="text-sm font-semibold text-gray-900">
-                            รวมรายได้ประเมิน (Total Salary)
-                          </span>
-                          <span className="font-semibold text-gray-900">
-                            ฿ {applicant.totalSalary.toLocaleString()}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Column Right: ฝั่งภาระหนี้และค่าใช้จ่าย */}
-                    <div className="space-y-3">
-                      <h4 className="text-sm font-medium text-gray-900 border-b pb-2">
-                        ภาระหนี้สินและค่าใช้จ่าย
-                      </h4>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center text-sm py-1">
-                          <span className="text-gray-600">
-                            รายการหักของหน่วยงานที่ไม่ใช่ภาระหนี้
-                          </span>
-                          <span className="font-medium text-red-600">
-                            ฿ {applicant.expenses.toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center text-sm py-1">
-                          <span className="text-gray-600">
-                            ค่าใช้จ่ายในการอุปโภคบริโภค
-                          </span>
-                          <span className="font-medium text-red-600">
-                            ฿{" "}
-                            {applicant.resultCustomerExpenses.toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center text-sm py-1">
-                          <span className="text-gray-600">
-                            ค่าใช้จ่ายที่พักอาศัย
-                          </span>
-                          <span className="font-medium text-red-600">
-                            ฿ {applicant.livingExpenses.toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center text-sm py-1">
-                          <span className="text-gray-600">ค่าใช่จ่ายอื่นๆ</span>
-                          <span className="font-medium text-red-600">
-                            ฿ {applicant.otherExpenses.toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-                          <span className="text-sm font-semibold text-gray-900">
-                            ค่าใช้จ่ายรวม
-                          </span>
-                          <span className="font-semibold text-red-600">
-                            ฿ {applicant.totalExpenses.toLocaleString()}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <EvaluateDetailDialog
+        evaluate={selectedEvaluate}
+        isOpen={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onExport={handleExportClick}
+      />
 
       {/* Status Dialog */}
       <Dialog open={isStatusDialogOpen} onOpenChange={setIsStatusDialogOpen}>
@@ -623,10 +368,11 @@ const EvaluatesTable = ({
               </Select>
             </div>
 
-            {selectedStatus === "ไม่อนุมัติ" && (
+            {(selectedStatus === "ไม่อนุมัติ" ||
+              selectedStatus === "อนุมัติ") && (
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">
-                  เหตุผลที่ไม่อนุมัติ
+                  หมายเหตุ (ถ้ามี)
                 </label>
                 <Textarea
                   placeholder="ระบุเหตุผล..."
@@ -646,7 +392,7 @@ const EvaluatesTable = ({
               ยกเลิก
             </Button>
             <Button onClick={handleStatusSave} disabled={isUpdatingStatus}>
-              บันทึก
+              {isUpdatingStatus ? "กำลังบันทึก..." : "บันทึก"}
             </Button>
           </DialogFooter>
         </DialogContent>
