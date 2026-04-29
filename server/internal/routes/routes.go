@@ -17,10 +17,13 @@ func SetupRoutes(app fiber.Router) {
 		})
 	})
 
-	app.Get("/healthy", func(c fiber.Ctx) error {
+	app.Get("/info", func(c fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
 			"status":  "success",
-			"message": "This is api for co-op credit evaluator",
+			"message": "Co-op Credit Evaluator API v1.0",
+			"version": "1.0",
+			"uptime":  "72h34m56s", // Example uptime, replace with actual uptime logic if needed
+			"build":   "2024-06-01T12:00:00Z", // Example build time, replace with actual build time logic if needed
 		})
 	})
 
