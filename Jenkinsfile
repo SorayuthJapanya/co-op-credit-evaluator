@@ -42,12 +42,12 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh """
-                    cd ${COOP_DEPLOY_DIR} &&
+                sh '''
+                    cd $COOP_DEPLOY_DIR &&
                     docker compose build --no-cache &&
                     docker compose up -d --remove-orphans &&
                     docker image prune -f
-                """
+                '''
             }
         }
 
@@ -60,7 +60,7 @@ pipeline {
                     retry(retries) {
                         sleep(delay)
                         def response = sh(
-                            script: "curl -sf ${COOP_SERVER_HEALTH_URL}/health -o /dev/null -w '%{http_code}'",
+                            script: 'curl -sf $COOP_SERVER_HEALTH_URL/health -o /dev/null -w \'%{http_code}\'',
                             returnStdout: true
                         ).trim()
 
@@ -75,11 +75,11 @@ pipeline {
 
         stage('Verify') {
             steps {
-                sh """
+                sh '''
                     echo '===== Container Status =====' &&
-                    cd ${COOP_DEPLOY_DIR} &&
+                    cd $COOP_DEPLOY_DIR &&
                     docker compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
-                """
+                '''
             }
         }
     }
