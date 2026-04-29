@@ -17,6 +17,13 @@ func SetupRoutes(app fiber.Router) {
 		})
 	})
 
+	app.Get("/healthy", func(c fiber.Ctx) error {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"status":  "success",
+			"message": "This is api for co-op credit evaluator",
+		})
+	})
+
 	// api routes
 	api := app.Group("/api/v1")
 
