@@ -58,7 +58,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                    cd $COOP_DEPLOY_DIR &&
+                    cp $COOP_DEPLOY_DIR/.env $WORKSPACE/.env &&
                     docker compose build --no-cache &&
                     docker compose up -d --remove-orphans &&
                     docker image prune -f
@@ -92,7 +92,6 @@ pipeline {
             steps {
                 sh '''
                     echo '===== Container Status =====' &&
-                    cd $COOP_DEPLOY_DIR &&
                     docker compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
                 '''
             }
