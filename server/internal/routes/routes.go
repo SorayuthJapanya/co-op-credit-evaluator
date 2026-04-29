@@ -17,14 +17,7 @@ func SetupRoutes(app fiber.Router) {
 		})
 	})
 
-	// healthy routes
-	app.Get("/healthy", func(c fiber.Ctx) error {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"status":  "success",
-			"message": "OK",
-		})
-	})
-
+	// info route
 	app.Get("/info", func(c fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
 			"status":  "success",
