@@ -59,8 +59,8 @@ pipeline {
             steps {
                 sh '''
                     cp $COOP_DEPLOY_DIR/.env $WORKSPACE/.env &&
-                    docker compose build --no-cache &&
-                    docker compose up -d --remove-orphans &&
+                    docker compose -p co-op-credit-evaluator build --no-cache &&
+                    docker compose -p co-op-credit-evaluator up -d --remove-orphans &&
                     docker image prune -f
                 '''
             }
@@ -92,7 +92,7 @@ pipeline {
             steps {
                 sh '''
                     echo '===== Container Status =====' &&
-                    docker compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
+                    docker compose -p co-op-credit-evaluator ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
                 '''
             }
         }
