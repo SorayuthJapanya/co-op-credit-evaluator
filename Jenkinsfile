@@ -41,9 +41,6 @@ pipeline {
         }
 
         stage('Deploy') {
-            when {
-                branch 'main'
-            }
             steps {
                 sh """
                     cd ${COOP_DEPLOY_DIR} &&
@@ -55,9 +52,6 @@ pipeline {
         }
 
         stage('Health Check') {
-            when {
-                branch 'main'
-            }
             steps {
                 script {
                     def retries = 10
@@ -80,9 +74,6 @@ pipeline {
         }
 
         stage('Verify') {
-            when {
-                branch 'main'
-            }
             steps {
                 sh """
                     echo '===== Container Status =====' &&
