@@ -2,8 +2,9 @@ pipeline {
     agent any
 
     environment {
-        COOP_DEPLOY_DIR        = credentials('COOP_DEPLOY_DIR')        // e.g. /opt/coop
-        COOP_SERVER_HEALTH_URL = credentials('COOP_SERVER_HEALTH_URL') // e.g. http://localhost:10000
+        COOP_DEPLOY_DIR        = "${env.COOP_DEPLOY_DIR}  "      // e.g. /opt/coop
+        COOP_SERVER_HEALTH_URL = "${env.COOP_SERVER_HEALTH_URL}" // e.g. http://localhost:10000
+        BRANCH_NAME            = "main"
     }
 
     stages {
@@ -86,10 +87,10 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline succeeded on branch: ${env.BRANCH_NAME}"
+            echo "Pipeline succeeded on branch: ${BRANCH_NAME}"
         }
         failure {
-            echo "Pipeline failed on branch: ${env.BRANCH_NAME}"
+            echo "Pipeline failed on branch: ${BRANCH_NAME}"
         }
         always {
             cleanWs()
