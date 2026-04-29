@@ -14,33 +14,29 @@ pipeline {
         }
 
         stage('Test Backend') {
-            agent {
-                docker {
-                    image 'golang:1.25-alpine'
-                    args '-v go-cache:/root/.cache/go-build -v go-mod:/go/pkg/mod'
-                    reuseNode true
-                }
-            }
             steps {
-                dir('server') {
-                    sh 'go test ./... -v -count=1'
-                }
+                sh '''
+                    docker run --rm \
+                        -v go-cache:/root/.cache/go-build \
+                        -v go-mod:/go/pkg/mod \
+                        -v $PWD/server:/app \
+                        -w /app \
+                        golang:1.25-alpine \
+                        go test ./... -v -count=1
+                '''
             }
         }
 
         stage('Test Frontend') {
-            agent {
-                docker {
-                    image 'node:20-alpine'
-                    args '-v pnpm-store:/root/.local/share/pnpm'
-                    reuseNode true
-                }
-            }
             steps {
-                dir('client') {
-                    sh 'npm install -g pnpm && pnpm install --frozen-lockfile'
-                    sh 'pnpm run build'
-                }
+                sh '''
+                    docker run --rm \
+                        -v pnpm-store:/root/.local/share/pnpm \
+                        -v $PWD/client:/app \
+                        -w /app \
+                        node:20-alpine \
+                        sh -c "npm install -g pnpm && pnpm install --frozen-lockfile && pnpm run build"
+                '''
             }
         }
 
