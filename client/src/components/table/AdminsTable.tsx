@@ -66,7 +66,7 @@ const AdminsTable = ({ admins, onRoleUpdate, onDelete, currentUserId }: AdminsTa
           <TableRow>
             <TableHead className="w-16 text-center whitespace-nowrap">ลำดับ</TableHead>
             <TableHead className="text-center whitespace-nowrap">วันที่สร้าง</TableHead>
-            <TableHead className="whitespace-nowrap">Username</TableHead>
+            <TableHead className="whitespace-nowrap">เลขบัตรประชาชน</TableHead>
             <TableHead className="whitespace-nowrap">ชื่อ - นามสกุล</TableHead>
             <TableHead className="text-center whitespace-nowrap">สิทธิ์การใช้งาน (Role)</TableHead>
             <TableHead className="text-center w-32 whitespace-nowrap">จัดการ</TableHead>
