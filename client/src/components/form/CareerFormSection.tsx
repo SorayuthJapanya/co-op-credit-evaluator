@@ -39,7 +39,10 @@ const CareerFormSection = ({
     return subCategory?.subNetProfit || 0;
   };
 
-  const recalculateDerivedValues = (data: ApplicantData): BorrowerData => {
+  const recalculateDerivedValues = (
+    data: ApplicantData,
+    source?: "costPercentage" | "costAndService",
+  ): BorrowerData => {
     // Deep clone the parts we might mutate
     const newData = {
       ...data,
@@ -55,9 +58,19 @@ const CareerFormSection = ({
 
     newData.businessActivity.totalIncome = totalSal;
 
-    const costPercentage = Number(newData.expenseItem.costPercentage || 0);
-    const costAndService = totalSal * (costPercentage / 100);
-    newData.expenseItem.costAndService = costAndService;
+    let costAndService: number;
+    if (source === "costAndService") {
+      costAndService = Number(newData.expenseItem.costAndService || 0);
+      const derivedPercentage =
+        totalSal > 0
+          ? parseFloat(((costAndService / totalSal) * 100).toFixed(2))
+          : 0;
+      newData.expenseItem.costPercentage = derivedPercentage;
+    } else {
+      const costPercentage = Number(newData.expenseItem.costPercentage || 0);
+      costAndService = parseFloat((totalSal * (costPercentage / 100)).toFixed(2));
+      newData.expenseItem.costAndService = costAndService;
+    }
 
     const sumExpense =
       costAndService +
@@ -82,8 +95,8 @@ const CareerFormSection = ({
     const shareProfitPercentage = Number(
       newData.shareHolder.shareOfNetProfit || 0,
     );
-    const shareValue = netProfit * (shareProfitPercentage / 100);
-    newData.shareHolder.bankNetProfit = Number(shareValue.toFixed(2));
+    const shareValue = parseFloat((netProfit * (shareProfitPercentage / 100)).toFixed(2));
+    newData.shareHolder.bankNetProfit = shareValue;
 
     const careerMargin = getCareerMargin(
       newData.careerCategory,
@@ -125,6 +138,22 @@ const CareerFormSection = ({
       },
     };
     newBorrowerData = recalculateDerivedValues(newBorrowerData);
+    onUpdate(newBorrowerData);
+  };
+
+  const handleExpenseSyncChange = (
+    field: "costPercentage" | "costAndService",
+    value: string | number,
+  ) => {
+    const currentExpense = applicantData.expenseItem || {};
+    let newBorrowerData = {
+      ...applicantData,
+      expenseItem: {
+        ...currentExpense,
+        [field]: value === "" || value === null ? 0 : Number(value),
+      },
+    };
+    newBorrowerData = recalculateDerivedValues(newBorrowerData, field);
     onUpdate(newBorrowerData);
   };
 
@@ -280,6 +309,7 @@ const CareerFormSection = ({
                   handleNestedFieldChange("businessActivity", "salary", value)
                 }
                 required
+                suffix="บาท/เดือน"
               />
               <InputField
                 label="รายได้อื่นๆ จากธุรกิจ (บาท/เดือน)"
@@ -294,6 +324,7 @@ const CareerFormSection = ({
                   )
                 }
                 required
+                suffix="บาท/เดือน"
               />
             </div>
             <div className="mt-4 px-3 py-1.5 bg-primary/5 rounded-lg flex items-cent justify-between text-primary">
@@ -316,13 +347,10 @@ const CareerFormSection = ({
                 placeholder="0"
                 value={bData.expenseItem.costPercentage}
                 onChange={(value) =>
-                  handleNestedFieldChange(
-                    "expenseItem",
-                    "costPercentage",
-                    value,
-                  )
+                  handleExpenseSyncChange("costPercentage", value)
                 }
                 required
+                suffix="%"
               />
 
               <InputField
@@ -331,14 +359,10 @@ const CareerFormSection = ({
                 placeholder="0"
                 value={bData.expenseItem.costAndService}
                 onChange={(value) =>
-                  handleNestedFieldChange(
-                    "expenseItem",
-                    "costAndService",
-                    value,
-                  )
+                  handleExpenseSyncChange("costAndService", value)
                 }
                 required
-                readOnly
+                suffix="บาท/เดือน"
               />
 
               <InputField
@@ -349,6 +373,7 @@ const CareerFormSection = ({
                 onChange={(value) =>
                   handleNestedFieldChange("expenseItem", "empSalary", value)
                 }
+                suffix="บาท/เดือน"
               />
 
               <InputField
@@ -359,6 +384,7 @@ const CareerFormSection = ({
                 onChange={(value) =>
                   handleNestedFieldChange("expenseItem", "rentExpenses", value)
                 }
+                suffix="บาท/เดือน"
               />
 
               <InputField
@@ -373,6 +399,7 @@ const CareerFormSection = ({
                     value,
                   )
                 }
+                suffix="บาท/เดือน"
               />
 
               <InputField
@@ -383,6 +410,7 @@ const CareerFormSection = ({
                 onChange={(value) =>
                   handleNestedFieldChange("expenseItem", "otherExpenses", value)
                 }
+                suffix="บาท/เดือน"
               />
             </div>
             <div className="mt-4 px-3 py-1.5 bg-primary/5 rounded-lg flex items-cent justify-between text-primary">
@@ -418,6 +446,7 @@ const CareerFormSection = ({
                     value,
                   )
                 }
+                suffix="บาท/เดือน"
               />
 
               <div className="space-y-2">
@@ -435,6 +464,7 @@ const CareerFormSection = ({
                 onChange={(value) =>
                   handleNestedFieldChange("profileLost", "taxExpense", value)
                 }
+                suffix="บาท/เดือน"
               />
 
               <div className="space-y-2">
@@ -464,6 +494,7 @@ const CareerFormSection = ({
                     )
                   }
                   required
+                  suffix="%"
                   className="w-full"
                 />
 
@@ -480,6 +511,7 @@ const CareerFormSection = ({
                     )
                   }
                   required
+                  suffix="บาท/เดือน"
                   readOnly
                   className="w-full"
                 />
@@ -514,6 +546,7 @@ const CareerFormSection = ({
                     )
                   }
                   required
+                  suffix="%"
                   readOnly
                   className="w-full"
                 />
@@ -531,6 +564,7 @@ const CareerFormSection = ({
                     )
                   }
                   required
+                  suffix="%"
                   readOnly
                   className="w-full"
                 />

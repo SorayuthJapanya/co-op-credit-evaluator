@@ -7,14 +7,14 @@ WORKDIR /app
 # Install git and other build dependencies
 RUN apk add --no-cache git
 
+# Install air for hot reload
+RUN go install github.com/air-verse/air@latest
+
 # Copy go mod files
 COPY go.mod go.sum ./
 
 # Download dependencies
 RUN go mod download
-
-# Copy source code
-COPY . .
 
 # Accept PORT as an argument with default 10000
 ARG PORT=10000
@@ -23,5 +23,5 @@ ENV PORT=$PORT
 # Expose port
 EXPOSE $PORT
 
-# Command to run the application in development mode
-CMD ["go", "run", "cmd/api/main.go"]
+# Command to run with hot reload (uses .air.toml in the working dir)
+CMD ["air"]

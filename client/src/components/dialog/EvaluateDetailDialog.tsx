@@ -156,7 +156,7 @@ const EvaluateDetailDialog = ({
                   <p className="text-2xl font-bold text-gray-800 leading-none">
                     {evaluate.result.dti.toFixed(2)}
                   </p>
-                  <p className="text-xs text-gray-400 font-medium">เท่า</p>
+                  <p className="text-xs text-gray-400 font-medium">%</p>
                 </div>
 
                 {/* DSCR */}
@@ -170,7 +170,7 @@ const EvaluateDetailDialog = ({
                   <p className="text-2xl font-bold text-gray-800 leading-none">
                     {evaluate.result.dscr.toFixed(2)}
                   </p>
-                  <p className="text-xs text-gray-400 font-medium">%</p>
+                  <p className="text-xs text-gray-400 font-medium">เท่า</p>
                 </div>
 
                 {/* รายได้สุทธิประเมิน */}

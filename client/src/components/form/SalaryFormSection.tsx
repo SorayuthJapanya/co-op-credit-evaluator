@@ -232,7 +232,7 @@ const SalaryFormSection = ({
                   value,
                 )
               }
-              suffix="%"
+              suffix="บาท/เดือน"
             />
 
             <InputField
@@ -341,7 +341,7 @@ const SalaryFormSection = ({
               onChange={(value) =>
                 handleNestedFieldChange("optionsSalary", "commission", value)
               }
-              suffix="%"
+              suffix="บาท/เดือน"
             />
 
             <InputField

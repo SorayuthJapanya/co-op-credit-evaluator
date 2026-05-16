@@ -210,9 +210,9 @@ func buildApplicantRowsHTML(label string, a models.ResultApplicant) string {
 func buildDebtRowsHTML(d models.DebtDetail) string {
 	var sb strings.Builder
 	sb.WriteString(dataRowHTML("หนี้ครั้งนี้", fmtNum(d.DebtAmount), "บาท/เดือน", false))
-	sb.WriteString(dataRowHTML("หนี้สิน GSB (จาก CBS)", fmtNum(d.LastDebt), "บาท/เดือน", false))
-	sb.WriteString(dataRowHTML("หนี้สินที่รายงานต่อ NCB (ไม่รวมหนี้สิน GSB)", fmtNum(d.DebtReported), "บาท/เดือน", false))
-	sb.WriteString(dataRowHTML("หนี้สินที่ไม่ได้รายงานต่อ NCB", fmtNum(d.DebtNotReported), "บาท/เดือน", false))
+	sb.WriteString(dataRowHTML("หนี้เดิมสหกรณ์", fmtNum(d.LastDebt), "บาท/เดือน", false))
+	sb.WriteString(dataRowHTML("หนี้ที่รายงานเครดิตบูโร(ไม่รวมหนี้สหกรณ์)", fmtNum(d.DebtReported), "บาท/เดือน", false))
+	sb.WriteString(dataRowHTML("หนี้ที่ไม่ได้รายงานเครดิตบูโร", fmtNum(d.DebtNotReported), "บาท/เดือน", false))
 	sb.WriteString(dataRowHTML("หัก เงินงวดเดิม กรณีคำขอนี้เป็นการ Refinance", fmtNum(d.LastDeduction), "บาท/เดือน", false))
 	sb.WriteString(highlightRowHTML("ภาระผ่อนชำระหนี้รวม", fmtNum(d.TotalDebt), "บาท/เดือน"))
 	return sb.String()
