@@ -41,7 +41,7 @@ const CareerFormSection = ({
 
   const recalculateDerivedValues = (
     data: ApplicantData,
-    source?: "costPercentage" | "costAndService",
+    source?: "costPercentage" | "costAndService" | "bankNetProfit",
   ): BorrowerData => {
     // Deep clone the parts we might mutate
     const newData = {
@@ -95,15 +95,27 @@ const CareerFormSection = ({
     const shareProfitPercentage = Number(
       newData.shareHolder.shareOfNetProfit || 0,
     );
-    const shareValue = parseFloat((netProfit * (shareProfitPercentage / 100)).toFixed(2));
-    newData.shareHolder.bankNetProfit = shareValue;
+
+    let shareValue: number;
+    let effectiveSharePercentage: number;
+    if (source === "bankNetProfit") {
+      shareValue = Number(newData.shareHolder.bankNetProfit || 0);
+      effectiveSharePercentage = netProfit > 0
+        ? parseFloat(((shareValue / netProfit) * 100).toFixed(2))
+        : 0;
+      newData.shareHolder.shareOfNetProfit = effectiveSharePercentage;
+    } else {
+      shareValue = parseFloat((netProfit * (shareProfitPercentage / 100)).toFixed(2));
+      newData.shareHolder.bankNetProfit = shareValue;
+      effectiveSharePercentage = shareProfitPercentage;
+    }
 
     const careerMargin = getCareerMargin(
       newData.careerCategory,
       newData.career,
     );
     const lastProfit =
-      totalSal * (careerMargin / 100) * (shareProfitPercentage / 100);
+      totalSal * (careerMargin / 100) * (effectiveSharePercentage / 100);
 
     let optionalOtherExpense = shareValue - lastProfit;
     if (optionalOtherExpense <= 0) optionalOtherExpense = 0;
@@ -154,6 +166,18 @@ const CareerFormSection = ({
       },
     };
     newBorrowerData = recalculateDerivedValues(newBorrowerData, field);
+    onUpdate(newBorrowerData);
+  };
+
+  const handleBankNetProfitChange = (value: string | number) => {
+    let newBorrowerData = {
+      ...applicantData,
+      shareHolder: {
+        ...applicantData.shareHolder,
+        bankNetProfit: Number(value) || 0,
+      },
+    };
+    newBorrowerData = recalculateDerivedValues(newBorrowerData, "bankNetProfit");
     onUpdate(newBorrowerData);
   };
 
@@ -503,16 +527,9 @@ const CareerFormSection = ({
                   type="number"
                   placeholder="0"
                   value={bData.shareHolder.bankNetProfit}
-                  onChange={(value) =>
-                    handleNestedFieldChange(
-                      "shareHolder",
-                      "bankNetProfit",
-                      value,
-                    )
-                  }
+                  onChange={handleBankNetProfitChange}
                   required
                   suffix="บาท/เดือน"
-                  readOnly
                   className="w-full"
                 />
               </div>
